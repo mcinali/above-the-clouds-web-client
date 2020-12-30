@@ -60,6 +60,25 @@
 .description {
   line-height: 1.5;
   font-size: 1.5rem;
+  margin-bottom:8%;
+}
+
+.registrationButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 64px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.textlink {
+  color: #0070f3;
+  font-size: 14px;
+  font-weight: normal;
 }
 
 .code {
