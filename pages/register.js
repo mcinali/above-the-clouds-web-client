@@ -1,6 +1,9 @@
 import React from 'react'
 import styles from '../styles/Common.module.css'
 import Link from 'next/link'
+import Router from "next/router"
+const { registerAccount } = require('../api/accounts')
+
 
 export default function Register() {
   return (
@@ -45,11 +48,22 @@ class RegistrationForm extends React.Component {
     this.setState({[event.target.name]: event.target.value.trim()})
   }
 
-  handleSubmit(event){
-    alert(this.state)
-    // TO DO: POST account request
+  handleSubmit(event) {
     event.preventDefault()
+    const accountDetails = registerAccount({
+      'username': this.state.username,
+      'password': this.state.password,
+      'email': this.state.email,
+      'phone': this.state.phone,
+      'firstname': this.state.firstname,
+      'lastname': this.state.lastname,
+    })
+    Router.push("/discovery")
   }
+
+  onRedirectCallback(appState) {
+    history.push(appState?.returnTo || window.location.pathname);
+  };
 
   render(){
     return (
@@ -61,9 +75,7 @@ class RegistrationForm extends React.Component {
         <input name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} className={styles.inputWide}/>
         <input name="phone" placeholder="phone number" value={this.state.phone} onChange={this.handleChange} className={styles.inputWide}/>
         <p></p>
-        <button type="submit" className={styles.registrationButton}>
-          <Link href="/register">Register</Link>
-        </button>
+        <button type="submit" className={styles.registrationButton}>Register</button>
     </form>
     )
   }
