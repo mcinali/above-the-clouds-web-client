@@ -52,14 +52,47 @@
   align-items: center;
 }
 
+.form {
+  font-family:Arial;
+  display: inline-block;
+  margin-bottom: 2%;
+  align-items: center;
+}
+
+.inputWide {
+  width: 50%;
+  height: 2rem;
+  margin-left: 25%;
+  margin-bottom: 2%;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputNarrowLeft {
+  width: 24%;
+  height: 2rem;
+  margin-left: 25%;
+  margin-bottom: 2%;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputNarrowRight {
+  width: 24%;
+  height: 2rem;
+  margin-left: 2%;
+  margin-bottom: 2%;
+  justify-content: center;
+  align-items: center;
+}
+
 .registrationButton {
+  margin-left: 40%;
   background-color: #0070f3;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 15px 64px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
+  padding: 10px 64px;
+  justify-content: center;
   font-size: 16px;
 }
