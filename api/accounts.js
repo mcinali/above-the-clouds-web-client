@@ -18,6 +18,21 @@ function registerAccount(userInfo) {
   }
 }
 
+function validateAccountFields(accountFields) {
+  try {
+    const response = axios.post(hostname+'/account/validate', {
+      'username': accountFields.username,
+      'email': accountFields.email,
+      'phone': accountFields.phone,
+    })
+    .then(function(response) {return response})
+    .catch(function(error) {new Error(error)})
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 module.exports = {
   registerAccount,
+  validateAccountFields,
 }
