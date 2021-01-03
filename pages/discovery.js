@@ -8,9 +8,10 @@ const axios = require('axios')
 
 export default function Discover() {
   return (
-    <div id="container" className={commonStyles.container}>
+    <div className={commonStyles.container}>
       <header className={commonStyles.header}></header>
-      <body></body>
+      <div id="leftPanel" className={discoveryStyles.leftPanel}>Hello</div>
+      <div id="rightPanel" className={discoveryStyles.rightPanel}>Friend</div>
       <footer className={commonStyles.footer}>
         <a
           href="/old"
@@ -22,3 +23,7 @@ export default function Discover() {
     </div>
   )
 }
+
+// TO DO:
+// Header/Account component
+//

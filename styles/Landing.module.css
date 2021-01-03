@@ -1,3 +1,36 @@
+.description {
+  line-height: 1.5;
+  font-size: 1.5rem;
+  margin-bottom:5%;
+}
+
+.main {
+  height: 100%;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.registrationButton {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 64px;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+}
+
+.textlink {
+  color: #0070f3;
+  font-size: 14px;
+  font-weight: normal;
+  align-items: center;
+}
+
 .title {
   margin-top: 5%;
   margin-bottom: 0.5%;
@@ -8,29 +41,4 @@
 .title a {
   color: #0070f3;
   text-decoration: none;
-}
-
-.description {
-  line-height: 1.5;
-  font-size: 1.5rem;
-  margin-bottom:5%;
-}
-
-.registrationButton {
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 15px 64px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-}
-
-.textlink {
-  color: #0070f3;
-  font-size: 14px;
-  font-weight: normal;
-  align-items: center;
 }

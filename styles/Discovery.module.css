@@ -1,0 +1,23 @@
+.leftPanel {
+  position: relative;
+  width: 32%;
+  margin-top: 1%;
+  margin-right: 1%;
+  margin-left: 1%;
+  float: left;
+  height: 100%;
+  min-height: 350px;
+  z-index: 1
+}
+
+.rightPanel {
+  position: relative;
+  width: 64%;
+  margin-top: 1%;
+  margin-right: 1%;
+  margin-left: 1%;
+  float: left;
+  height: 100%;
+  min-height: 350px;
+  z-index: 1
+}

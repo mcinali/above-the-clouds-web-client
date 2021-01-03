@@ -5,7 +5,7 @@ import Link from 'next/link'
 export default function Landing() {
   return (
     <div className={commonStyles.container}>
-      <body className={commonStyles.main}>
+      <body className={landingStyles.main}>
         <h1 className={landingStyles.title}>Welcome to
           <a> Above the Clouds!</a>
         </h1>
@@ -17,17 +17,6 @@ export default function Landing() {
           <Link href="/login">Already have an account? Login here</Link>
         </p>
       </body>
-      <div id="footer" className={commonStyles.footer}>
-        <footer>
-          <a
-            href="/old"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            About Us
-          </a>
-        </footer>
-      </div>
     </div>
   )
 }
