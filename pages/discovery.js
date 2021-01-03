@@ -9,18 +9,16 @@ const axios = require('axios')
 export default function Discover() {
   return (
     <div id="container" className={commonStyles.container}>
-      <div id="header" className={commonStyles.header}></div>
-      <div id="body" className={commonStyles.body}></div>
-      <div id="footer" className={commonStyles.footer}>
-        <footer className={commonStyles.footer}>
-          <a
-            href="/old"
-            target="_blank"
-            rel="noopener noreferrer">
-              About Us
-          </a>
-        </footer>
-      </div>
+      <header className={commonStyles.header}></header>
+      <body></body>
+      <footer className={commonStyles.footer}>
+        <a
+          href="/old"
+          target="_blank"
+          rel="noopener noreferrer">
+            About Us
+        </a>
+      </footer>
     </div>
   )
 }
