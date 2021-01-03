@@ -1,4 +1,4 @@
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Landing.module.css'
 import Link from 'next/link'
 
 export default function Landing() {
@@ -11,7 +11,7 @@ export default function Landing() {
         </h1>
         <p className={styles.description}>A Space for Meaningful Conversations</p>
         <button className={styles.registrationButton}>
-          <Link href="/register">Register</Link>
+          <Link href="/register">Sign Up</Link>
         </button>
         <p className={styles.textlink}>
           <Link href="/login">Already have an account? Login here</Link>
