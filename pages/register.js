@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import styles from '../styles/Common.module.css'
+import React from 'react'
 import Link from 'next/link'
 import Router from "next/router"
-const { registerAccount, validateAccountFields } = require('../api/accounts')
+import styles from '../styles/Common.module.css'
+const { hostname } = require('../config')
+const axios = require('axios')
+
 
 
 export default function Register() {
@@ -42,77 +44,46 @@ class RegistrationForm extends React.Component {
       lastname: '',
       email: '',
       phone: '',
+      submitDisabled: true,
       validationErrors: new Array(),
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.validateForm = this.validateForm.bind(this)
   }
 
   handleChange(event) {
     this.setState({[event.target.name]: event.target.value.trim()})
-  }
-
-  validateForm(event){
-    let valid = true
-    this.setState(prevState => ({
-      validationErrors: new Array()
-    }))
-    if (!Boolean(this.state.username)){
-      valid = false
-      this.setState(prevState => ({
-        validationErrors: [...prevState.validationErrors, 'Please enter a username']
-      }))
-    }
-    if (this.state.password.length<8){
-      valid = false
-      this.setState(prevState => ({
-        validationErrors: [...prevState.validationErrors, 'Please enter a password between 8-20 characters with at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 special character']
-      }))
-    }
-    if (!Boolean(this.state.firstname)){
-      valid = false
-      this.setState(prevState => ({
-        validationErrors: [...prevState.validationErrors, 'Please enter a first name']
-      }))
-    }
-    if (!Boolean(this.state.lastname)){
-      valid = false
-      this.setState(prevState => ({
-        validationErrors: [...prevState.validationErrors, 'Please enter a last name']
-      }))
-    }
-    if (!Boolean(this.state.lastname)){
-      valid = false
-      this.setState(prevState => ({
-        validationErrors: [...prevState.validationErrors, 'Please enter a valid email address']
-      }))
-    }
-    if (!Boolean(this.state.lastname)){
-      valid = false
-      this.setState(prevState => ({
-        validationErrors: [...prevState.validationErrors, 'Please enter a valid (10-digit) US phone number']
-      }))
-    }
-    return valid
+    const uglyBoolean = !(
+      ((event.target.name=="username") ? Boolean(event.target.value.trim()) : Boolean(this.state.username)) &&
+      ((event.target.name=="password") ? Boolean(event.target.value.trim()) : Boolean(this.state.password)) &&
+      ((event.target.name=="firstname") ? Boolean(event.target.value.trim()) : Boolean(this.state.firstname)) &&
+      ((event.target.name=="lastname") ? Boolean(event.target.value.trim()) : Boolean(this.state.lastname)) &&
+      ((event.target.name=="email") ? Boolean(event.target.value.trim()) : Boolean(this.state.email)) &&
+      ((event.target.name=="phone") ? Boolean(event.target.value.trim()) : Boolean(this.state.phone))
+    )
+    this.setState({submitDisabled: uglyBoolean})
   }
 
   handleSubmit(event) {
     event.preventDefault()
-    const valid = this.validateForm()
-    if (!valid){
-      return
-    } else {
-      const accountDetails = registerAccount({
-        'username': this.state.username,
-        'password': this.state.password,
-        'email': this.state.email,
-        'phone': this.state.phone,
-        'firstname': this.state.firstname,
-        'lastname': this.state.lastname,
-      })
-    }
-    Router.push("/discovery")
+    axios.post(hostname+'/account/register', {
+      'username': this.state.username,
+      'password': this.state.password,
+      'email': this.state.email,
+      'phone': this.state.phone,
+      'firstname': this.state.firstname,
+      'lastname': this.state.lastname,
+    })
+    .then(res => {
+      Router.push("/discovery")
+    })
+    .catch(error => {
+      if (error.response && error.response.data && error.response.data.errors){
+        this.setState({validationErrors: error.response.data.errors})
+      } else {
+        new Error(error)
+      }
+    })
   }
 
   render(){
@@ -120,12 +91,12 @@ class RegistrationForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit} className={styles.form}>
         <input name="username" placeholder="username" value={this.state.username} onChange={this.handleChange} className={styles.inputWide}/>
-        <input name="password" placeholder="password" value={this.state.password} onChange={this.handleChange} className={styles.inputWide}/>
-        <input name="firstname" placeholder="firstname" value={this.state.firstname} onChange={this.handleChange} className={styles.inputNarrowLeft}/>
-        <input name="lastname" placeholder="lastname" value={this.state.lastname} onChange={this.handleChange} className={styles.inputNarrowRight}/>
+        <input name="password" type='password' placeholder="password" value={this.state.password} onChange={this.handleChange} className={styles.inputWide}/>
+        <input name="firstname" placeholder="first name" value={this.state.firstname} onChange={this.handleChange} className={styles.inputNarrowLeft}/>
+        <input name="lastname" placeholder="last name" value={this.state.lastname} onChange={this.handleChange} className={styles.inputNarrowRight}/>
         <input name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} className={styles.inputWide}/>
         <input name="phone" placeholder="phone number" value={this.state.phone} onChange={this.handleChange} className={styles.inputWide}/>
-        <button type="submit" className={styles.registrationButton}>Create Account</button>
+        <button type="submit" className={styles.registrationButton} disabled={this.state.submitDisabled}>Create Account</button>
         <ul>{this.state.validationErrors.map((item,index) => <li key={index.toString()} className={styles.error}>{item}</li>)}</ul>
     </form>
     )
