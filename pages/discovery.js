@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import Link from 'next/link'
 import Router from "next/router"
 import commonStyles from '../styles/Common.module.css'
@@ -20,3 +20,15 @@ export default function Discover() {
 // Discovery component
 // Connections component
 // Header/Account component
+
+function DiscoveryCarousel() {
+  const [index, setIndex] = useState(0)
+  const [threads, setThreads] = useState([])
+  const [isLoading, setIsLoadting] = useState(true)
+
+  useEffect(() => {
+    return
+  })
+
+  return
+}
