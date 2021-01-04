@@ -6,7 +6,7 @@
 
 .main {
   height: 100%;
-  margin-top: 10%;
+  margin-top: 15%;
   margin-bottom: 10%;
   text-align: center;
   position: relative;
@@ -32,7 +32,7 @@
 }
 
 .title {
-  margin-top: 5%;
+  margin-top: 7%;
   margin-bottom: 0.5%;
   line-height: 1.15;
   font-size: 4rem;

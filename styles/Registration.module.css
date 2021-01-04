@@ -1,7 +1,7 @@
 .description {
   line-height: 1.5;
   font-size: 1.5rem;
-  margin-bottom:3%;
+  margin-bottom:2%;
 }
 
 .error {
@@ -50,7 +50,7 @@
 }
 
 .registrationButton {
-  margin-bottom: 1%;
+  margin-bottom: 0%;
   background-color: #0070f3;
   color: white;
   border: none;
@@ -75,8 +75,8 @@
 }
 
 .title {
-  margin-bottom: 0.5%;
-  margin-top: 5%;
+  margin-bottom: 0px;
+  margin-top: 3%;
   line-height: 1.15;
   font-size: 4rem;
   color: #0070f3;
