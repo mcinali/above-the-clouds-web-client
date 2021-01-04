@@ -12,18 +12,11 @@ export default function Discover() {
       <header className={commonStyles.header}></header>
       <div id="leftPanel" className={discoveryStyles.leftPanel}>Hello</div>
       <div id="rightPanel" className={discoveryStyles.rightPanel}>Friend</div>
-      <footer className={commonStyles.footer}>
-        <a
-          href="/old"
-          target="_blank"
-          rel="noopener noreferrer">
-            About Us
-        </a>
-      </footer>
     </div>
   )
 }
 
 // TO DO:
+// Discovery component
+// Connections component
 // Header/Account component
-//

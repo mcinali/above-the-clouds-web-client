@@ -27,15 +27,3 @@
   background: #0070f3;
   z-index: 1;
 }
-
-.main {
-  height: 100%;
-  padding: 5rem 0;
-  margin-bottom: 5%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-}
