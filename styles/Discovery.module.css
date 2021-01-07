@@ -22,16 +22,17 @@
   z-index: -1
 }
 
-.carousel {
+.cardList {
   margin-top: 2%;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 }
 
 .card {
-  width: 90%;
+  width: 750px;
   height: 500px;
   margin-top: 2%;
   margin-bottom: 2%;

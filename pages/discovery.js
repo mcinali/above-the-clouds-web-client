@@ -51,18 +51,18 @@ function DiscoveryStreams() {
   }, [isLoading])
 
   return (
-    <div className={discoveryStyles.carousel}>
+    <div className={discoveryStyles.cardList}>
       <div>
         {console.log(streams)}
         {streams.map((stream, index) =>
-          <a key={index.toString()} className={discoveryStyles.card}>
+          <div key={index.toString()} className={discoveryStyles.card}>
             <p>Topic: {stream.info.topic}</p>
             <p>Capacity: {stream.info.capacity}</p>
             <p>Participants:</p>
             <ul>
               {stream.participants.map((participant,index) => <li key={index.toString()}>{`${participant.username} (${participant.firstname} ${participant.lastnameInitial})`}</li>)}
             </ul>
-          </a>
+          </div>
         )}
       </div>
     </div>
