@@ -1,4 +1,75 @@
-.leftPanel {
+.cardButton {
+  margin: 10px auto;
+  display: block;
+  background-color: white;
+  color: #0070f3;
+  font-size: 18px;
+  border: 1px solid #0070f3;
+  border-radius: 10px;
+  padding: 10px 64px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 50px;
+}
+
+.cardButton:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
+.card {
+  width: 750px;
+  height: 500px;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 50px;
+  padding-left: 25px;
+  padding-right: 25px;
+  shadow: '20px 20px 20px 20px black';
+  display: 'flex';
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  position: relative;
+}
+
+.cardList {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.newStreamButton {
+  margin: 0px auto;
+  display: block;
+  background-color: #0070f3;
+  color:  white;
+  border: 1px solid #0070f3;
+  font-size: 18px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 50px;
+}
+
+.newStreamButton:hover {
+  cursor: pointer;
+  opacity: 60%;
+}
+
+.newStreamContainer {
+  margin-top: 20px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 5px;
+}
+
+.panelLeft {
   position: relative;
   width: 32%;
   margin-top: 50px;
@@ -10,7 +81,7 @@
   z-index: -1
 }
 
-.rightPanel {
+.panelRight {
   position: relative;
   width: 64%;
   margin-top: 50px;
@@ -22,26 +93,14 @@
   z-index: -1
 }
 
-.cardList {
-  margin-top: 2%;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
+.speakerAccessibility {
+  margin-bottom: 30px;
+  font-size: 16px;
+  text-align: right;
 }
 
-.card {
-  width: 750px;
-  height: 500px;
-  margin-top: 2%;
-  margin-bottom: 2%;
-  margin-left: 2%;
-  margin-right: 2%;
-  padding: '75px 50px';
-  shadow: '20px 20px 20px 20px black';
-  display: 'flex';
-  justify-content: 'center';
-  border: 1px solid #eaeaea;
-  border-radius: 10px;
+.topic {
+  margin-bottom: 50px;
+  font-size: 32px;
+  text-align: center;
 }
