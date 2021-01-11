@@ -1,21 +1,7 @@
-.cardButton {
-  margin: 10px auto;
-  display: block;
-  background-color: white;
-  color: #0070f3;
-  font-size: 18px;
-  border: 1px solid #0070f3;
-  border-radius: 10px;
-  padding: 10px 64px;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  height: 50px;
-}
-
-.cardButton:hover {
-  background-color: #F5F5F5;
-  cursor: pointer;
+.break {
+  width: 750px;
+  flex-basis: 100%;
+  height: 0;
 }
 
 .card {
@@ -27,17 +13,49 @@
   padding-left: 25px;
   padding-right: 25px;
   shadow: '20px 20px 20px 20px black';
-  display: 'flex';
   border: 1px solid #eaeaea;
   border-radius: 10px;
   position: relative;
+}
+
+.cardButton {
+  margin: 10px auto;
+  display: block;
+  background-color: white;
+  color: #0070f3;
+  font-size: 18px;
+  border: 1px solid #0070f3;
+  border-radius: 10px;
+  padding: 10px 64px;
+  text-align: center;
+  height: 40px;
+}
+
+.cardButton:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
+.cardButtonContainer {
+  margin: 0 auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 10px;
 }
 
 .cardList {
   margin-top: 10px;
   display: flex;
   justify-content: center;
-  overflow-y: auto;
+  align-items: center;
+}
+
+.image {
+  left: 0;
+  border: 1px solid #0070f3;
+  border-radius: 50%;
 }
 
 .newStreamButton {
@@ -93,14 +111,69 @@
   z-index: -1
 }
 
-.speakerAccessibility {
-  margin-bottom: 30px;
+.participantsContainer {
+  height: 120px;
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.participantContainer {
+  height: 100%;
+  float: center;
+  text-align: center;
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.participantUsername {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.participantName {
+  font-size: 14px;
+}
+
+.speakerAccessibilityContainer {
+  margin-top: 10px;
   font-size: 16px;
   text-align: right;
 }
 
-.topic {
-  margin-bottom: 50px;
+.time {
+  margin: 0px;
+  font-size: 20px;
+}
+
+.timeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timeSubContainer {
+  height: 100%;
+  float: center;
+  text-align: center;
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.timeLabels {
+  margin: 0px;
+  font-size: 12px;
+}
+
+.topicContainer {
+  margin-top: 20px;
+  margin-bottom: 30px;
   font-size: 32px;
   text-align: center;
+}
+
+.topicText {
+  font-size: 36px;
+  font-weight: 600;
 }

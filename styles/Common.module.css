@@ -18,7 +18,7 @@
 
 .image {
   border: 1px solid #0070f3;
-  border-radius: 10px;
+  border-radius: 50%;
 }
 
 .image:hover {
@@ -38,10 +38,8 @@
 }
 
 .navBarContent {
-  /* align-items: stretch; */
   display: flex;
   text-align: center;
-  /* justify-content: space-between; */
   width: 100%;
 }
 
@@ -73,6 +71,10 @@
   padding: 5px;
   margin: 5px;
   height: 40px;
+}
+
+.navbarLink {
+  font-size: 18px;
 }
 
 .navbarLink:hover {
