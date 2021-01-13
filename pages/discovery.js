@@ -12,7 +12,9 @@ const axios = require('axios')
 
 
 
-export default function Discover() {
+export default function Discovery() {
+  const cookie = new Cookies()
+  const accountId = cookie.get('accountId')
   return (
     <div className={commonStyles.container}>
       <div className={commonStyles.navbar}>
@@ -26,13 +28,13 @@ export default function Discover() {
         </div>
       </div>
       <div className={discoveryStyles.panelLeft}>
-        {Connections()}
+        {Connections(accountId)}
       </div>
       <div className={discoveryStyles.panelRight}>
         <div className={discoveryStyles.newStreamContainer}>
           <button className={discoveryStyles.newStreamButton}>New Stream+</button>
         </div>
-        {DiscoveryStreams()}
+        {DiscoveryStreams(accountId)}
       </div>
     </div>
   )
@@ -43,7 +45,7 @@ export default function Discover() {
 // Connections component
 // Header/Account component
 
-function Connections(){
+function Connections(accountId){
   const [searchText, setSearchText] = useState('')
   const [connections, setConnections] = useState([])
   const [inboundRequests, setInboundRequests] = useState([])
@@ -52,9 +54,8 @@ function Connections(){
 
   useEffect(() => {
     setIsLoading(true)
-    const cookie = new Cookies()
-    const accountId = cookie.get('accountId')
-    axios.get(hostname+`/connections/${accountId}`)
+    const url = hostname+`/connections/${accountId}`
+    axios.get(url)
          .then(res => {
            if(isLoading){
              setConnections(res.data.connections)
@@ -72,6 +73,46 @@ function Connections(){
          })
     return
   }, [])
+
+  function connect(index, request){
+    try {
+      setIsLoading(true)
+      const connectionAccountId = request.accountId
+      const url = hostname+`/connections/new`
+      const body = {
+        "accountId": accountId,
+        "connectionAccountId": connectionAccountId,
+      }
+      axios.post(url, body)
+           .then(res => {
+             if(res.data){
+               const connection = {
+                 'accountId': res.data.connectionAccountId,
+                 'username': res.data.connectionUsername,
+                 'firstname': res.data.connectionFirstname,
+                 'lastnameInitial': res.data.connectionLastnameInitial,
+                 'email': res.data.connectionEmail,
+               }
+               connections.unshift(connection)
+               inboundRequests.splice(index, 1)
+               setConnections(connections)
+               setInboundRequests(inboundRequests)
+               setIsLoading(false)
+               console.log(connections)
+               console.log(inboundRequests)
+             }
+           })
+           .catch(error => {
+             if (error.response && error.response.data){
+               setError(error.response.data)
+               setIsLoading(false)
+             }
+           })
+    } catch (error) {
+      console.log(error)
+    }
+    return
+  }
 
   return (
     <div className={connectionsStyles.mainContainer}>
@@ -95,7 +136,7 @@ function Connections(){
                   <a className={connectionsStyles.username}>{request.username} </a>
                   <a className={connectionsStyles.name}>{`(${request.firstname} ${request.lastnameInitial})`}</a>
                 </div>
-                <button className={connectionsStyles.connectButton}> Connect </button>
+                <button className={connectionsStyles.connectButton} onClick={function(){connect(index, request)}}> Connect </button>
               </div>
             )
           })}
@@ -118,7 +159,7 @@ function Connections(){
   )
 }
 
-function DiscoveryStreams() {
+function DiscoveryStreams(accountId) {
   const [streams, setStreams] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState({})
