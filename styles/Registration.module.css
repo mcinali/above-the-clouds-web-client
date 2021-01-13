@@ -65,6 +65,10 @@
   opacity: 50%;
 }
 
+.registrationButton:hover {
+  cursor: pointer;
+}
+
 .textlink {
   color: #0070f3;
   font-size: 14px;

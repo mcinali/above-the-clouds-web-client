@@ -1,17 +1,17 @@
 import React from 'react'
 import Link from 'next/link'
 import Router from "next/router"
+import Cookies from 'universal-cookie'
 import commonStyles from '../styles/Common.module.css'
 import registrationStyles from '../styles/Registration.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
 
-
 export default function Register() {
   return (
     <div className={commonStyles.container}>
-      <body className={registrationStyles.main}>
+      <div className={registrationStyles.main}>
         <h1 className={registrationStyles.title}>
           <a> Above the Clouds</a>
         </h1>
@@ -20,7 +20,7 @@ export default function Register() {
         <p className={registrationStyles.textlink}>
           <Link href="/login">Already have an account? Login here</Link>
         </p>
-      </body>
+      </div>
     </div>
   )
 }
@@ -66,6 +66,9 @@ class RegistrationForm extends React.Component {
       'lastname': this.state.lastname,
     })
     .then(res => {
+      const cookie = new Cookies()
+      const accountId = cookie.set('accountId', res.data.accountId)
+      const accountCookie = cookie.get('accountId')
       Router.push("/discovery")
     })
     .catch(error => {
@@ -82,7 +85,7 @@ class RegistrationForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit} className={registrationStyles.form}>
         <input name="username" placeholder="username" value={this.state.username} onChange={this.handleChange} className={registrationStyles.input}/>
-        <input name="password" type='password' placeholder="password" value={this.state.password} onChange={this.handleChange} className={registrationStyles.input}/>
+        <input name="password" placeholder="password" value={this.state.password} onChange={this.handleChange} className={registrationStyles.input}/>
         <input name="firstname" placeholder="first name" value={this.state.firstname} onChange={this.handleChange} className={registrationStyles.input}/>
         <input name="lastname" placeholder="last name" value={this.state.lastname} onChange={this.handleChange} className={registrationStyles.input}/>
         <input name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} className={registrationStyles.input}/>

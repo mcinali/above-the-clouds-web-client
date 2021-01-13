@@ -47,6 +47,8 @@ export default function Discovery() {
 
 function Connections(accountId){
   const [searchText, setSearchText] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [dropdownContent, setDropdownContent] = useState(connectionsStyles.dropdownContent)
   const [connections, setConnections] = useState([])
   const [inboundRequests, setInboundRequests] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -109,9 +111,46 @@ function Connections(accountId){
              }
            })
     } catch (error) {
-      console.log(error)
+      setError(error)
+      setIsLoading(false)
     }
     return
+  }
+
+  function fetchConnectionSuggestions(text){
+    try {
+      setSearchText(text)
+      const url = hostname+`/connections/search/suggestions`
+      const params = {text: text}
+      if (Boolean(text.trim())){
+        setIsLoading(true)
+        axios.get(url, {params: params})
+             .then(res => {
+               if (res.data){
+                 console.log(res.data)
+                 setSearchResults(res.data)
+                 setDropdownContent(connectionsStyles.dropdownContent.show)
+                 console.log(dropdownContent)
+                 console.log(connectionsStyles.dropdownContent.show)
+                 setIsLoading(false)
+               }
+             })
+             .catch(error => {
+               if (error.response && error.response.data){
+                 setError(error.response.data)
+                 setIsLoading(false)
+               }
+             })
+      } else {
+        console.log("HERE")
+        setSearchResults([])
+        setDropdownContent(connectionsStyles.dropdownContent)
+        console.log(dropdownContent)
+      }
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -121,9 +160,24 @@ function Connections(accountId){
         <input
           key='searchBar'
           placeholder={"Search by username, full name, or email"}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => fetchConnectionSuggestions(e.target.value)}
           className={connectionsStyles.searchBar}
         />
+        <div className={connectionsStyles.dropdown}>
+          <div className={dropdownContent}>
+            {searchResults.map((result, index) => {
+              return (
+                <div id="connectionSuggestion" key={index.toString()} className={connectionsStyles.dropdownRow}>
+                  <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
+                  <div className={connectionsStyles.userInfo}>
+                    <a className={connectionsStyles.username}>{result.username} </a>
+                    <a className={connectionsStyles.name}>{`(${result.firstname} ${result.lastnameInitial} / ${result.email})`}</a>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
         <button className={connectionsStyles.requestButton} disabled={true}> Send Connection Request </button>
       </div>
       <div id="connectionRequests" className={connectionsStyles.subContainer}>
