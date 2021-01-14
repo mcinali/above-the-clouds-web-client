@@ -127,13 +127,20 @@ function Connections(accountId){
       if (Boolean(text)){
         axios.get(url, {params: params})
              .then(res => {
-               if (res.data){
+               if (res.data && res.data.length){
                  console.log(res.data)
+                 const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/
                  const suggestions = filterConnectionSuggestions(res.data)
-                 setSearchResults(suggestions)
+                 if (suggestions.length>0) {
+                   setSearchResults(suggestions)
+                 } else if (regex.test(text)){
+                   const suggestions = [{"accountId":null,"email":text}]
+                   setSearchResults(suggestions)
+                 } else {
+                   setSearchResults([])
+                 }
                  setIsLoading(false)
-               }
-             })
+             }})
              .catch(error => {
                if (error.response && error.response.data){
                  setError(error.response.data)
@@ -192,16 +199,19 @@ function Connections(accountId){
     try{
       setIsLoading(true)
       const connectionAccountId = connectionRequest.accountId
+      const connectionEmail = (connectionAccountId) ? null : connectionRequest.email
+      const alertName = (connectionRequest.username) ? connectionRequest.username : connectionRequest.email
       const url = hostname+`/connections/new`
       const body = {
         "accountId": accountId,
         "connectionAccountId": connectionAccountId,
+        "connectionEmail": connectionEmail,
       }
       axios.post(url, body)
            .then(res => {
              if(res.data){
                setConnectionRequest({})
-               alert(`Connection Request Sent to: ${connectionRequest.username}`)
+               alert(`Connection Request Sent to: ${alertName}`)
                setIsLoading(false)
              }
            })
@@ -223,14 +233,21 @@ function Connections(accountId){
         <div id="newConnections" className={connectionsStyles.headers}>Make Connections:</div>
         {(Boolean(Object.keys(connectionRequest).length)) ?
           <div className={connectionsStyles.request}>
-            <div className={connectionsStyles.requestContent}>
-              <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
-              <div className={connectionsStyles.userInfo}>
-                <a className={connectionsStyles.username}>{connectionRequest.username} </a>
-                <a className={connectionsStyles.name}>{`(${connectionRequest.firstname} ${connectionRequest.lastnameInitial} / ${connectionRequest.email})`}</a>
+            {(connectionRequest.accountId) ?
+              <div className={connectionsStyles.requestContent}>
+                <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
+                <div className={connectionsStyles.userInfo}>
+                  <a className={connectionsStyles.username}>{connectionRequest.username} </a>
+                  <a className={connectionsStyles.name}>{`(${connectionRequest.firstname} ${connectionRequest.lastnameInitial} / ${connectionRequest.email})`}</a>
+                </div>
+                <button className={connectionsStyles.requestDiscardButton} onClick={function(){discardConnectionRequest()}}>x</button>
               </div>
-              <button className={connectionsStyles.requestDiscardButton} onClick={function(){discardConnectionRequest()}}>x</button>
-            </div>
+              :
+              <div className={connectionsStyles.requestContent}>
+                <a className={connectionsStyles.username}>{connectionRequest.email} </a>
+                <button className={connectionsStyles.requestDiscardButton} onClick={function(){discardConnectionRequest()}}>x</button>
+              </div>
+            }
           </div>
           :
           <input
@@ -244,12 +261,20 @@ function Connections(accountId){
           <div className={connectionsStyles.dropdownContent}>
             {searchResults.map((result, index) => {
               return (
-                <div id="connectionSuggestion" key={index.toString()} className={connectionsStyles.dropdownRow} onClick={function(){queueConnectionRequest(result)}}>
-                  <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
-                  <div className={connectionsStyles.userInfo}>
-                    <a className={connectionsStyles.username}>{result.username} </a>
-                    <a className={connectionsStyles.name}>{`(${result.firstname} ${result.lastnameInitial} / ${result.email})`}</a>
-                  </div>
+                <div id="connectionSuggestion" key={index.toString()} onClick={function(){queueConnectionRequest(result)}}>
+                  {(result.accountId) ?
+                    <div className={connectionsStyles.dropdownRow}>
+                      <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
+                      <div className={connectionsStyles.userInfo}>
+                        <a className={connectionsStyles.username}>{result.username} </a>
+                        <a className={connectionsStyles.name}>{`(${result.firstname} ${result.lastnameInitial} / ${result.email})`}</a>
+                      </div>
+                    </div>
+                    :
+                    <div className={connectionsStyles.dropdownRow}>
+                      <a className={connectionsStyles.username}>{result.email} </a>
+                    </div>
+                  }
                 </div>
               )
             })}
