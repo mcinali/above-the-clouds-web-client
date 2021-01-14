@@ -19,6 +19,28 @@
   width: 100%;
 }
 
+.dropdownButton {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  padding: 0;
+  border: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+}
+
+.dropdownButton:hover {
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.dropdownButton:disabled {
+  cursor: default;
+}
+
 .dropdownContent {
   display: block;
   position: absolute;
@@ -30,14 +52,9 @@
   z-index: 1;
 }
 
-.dropdownContent {
-  display:block;
-}
-
 .dropdownRow {
   display: flex;
   align-items: center;
-  /* margin-bottom: 10px; */
   height: 50px;
   width: 100%;
   background-color: white;
@@ -121,6 +138,11 @@
   padding-left: 16px;
 }
 
+.requestSelector:disabled {
+  background-color: white;
+  cursor: auto;
+}
+
 .row {
   display: flex;
   align-items: center;
@@ -140,6 +162,17 @@
   padding-left: 16px;
 }
 
+.status {
+  right: 0;
+  position: absolute;
+  padding-right: 10px;
+  font-size: 12px;
+  font-style: italic;
+  background-color: inherit;
+  color: #0070f3;
+  align-self: flex-start;
+}
+
 .subContainer {
   left: 0px;
   margin-top: 10px;
@@ -156,8 +189,10 @@
 .username {
   font-size: 16px;
   font-weight: 600;
+  align-self: flex-start;
 }
 
 .name {
   font-size: 14px;
+  align-self: flex-start;
 }
