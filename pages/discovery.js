@@ -48,13 +48,16 @@ export default function Discovery() {
 function Connections(accountId){
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
-  const [dropdownContent, setDropdownContent] = useState(connectionsStyles.dropdownContent)
+  const [connectionRequest, setConnectionRequest] = useState({})
+
   const [connections, setConnections] = useState([])
   const [inboundRequests, setInboundRequests] = useState([])
+
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState({})
 
   useEffect(() => {
+    console.log(connectionRequest)
     setIsLoading(true)
     const url = hostname+`/connections/${accountId}`
     axios.get(url)
@@ -100,15 +103,13 @@ function Connections(accountId){
                setConnections(connections)
                setInboundRequests(inboundRequests)
                setIsLoading(false)
-               console.log(connections)
-               console.log(inboundRequests)
              }
            })
            .catch(error => {
              if (error.response && error.response.data){
                setError(error.response.data)
-               setIsLoading(false)
              }
+             setIsLoading(false)
            })
     } catch (error) {
       setError(error)
@@ -119,34 +120,97 @@ function Connections(accountId){
 
   function fetchConnectionSuggestions(text){
     try {
-      setSearchText(text)
+      setIsLoading(true)
+      setSearchText(text.trim())
       const url = hostname+`/connections/search/suggestions`
       const params = {text: text}
-      if (Boolean(text.trim())){
-        setIsLoading(true)
+      if (Boolean(text)){
         axios.get(url, {params: params})
              .then(res => {
                if (res.data){
                  console.log(res.data)
-                 setSearchResults(res.data)
-                 setDropdownContent(connectionsStyles.dropdownContent.show)
-                 console.log(dropdownContent)
-                 console.log(connectionsStyles.dropdownContent.show)
+                 const suggestions = filterConnectionSuggestions(res.data)
+                 setSearchResults(suggestions)
                  setIsLoading(false)
                }
              })
              .catch(error => {
                if (error.response && error.response.data){
                  setError(error.response.data)
-                 setIsLoading(false)
                }
+               setIsLoading(false)
              })
       } else {
-        console.log("HERE")
         setSearchResults([])
-        setDropdownContent(connectionsStyles.dropdownContent)
-        console.log(dropdownContent)
       }
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
+  }
+
+  // TO DO: MOVE TO BACKEND IN FUTURE
+  function filterConnectionSuggestions(suggestions){
+    try {
+      const connectionAccounts = connections.map(connection => connection.accountId)
+      const inboundRequestAccounts = inboundRequests.map(inboundRequest => inboundRequest.accountId)
+      const accounts = [...new Set(connectionAccounts.concat(inboundRequestAccounts))]
+      const filtrdSuggestions = suggestions.filter(suggestion => {
+        if((!accounts.includes(suggestion.accountId))&&(suggestion.accountId!=accountId)) {return suggestion}
+      })
+      return filtrdSuggestions.splice(0,5)
+    } catch (error) {
+      setError(error)
+    }
+  }
+
+  function queueConnectionRequest(account){
+    try {
+      setIsLoading(true)
+      setConnectionRequest(account)
+      setSearchText('')
+      setSearchResults([])
+      setIsLoading(false)
+      return
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
+  }
+
+  function discardConnectionRequest(){
+    try {
+      setIsLoading(true)
+      setConnectionRequest({})
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
+  }
+
+  function sendConnectionRequest(){
+    try{
+      setIsLoading(true)
+      const connectionAccountId = connectionRequest.accountId
+      const url = hostname+`/connections/new`
+      const body = {
+        "accountId": accountId,
+        "connectionAccountId": connectionAccountId,
+      }
+      axios.post(url, body)
+           .then(res => {
+             if(res.data){
+               setConnectionRequest({})
+               alert(`Connection Request Sent to: ${connectionRequest.username}`)
+               setIsLoading(false)
+             }
+           })
+           .catch(error => {
+             if (error.response && error.response.data){
+               setError(error.response.data)
+             }
+             setIsLoading(false)
+           })
     } catch (error) {
       setError(error)
       setIsLoading(false)
@@ -157,17 +221,30 @@ function Connections(accountId){
     <div className={connectionsStyles.mainContainer}>
       <div className={connectionsStyles.subContainer}>
         <div id="newConnections" className={connectionsStyles.headers}>Make Connections:</div>
-        <input
-          key='searchBar'
-          placeholder={"Search by username, full name, or email"}
-          onChange={(e) => fetchConnectionSuggestions(e.target.value)}
-          className={connectionsStyles.searchBar}
-        />
+        {(Boolean(Object.keys(connectionRequest).length)) ?
+          <div className={connectionsStyles.request}>
+            <div className={connectionsStyles.requestContent}>
+              <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
+              <div className={connectionsStyles.userInfo}>
+                <a className={connectionsStyles.username}>{connectionRequest.username} </a>
+                <a className={connectionsStyles.name}>{`(${connectionRequest.firstname} ${connectionRequest.lastnameInitial} / ${connectionRequest.email})`}</a>
+              </div>
+              <button className={connectionsStyles.requestDiscardButton} onClick={function(){discardConnectionRequest()}}>x</button>
+            </div>
+          </div>
+          :
+          <input
+            key='searchBar'
+            placeholder={"Search by username, full name, or email"}
+            onChange={(e) => fetchConnectionSuggestions(e.target.value)}
+            className={connectionsStyles.searchBar}
+          />
+        }
         <div className={connectionsStyles.dropdown}>
-          <div className={dropdownContent}>
+          <div className={connectionsStyles.dropdownContent}>
             {searchResults.map((result, index) => {
               return (
-                <div id="connectionSuggestion" key={index.toString()} className={connectionsStyles.dropdownRow}>
+                <div id="connectionSuggestion" key={index.toString()} className={connectionsStyles.dropdownRow} onClick={function(){queueConnectionRequest(result)}}>
                   <Image src='/bitmoji.png' width='30' height='30' className={connectionsStyles.image} />
                   <div className={connectionsStyles.userInfo}>
                     <a className={connectionsStyles.username}>{result.username} </a>
@@ -178,7 +255,7 @@ function Connections(accountId){
             })}
           </div>
         </div>
-        <button className={connectionsStyles.requestButton} disabled={true}> Send Connection Request </button>
+        <button className={connectionsStyles.requestButton} disabled={!Boolean(Object.keys(connectionRequest).length)} onClick={function(){sendConnectionRequest()}}> Send Connection Request </button>
       </div>
       <div id="connectionRequests" className={connectionsStyles.subContainer}>
         <div className={connectionsStyles.headers}>Connection Requests: ({inboundRequests.length}) </div>
