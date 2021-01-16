@@ -5,6 +5,7 @@ import Image from 'next/image'
 import commonStyles from '../styles/Common.module.css'
 import discoveryStyles from '../styles/Discovery.module.css'
 import connectionsStyles from '../styles/Connections.module.css'
+import newStreamStyles from '../styles/NewStream.module.css'
 import { Tab, Tabs } from 'react-bootstrap'
 import Cookies from 'universal-cookie'
 const { hostname } = require('../config')
@@ -13,6 +14,9 @@ const axios = require('axios')
 
 
 export default function Discovery() {
+  const [showModal, setShowModal] = useState(true)
+  const displayModal = showModal ? {"display":"block"} : {"display":"none"}
+
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
   return (
@@ -36,14 +40,25 @@ export default function Discovery() {
         </div>
         {DiscoveryStreams(accountId)}
       </div>
+      <div className={newStreamStyles.background} style={displayModal}></div>
+      {NewStreamModal(accountId, displayModal)}
     </div>
   )
 }
 
 // TO DO:
-// Discovery component (styling + join button + start new button)
-// Connections component
 // Header/Account component
+// New stream modal
+
+function NewStreamModal(accountId, displayModal){
+  return (
+    <div className={newStreamStyles.modal} style={displayModal}>
+      <div className={newStreamStyles.modalContainer}>
+        <div >{"Hello World!"}</div>
+      </div>
+    </div>
+  )
+}
 
 function Connections(accountId){
   const [searchText, setSearchText] = useState('')
@@ -57,7 +72,6 @@ function Connections(accountId){
   const [error, setError] = useState({})
 
   useEffect(() => {
-    console.log(connectionRequest)
     setIsLoading(true)
     const url = hostname+`/connections/${accountId}`
     axios.get(url)
