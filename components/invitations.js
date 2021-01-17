@@ -1,0 +1,155 @@
+import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
+import invitationsStyles from '../styles/Invitations.module.css'
+import userStyles from '../styles/Users.module.css'
+const { hostname } = require('../config')
+const axios = require('axios')
+
+export default function Invitations(accountId, filterList, addInvitation, disableOptions){
+  const [searchText, setSearchText] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [invitationAccount, setInvitationAccount] = useState({})
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState({})
+
+  function fetchSuggestions(text){
+    try {
+      setIsLoading(true)
+      setSearchText(text.trim())
+      const url = hostname+`/connections/${accountId}/suggestions`
+      const params = {text: text}
+      if (Boolean(text)){
+        axios.get(url, {params: params})
+             .then(res => {
+               if (res.data){
+                 res.data.map(entry => console.log(Boolean(entry.status)))
+                 const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/
+                 const suggestions = filterSuggestions(res.data)
+                 if (suggestions.length>0) {
+                   setSearchResults(suggestions)
+                 } else if (regex.test(text)){
+                   const suggestions = [{"accountId":null,"email":text}]
+                   setSearchResults(suggestions)
+                 } else {
+                   setSearchResults([])
+                 }
+                 setIsLoading(false)
+             }})
+             .catch(error => {
+               if (error.response && error.response.data){
+                 setError(error.response.data)
+               }
+               setIsLoading(false)
+             })
+      } else {
+        setSearchResults([])
+      }
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
+  }
+
+  function filterSuggestions(suggestions){
+    try {
+      const accounts = filterList.map(filterItem => filterItem.accountId)
+      const filtrdSuggestions = suggestions.filter(suggestion => {
+        if((!accounts.includes(suggestion.accountId))&&(suggestion.accountId!=accountId)) {return suggestion}
+      })
+      return filtrdSuggestions.splice(0,5)
+    } catch (error) {
+      setError(error)
+    }
+  }
+
+  function queueRequest(account){
+    try {
+      setIsLoading(true)
+      setInvitationAccount(account)
+      setSearchText('')
+      setSearchResults([])
+      setIsLoading(false)
+      return
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
+  }
+
+  function discardRequest(){
+    try {
+      setIsLoading(true)
+      setInvitationAccount({})
+    } catch (error) {
+      setError(error)
+      setIsLoading(false)
+    }
+  }
+
+  function sendRequest(){
+    setIsLoading(true)
+    addInvitation(invitationAccount)
+    setInvitationAccount({})
+    setIsLoading(false)
+  }
+
+  return (
+    <div>
+      {(Boolean(Object.keys(invitationAccount).length)) ?
+        <div className={invitationsStyles.request}>
+          {(invitationAccount.accountId) ?
+            <div className={invitationsStyles.container}>
+              <Image src='/bitmoji.png' width='30' height='30' className={userStyles.image} />
+              <div className={userStyles.userInfo}>
+                <a className={userStyles.username}>{invitationAccount.username} </a>
+                <a className={userStyles.name}>{`(${invitationAccount.firstname} ${invitationAccount.lastnameInitial} / ${invitationAccount.email})`}</a>
+              </div>
+              <button className={userStyles.discardButton} onClick={function(){discardRequest()}}>x</button>
+            </div>
+            :
+            <div className={invitationsStyles.container}>
+              <div className={userStyles.userInfo}>
+                <a className={userStyles.username}>{invitationAccount.email} </a>
+              </div>
+              <button className={userStyles.discardButton} onClick={function(){discardRequest()}}>x</button>
+            </div>
+          }
+        </div>
+        :
+        <input
+          key='searchBar'
+          placeholder={"Search by username, full name, or email"}
+          onChange={(e) => fetchSuggestions(e.target.value)}
+          className={invitationsStyles.searchBar}
+        />
+      }
+      <div className={invitationsStyles.dropdown}>
+        <div className={invitationsStyles.dropdownContent}>
+          {searchResults.map((result, index) => {
+            return (
+                (result.accountId) ?
+                  <button className={invitationsStyles.dropdownButton} key={index.toString()} onClick={function(){queueRequest(result)}} disabled={!(disableOptions) ? disableOptions : Boolean(result.status)}>
+                    <Image src='/bitmoji.png' width='30' height='30' className={userStyles.image} />
+                    <div className={userStyles.userInfo}>
+                      <a className={userStyles.username}>{result.username} </a>
+                      <a className={userStyles.name}>{`(${result.firstname} ${result.lastnameInitial} / ${result.email})`}</a>
+                    </div>
+                    <a className={userStyles.status}>{result.status}</a>
+                  </button>
+                  :
+                  <div className={invitationsStyles.dropdownRow} key={index.toString()} onClick={function(){queueRequest(result)}}>
+                    <div className={userStyles.userInfo}>
+                      <a className={userStyles.username}>{result.email} </a>
+                      <a className={userStyles.name}>(Send Email Invite)</a>
+                    </div>
+                  </div>
+            )
+          })}
+        </div>
+      </div>
+      <button className={invitationsStyles.requestButton} disabled={!Boolean(Object.keys(invitationAccount).length)} onClick={function(){sendRequest()}}> Send Invite </button>
+    </div>
+  )
+
+}
