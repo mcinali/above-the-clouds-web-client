@@ -14,8 +14,7 @@ const axios = require('axios')
 
 
 export default function Discovery() {
-  const [showModal, setShowModal] = useState(true)
-  const displayModal = showModal ? {"display":"block"} : {"display":"none"}
+  const [showModal, setShowModal] = useState(false)
 
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
@@ -36,12 +35,11 @@ export default function Discovery() {
       </div>
       <div className={discoveryStyles.panelRight}>
         <div className={discoveryStyles.newStreamContainer}>
-          <button className={discoveryStyles.newStreamButton}>New Stream+</button>
+          <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
         </div>
         {DiscoveryStreams(accountId)}
       </div>
-      <div className={newStreamStyles.background} style={displayModal}></div>
-      {NewStreamModal(accountId, displayModal)}
+      {NewStreamModal(accountId, showModal, setShowModal)}
     </div>
   )
 }
@@ -50,11 +48,56 @@ export default function Discovery() {
 // Header/Account component
 // New stream modal
 
-function NewStreamModal(accountId, displayModal){
+function NewStreamModal(accountId, showModal, setShowModal){
+  const displayModal = showModal ? {"display":"block"} : {"display":"none"}
+  const [topic, setTopic] = useState('')
+  const [speakerAccessibility, setSpeakerAccessibility] = useState('')
+  const [capacity, setCapacity] = useState(5)
+
+  function createStream(){
+    return
+  }
+
+  function closeModal(){
+    setTopic('')
+    setSpeakerAccessibility('')
+    setShowModal(false)
+  }
+
+  function fetchConnectionSuggestions(text){
+    return
+  }
+
   return (
-    <div className={newStreamStyles.modal} style={displayModal}>
-      <div className={newStreamStyles.modalContainer}>
-        <div >{"Hello World!"}</div>
+    <div>
+      <div className={newStreamStyles.background} style={displayModal}></div>
+      <div className={newStreamStyles.modal} style={displayModal}>
+        <div className={newStreamStyles.modalContainer}>
+          <div className={newStreamStyles.exitButtonContainer}>
+            <button className={newStreamStyles.exitButton} onClick={function(){closeModal()}}>x</button>
+          </div>
+          <div>
+            <form onSubmit={function(){createStream()}}>
+              <div>
+                <a>Topic: </a>
+                <input value={topic} onChange={(e) => setTopic(e.target.value.trim())}></input>
+              </div>
+              <div>
+                <a>Participants: </a>
+                <input type="Radio" value="invite-only" checked={speakerAccessibility=="invite-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>invite-only
+                <input type="Radio" value="network-only" checked={speakerAccessibility=="network-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>network-only
+                <input type="Radio" value="public" checked={speakerAccessibility=="public"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>public
+              </div>
+              <div>
+                <a>Invite Participants:</a>
+                <input
+                  placeholder={"Search by username, full name, or email"}
+                  onChange={(e) => fetchConnectionSuggestions(e.target.value)}
+                />
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -142,19 +185,15 @@ function Connections(accountId){
         axios.get(url, {params: params})
              .then(res => {
                if (res.data){
-                 console.log(res.data)
                  res.data.map(entry => console.log(Boolean(entry.status)))
                  const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/
                  const suggestions = filterConnectionSuggestions(res.data)
                  if (suggestions.length>0) {
-                   console.log("ACCOUNT MATCH")
                    setSearchResults(suggestions)
                  } else if (regex.test(text)){
-                   console.log("EMAIL MATCH")
                    const suggestions = [{"accountId":null,"email":text}]
                    setSearchResults(suggestions)
                  } else {
-                   console.log("NO MATCH")
                    setSearchResults([])
                  }
                  setIsLoading(false)

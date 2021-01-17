@@ -13,9 +13,10 @@
 }
 
 .modalContainer {
-  margin: 2%;
-  height: 96%;
-  width: 96%;
+  margin: 20px;
+  padding: 5px;
+  width: 860px;
+  height: 560px;
 }
 
 .background {
@@ -29,10 +30,19 @@
   opacity: 80%;
 }
 
-.display-block {
-  display: block;
+.exitButton {
+  font-size: 20px;
+  color: #696969;
+  float: right;
+  background-color: inherit;
+  border: none;
 }
 
-.display-none {
-  display: none;
+.exitButton:hover {
+  cursor: pointer;
+}
+
+.exitButtonContainer {
+  width: 100%;
+  overflow: hidden;
 }
