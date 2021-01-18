@@ -30,7 +30,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal){
   }
 
   function queueStreamInvitation(account){
-    const invitationsAppended = invitations.concat([account])
+    const invitationsAppended = [account].concat(invitations)
     setInvitations(invitationsAppended)
   }
 
@@ -47,41 +47,42 @@ export default function NewStreamModal(accountId, showModal, setShowModal){
           <div className={newStreamStyles.exitButtonContainer}>
             <button className={newStreamStyles.exitButton} onClick={function(){closeModal()}}>x</button>
           </div>
-          <div>
-            <form onSubmit={function(){createStream()}}>
-              <div>
-                <a>Topic: </a>
-                <input value={topic} onChange={(e) => setTopic(e.target.value.trim())}></input>
+          <div className={newStreamStyles.formContainer}>
+            <form>
+              <div className={newStreamStyles.topicContainer}>
+                <div className={newStreamStyles.header}>Topic: </div>
+                <input value={topic} className={newStreamStyles.textForm} onChange={(e) => setTopic(e.target.value)}></input>
               </div>
-              <div>
-                <a>Participants: </a>
-                <input type="Radio" value="invite-only" checked={speakerAccessibility=="invite-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>invite-only
-                <input type="Radio" value="network-only" checked={speakerAccessibility=="network-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>network-only
-                <input type="Radio" value="public" checked={speakerAccessibility=="public"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>public
-              </div>
-              <div>
-                <a>Invite Participants:</a>
-                {Invitations(accountId, invitations, queueStreamInvitation, false)}
+              <div className={newStreamStyles.speakerAccessibilityContainer}>
+                <div className={newStreamStyles.header}>Participants: </div>
+                <input type="Radio" className={newStreamStyles.radioContainer} value="invite-only" checked={speakerAccessibility=="invite-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>invite-only
+                <input type="Radio" className={newStreamStyles.radioContainer} value="network-only" checked={speakerAccessibility=="network-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>network-only
+                <input type="Radio" className={newStreamStyles.radioContainer} value="public" checked={speakerAccessibility=="public"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>public
               </div>
             </form>
-            <div>
-              <a>Invitations:</a>
-              {invitations.map((invitation, index) => {
-                return (
-                  <div key={index.toString()} className={userStyles.row}>
-                    <Image src='/bitmoji.png' width='40' height='40' className={userStyles.image} />
-                    <div className={userStyles.userInfo}>
-                      <a className={userStyles.username}>{invitation.username} </a>
-                      <a className={userStyles.name}>{`(${invitation.firstname} ${invitation.lastnameInitial})`}</a>
-                    </div>
-                    <button className={userStyles.discardButton} onClick={function(){discardInvitation(index)}}>x</button>
+          </div>
+          <div className={newStreamStyles.invitationsContainer}>
+            <div className={newStreamStyles.header}>Invite Participants:</div>
+            {Invitations(accountId, invitations, queueStreamInvitation, discardInvitation, false)}
+          </div>
+          <div className={newStreamStyles.inviteesContainer}>
+            <div className={newStreamStyles.header}>Invitees:</div>
+            {invitations.map((invitation, index) => {
+              return (
+                <div key={index.toString()} className={userStyles.row}>
+                  <Image src='/bitmoji.png' width='40' height='40' className={userStyles.image} />
+                  <div className={userStyles.userInfo}>
+                    <a className={userStyles.username}>{invitation.username} </a>
+                    <a className={userStyles.name}>{`(${invitation.firstname} ${invitation.lastnameInitial})`}</a>
                   </div>
-                )
-              })}
-            </div>
-            <div>
-              <button className={newStreamStyles.requestButton} disabled={disableCreateStream} onClick={function(){createStream()}}> Create Stream </button>
-            </div>
+                  <a className={userStyles.status}>{invitation.status}</a>
+                  <button className={userStyles.discardButton} onClick={function(){discardInvitation(index)}}>x</button>
+                </div>
+              )
+            })}
+          </div>
+          <div className={newStreamStyles.createStreamButtonContainer}>
+            <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}> Create Stream </button>
           </div>
         </div>
       </div>

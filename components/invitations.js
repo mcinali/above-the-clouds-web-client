@@ -5,10 +5,9 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function Invitations(accountId, filterList, addInvitation, disableOptions){
+export default function Invitations(accountId, filterList, addInvitation, removeInvitation, disableOptions){
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
-  const [invitationAccount, setInvitationAccount] = useState({})
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState({})
@@ -63,10 +62,10 @@ export default function Invitations(accountId, filterList, addInvitation, disabl
     }
   }
 
-  function queueRequest(account){
+  function queueAccount(account){
     try {
       setIsLoading(true)
-      setInvitationAccount(account)
+      addInvitation(account)
       setSearchText('')
       setSearchResults([])
       setIsLoading(false)
@@ -77,59 +76,32 @@ export default function Invitations(accountId, filterList, addInvitation, disabl
     }
   }
 
-  function discardRequest(){
+  function discardAccount(){
     try {
       setIsLoading(true)
-      setInvitationAccount({})
+      removeInvitation(account)
+      setIsLoading(false)
     } catch (error) {
       setError(error)
       setIsLoading(false)
     }
   }
 
-  function sendRequest(){
-    setIsLoading(true)
-    addInvitation(invitationAccount)
-    setInvitationAccount({})
-    setIsLoading(false)
-  }
-
   return (
     <div>
-      {(Boolean(Object.keys(invitationAccount).length)) ?
-        <div className={invitationsStyles.request}>
-          {(invitationAccount.accountId) ?
-            <div className={invitationsStyles.container}>
-              <Image src='/bitmoji.png' width='30' height='30' className={userStyles.image} />
-              <div className={userStyles.userInfo}>
-                <a className={userStyles.username}>{invitationAccount.username} </a>
-                <a className={userStyles.name}>{`(${invitationAccount.firstname} ${invitationAccount.lastnameInitial} / ${invitationAccount.email})`}</a>
-              </div>
-              <button className={userStyles.discardButton} onClick={function(){discardRequest()}}>x</button>
-            </div>
-            :
-            <div className={invitationsStyles.container}>
-              <div className={userStyles.userInfo}>
-                <a className={userStyles.username}>{invitationAccount.email} </a>
-              </div>
-              <button className={userStyles.discardButton} onClick={function(){discardRequest()}}>x</button>
-            </div>
-          }
-        </div>
-        :
-        <input
-          key='searchBar'
-          placeholder={"Search by username, full name, or email"}
-          onChange={(e) => fetchSuggestions(e.target.value)}
-          className={invitationsStyles.searchBar}
-        />
-      }
+      <input
+        key='searchBar'
+        value={searchText}
+        placeholder={"Search by username, full name, or email"}
+        onChange={(e) => fetchSuggestions(e.target.value)}
+        className={invitationsStyles.searchBar}
+      />
       <div className={invitationsStyles.dropdown}>
         <div className={invitationsStyles.dropdownContent}>
           {searchResults.map((result, index) => {
             return (
                 (result.accountId) ?
-                  <button className={invitationsStyles.dropdownButton} key={index.toString()} onClick={function(){queueRequest(result)}} disabled={!(disableOptions) ? disableOptions : Boolean(result.status)}>
+                  <button className={invitationsStyles.dropdownButton} key={index.toString()} onClick={function(){queueAccount(result)}} disabled={!(disableOptions) ? disableOptions : Boolean(result.status)}>
                     <Image src='/bitmoji.png' width='30' height='30' className={userStyles.image} />
                     <div className={userStyles.userInfo}>
                       <a className={userStyles.username}>{result.username} </a>
@@ -138,7 +110,7 @@ export default function Invitations(accountId, filterList, addInvitation, disabl
                     <a className={userStyles.status}>{result.status}</a>
                   </button>
                   :
-                  <div className={invitationsStyles.dropdownRow} key={index.toString()} onClick={function(){queueRequest(result)}}>
+                  <div className={invitationsStyles.dropdownRow} key={index.toString()} onClick={function(){queueAccount(result)}}>
                     <div className={userStyles.userInfo}>
                       <a className={userStyles.username}>{result.email} </a>
                       <a className={userStyles.name}>(Send Email Invite)</a>
@@ -148,7 +120,6 @@ export default function Invitations(accountId, filterList, addInvitation, disabl
           })}
         </div>
       </div>
-      <button className={invitationsStyles.requestButton} disabled={!Boolean(Object.keys(invitationAccount).length)} onClick={function(){sendRequest()}}> Send Invite </button>
     </div>
   )
 

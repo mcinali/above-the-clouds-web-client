@@ -1,11 +1,15 @@
 .discardButton {
   right: 0;
-  position: absolute;
+  align-self: center;
+  justify-content: right;
+  text-align: right;
+  /* position: absolute; */
   padding-right: 20px;
   font-size: 18px;
   background-color: inherit;
   color: #0070f3;
   border: none;
+  overflow: hidden;
 }
 
 .discardButton:hover {
