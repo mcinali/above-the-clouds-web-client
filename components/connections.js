@@ -87,7 +87,6 @@ export default function Connections(accountId){
         axios.get(url, {params: params})
              .then(res => {
                if (res.data){
-                 res.data.map(entry => console.log(Boolean(entry.status)))
                  const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/
                  const suggestions = filterConnectionSuggestions(res.data)
                  if (suggestions.length>0) {

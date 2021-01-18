@@ -22,7 +22,6 @@ export default function Invitations(accountId, filterList, addInvitation, remove
         axios.get(url, {params: params})
              .then(res => {
                if (res.data){
-                 res.data.map(entry => console.log(Boolean(entry.status)))
                  const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/
                  const suggestions = filterSuggestions(res.data)
                  if (suggestions.length>0) {

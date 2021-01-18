@@ -89,7 +89,6 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
   }
 
   function queueStreamInvitation(account){
-    console.log(account)
     const invitationsAppended = [account].concat(invitations)
     setInvitations(invitationsAppended)
   }

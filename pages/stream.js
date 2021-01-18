@@ -10,6 +10,7 @@ const axios = require('axios')
 
 export default function Stream(){
   const [isLoading, setIsLoading] = useState(false)
+  const [streamIsActive, setStreamIsActive] = useState(false)
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipantInfo, setStreamParticipantInfo] = useState({})
 
@@ -19,27 +20,7 @@ export default function Stream(){
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
 
-  console.log(streamId)
-  console.log(accountId)
-
-  function leaveStream(streamParticipant){
-    setIsLoading(true)
-    const url = hostname + `/stream/leave`
-    const body = {
-      streamParticipantId: streamParticipant.streamParticipantId,
-    }
-    axios.post(url, body)
-         .then(res => {
-           setIsLoading(false)
-           Router.push('/discovery')
-         })
-         .catch(error => {
-           console.error(error)
-           window.alert('Failed to leave stream')
-           setIsLoading(false)
-         })
-  }
-
+  // Join stream on page load
   useEffect(() => {
     setIsLoading(true)
     const url = hostname + `/stream/join`
@@ -50,14 +31,13 @@ export default function Stream(){
     axios.post(url, body)
          .then(res => {
            if (res.data){
-             console.log(res.data)
              const streamParticipantData = res.data
              setStreamParticipantInfo(res.data)
+             setStreamIsActive(true)
              const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
              axios.get(streamURL)
                   .then(res => {
                     if (res.data) {
-                      console.log(res.data)
                       setStreamInfo(res.data)
                       setIsLoading(false)
                     }
@@ -79,12 +59,75 @@ export default function Stream(){
     return
   }, [])
 
+  // Leave page
+  function leaveStream(streamParticipant){
+    setIsLoading(true)
+    const url = hostname + `/stream/leave`
+    const body = {
+      streamParticipantId: streamParticipant.streamParticipantId,
+    }
+    axios.post(url, body)
+         .then(res => {
+           setIsLoading(false)
+         })
+         .catch(error => {
+           console.error(error)
+           window.alert('Failed to leave stream')
+           setIsLoading(false)
+         })
+  }
+
+  // Confirm leave page
+  function confirmLeaveStream(streamParticipant){
+    setIsLoading(true)
+    const action = window.confirm('Are you sure you want to leave?')
+    if (action) {
+      leaveStream(streamParticipantInfo)
+      setStreamIsActive(false)
+      Router.push('/discovery')
+    } else {
+      setIsLoading(false)
+      return
+    }
+  }
+
+  // Leave stream on navigation away from page (within app)
+  useEffect(() => {
+    return () => {
+      if (streamIsActive) {
+        leaveStream(streamParticipantInfo)
+      }
+    }
+  }, [streamIsActive, streamParticipantInfo])
+
+  // Leave stream on navigation away from page (e.g. close tab, navigate to different host, etc)
+  useEffect(() => {
+    window.addEventListener('beforeunload', alertUser)
+    window.addEventListener('unload', endStreamForUser)
+    return () => {
+      if (streamIsActive){
+        window.removeEventListener('beforeunload', alertUser)
+        window.removeEventListener('unload', endStreamForUser)
+      }
+    }
+  }, [streamIsActive, streamParticipantInfo])
+
+  const alertUser = e => {
+    e.preventDefault()
+    e.returnValue = ''
+  }
+
+  const endStreamForUser = function(){
+    leaveStream(streamParticipantInfo)
+  }
+
+
   return (
     <div className={commonStyles.container}>
       {Header()}
       <div className={commonStyles.bodyContainer}>
         <div>Hello World!</div>
-        <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream(streamParticipantInfo)}}>Leave</button>
+        <button className={streamStyles.leaveStreamButton} onClick={function(){confirmLeaveStream(streamParticipantInfo)}}>Leave</button>
       </div>
     </div>
   )

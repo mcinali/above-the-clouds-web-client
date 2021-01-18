@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Router from "next/router"
 import discoveryStreamsStyles from '../styles/DiscoveryStreams.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
@@ -52,6 +53,17 @@ export default function DiscoveryStreams(accountId) {
     return
   }, [])
 
+  function joinStream(streamInfo){
+    try {
+      Router.push(
+        {pathname: "/stream",
+        query: {streamId: streamInfo.streamId}
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div>
       <div id="cardList" className={discoveryStreamsStyles.cardList}>
@@ -82,7 +94,7 @@ export default function DiscoveryStreams(accountId) {
                 )}
               </div>
               <div className={discoveryStreamsStyles.cardButtonContainer}>
-                <button className={discoveryStreamsStyles.cardButton}>Join</button>
+                <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream.info)}}>Join</button>
                 <button className={discoveryStreamsStyles.cardButton}>Fork</button>
               </div>
             </div>

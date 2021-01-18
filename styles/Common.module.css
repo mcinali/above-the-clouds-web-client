@@ -46,7 +46,7 @@
   align-items: center;
   background: white;
   border-bottom: 1px solid #eaeaea;
-  z-index: 1;
+  z-index: 2;
 }
 
 .navBarContent {
