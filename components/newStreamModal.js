@@ -45,9 +45,12 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
                  streamBody['topicId'] = res.data.topicId
                  axios.post(streamURL, streamBody)
                       .then(res => {
-                        if (res.data){
+                        if (res.data && res.data.streamId){
                           setIsLoading(false)
-                          Router.push("/stream")
+                          Router.push(
+                            {pathname:"/stream",
+                            query: {streamId: res.data.streamId}
+                          })
                         }
                       })
                       .catch(error => {
@@ -63,7 +66,10 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
              .then(res => {
                if (res.data){
                  setIsLoading(false)
-                 Router.push("/stream")
+                 Router.push(
+                   {pathname:"/stream",
+                   query: {streamId: res.data.streamId}
+                 })
                }
              })
              .catch(error => {

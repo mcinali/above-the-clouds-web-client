@@ -1,0 +1,19 @@
+.leaveStreamButton {
+  margin: 0px auto;
+  display: block;
+  background-color: #0070f3;
+  color:  white;
+  border: 1px solid #0070f3;
+  font-size: 18px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 50px;
+}
+
+.leaveStreamButton:hover {
+  cursor: pointer;
+  opacity: 60%;
+}

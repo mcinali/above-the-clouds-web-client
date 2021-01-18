@@ -1,0 +1,46 @@
+.newStreamButton {
+  margin: 0px auto;
+  display: block;
+  background-color: #0070f3;
+  color:  white;
+  border: 1px solid #0070f3;
+  font-size: 18px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 50px;
+}
+
+.newStreamButton:hover {
+  cursor: pointer;
+  opacity: 60%;
+}
+
+.newStreamContainer {
+  margin-top: 20px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 5px;
+}
+
+.panelLeft {
+  position: relative;
+  width: 34%;
+  padding-left: 1%;
+  float: left;
+  height: 100%;
+  z-index: 1;
+}
+
+.panelRight {
+  position: relative;
+  width: 66%;
+  padding-left: 1%;
+  float: left;
+  height: 100%;
+  z-index: 1;
+}
