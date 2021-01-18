@@ -1,9 +1,4 @@
 .discardButton {
-  right: 0;
-  align-self: center;
-  justify-content: right;
-  text-align: right;
-  /* position: absolute; */
   padding-right: 20px;
   font-size: 18px;
   background-color: inherit;
@@ -22,34 +17,54 @@
   border-radius: 50%;
 }
 
+.leftContainer {
+  align-self: flex-start;
+  text-align: left;
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
 .name {
   font-size: 14px;
   align-self: flex-start;
 }
 
+.rightContainer {
+  align-self: flex-start;
+  text-align: right;
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
 .row {
   display: flex;
+  flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
   height: 50px;
   width: 100%;
 }
 
+.row:hover {
+  background-color: #F5F5F5;
+}
+
 .status {
-  right: 0;
-  position: absolute;
   padding-right: 10px;
   font-size: 12px;
   font-style: italic;
   background-color: inherit;
   color: #0070f3;
-  align-self: flex-start;
 }
 
 .userInfo {
   margin-left: 15px;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .username {

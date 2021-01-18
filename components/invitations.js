@@ -107,7 +107,9 @@ export default function Invitations(accountId, filterList, addInvitation, remove
                       <a className={userStyles.username}>{result.username} </a>
                       <a className={userStyles.name}>{`(${result.firstname} ${result.lastnameInitial} / ${result.email})`}</a>
                     </div>
-                    <a className={userStyles.status}>{result.status}</a>
+                    <div className={userStyles.rightContainer}>
+                      <a className={userStyles.status}>{result.status}</a>
+                    </div>
                   </button>
                   :
                   <div className={invitationsStyles.dropdownRow} key={index.toString()} onClick={function(){queueAccount(result)}}>
