@@ -5,8 +5,9 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
-const { hostname } = require('../config')
-const axios = require('axios')
+import { hostname } from '../config'
+import axios from 'axios'
+import socketIOClient from "socket.io-client"
 
 export default function Stream(){
   const [isLoading, setIsLoading] = useState(false)
@@ -22,40 +23,53 @@ export default function Stream(){
 
   // Join stream on page load
   useEffect(() => {
-    setIsLoading(true)
-    const url = hostname + `/stream/join`
-    const body = {
-      streamId: streamId,
-      accountId: accountId,
-    }
-    axios.post(url, body)
-         .then(res => {
-           if (res.data){
-             const streamParticipantData = res.data
-             setStreamParticipantInfo(res.data)
-             setStreamIsActive(true)
-             const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
-             axios.get(streamURL)
-                  .then(res => {
-                    if (res.data) {
-                      setStreamInfo(res.data)
-                      setIsLoading(false)
-                    }
-                  })
-                  .catch(error => {
-                    window.alert('Failed to join stream')
-                    leaveStream(streamParticipantData)
-                    console.error(error)
-                    setIsLoading(false)
-                  })
-           }
-         })
-         .catch(error => {
-           window.alert('Failed to join stream')
-           console.error(error)
-           setIsLoading(false)
-           Router.push('/discovery')
-         })
+    const socketURL = 'http://0.0.0.0:4200'
+    const socket = socketIOClient(socketURL)
+    socket.on('connect', data => {
+      socket.emit('join', 'Hellow World from client')
+    })
+    socket.on('messages', function(data) {
+      console.log(data)
+      socket.emit('messages', 'Hello World from client')
+    })
+  })
+
+  useEffect(() => {
+
+    // setIsLoading(true)
+    // const url = hostname + `/stream/join`
+    // const body = {
+    //   streamId: streamId,
+    //   accountId: accountId,
+    // }
+    // axios.post(url, body)
+    //      .then(res => {
+    //        if (res.data){
+    //          const streamParticipantData = res.data
+    //          setStreamParticipantInfo(res.data)
+    //          setStreamIsActive(true)
+    //          const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
+    //          axios.get(streamURL)
+    //               .then(res => {
+    //                 if (res.data) {
+    //                   setStreamInfo(res.data)
+    //                   setIsLoading(false)
+    //                 }
+    //               })
+    //               .catch(error => {
+    //                 window.alert('Failed to join stream')
+    //                 leaveStream(streamParticipantData)
+    //                 console.error(error)
+    //                 setIsLoading(false)
+    //               })
+    //        }
+    //      })
+    //      .catch(error => {
+    //        window.alert('Failed to join stream')
+    //        console.error(error)
+    //        setIsLoading(false)
+    //        Router.push('/discovery')
+    //      })
     return
   }, [])
 
