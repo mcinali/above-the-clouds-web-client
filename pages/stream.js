@@ -7,12 +7,14 @@ import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
+const { connect, createLocalTracks } = require('twilio-video')
 
 export default function Stream(){
   const [isLoading, setIsLoading] = useState(false)
   const [streamIsActive, setStreamIsActive] = useState(false)
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipantInfo, setStreamParticipantInfo] = useState({})
+  const [room, setRoom] = useState({})
 
   const router = useRouter()
   const streamId = router.query.streamId
@@ -33,6 +35,42 @@ export default function Stream(){
            if (res.data){
              const streamParticipantData = res.data
              setStreamParticipantInfo(res.data)
+             createLocalTracks({
+               audio: true,
+               video: false
+             }).then(localTracks => {
+               return connect(streamParticipantData.twilioAccessToken, {
+                 name: streamParticipantData.streamId.toString(),
+                 tracks: localTracks
+               })
+             }).then(room => {
+               console.log(`Connected to Room: ${room.name}`)
+               setRoom(room)
+               // Attach new Participant's Media to a <div> element.
+               room.on('participantConnected', participant => {
+                 participant.tracks.forEach(publication => {
+                   if (publication.isSubscribed) {
+                     const track = publication.track
+                     document.getElementById('remote-media-div').appendChild(track.attach())
+                   }
+                 })
+                 participant.on('trackSubscribed', track => {
+                   document.getElementById('remote-media-div').appendChild(track.attach())
+                 })
+              })
+              // Attach existing Participants' Media to a <div> element.
+              room.participants.forEach(participant => {
+                participant.tracks.forEach(publication => {
+                  if (publication.track) {
+                    document.getElementById('remote-media-div').appendChild(publication.track.attach())
+                  }
+                })
+
+               participant.on('trackSubscribed', track => {
+                  document.getElementById('remote-media-div').appendChild(track.attach())
+                })
+              })
+             })
              setStreamIsActive(true)
              const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
              axios.get(streamURL)
@@ -68,6 +106,7 @@ export default function Stream(){
     }
     axios.post(url, body)
          .then(res => {
+           room.disconnect()
            setIsLoading(false)
          })
          .catch(error => {
@@ -126,7 +165,7 @@ export default function Stream(){
     <div className={commonStyles.container}>
       {Header()}
       <div className={commonStyles.bodyContainer}>
-        <div>Hello World!</div>
+        <div id='remote-media-div'>Hello World!</div>
         <button className={streamStyles.leaveStreamButton} onClick={function(){confirmLeaveStream(streamParticipantInfo)}}>Leave</button>
       </div>
     </div>
