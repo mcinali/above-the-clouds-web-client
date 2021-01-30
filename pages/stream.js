@@ -27,8 +27,8 @@ export default function Stream(){
     setIsLoading(true)
     const url = hostname + `/stream/join`
     const body = {
-      streamId: streamId,
-      accountId: accountId,
+      streamId: parseInt(streamId, 10),
+      accountId: parseInt(accountId, 10),
     }
     axios.post(url, body)
          .then(res => {
@@ -97,67 +97,25 @@ export default function Stream(){
     return
   }, [])
 
-  // Leave page
-  function leaveStream(streamParticipant){
-    setIsLoading(true)
-    const url = hostname + `/stream/leave`
-    const body = {
-      streamParticipantId: streamParticipant.streamParticipantId,
-    }
-    axios.post(url, body)
-         .then(res => {
-           room.disconnect()
-           setIsLoading(false)
-         })
-         .catch(error => {
-           console.error(error)
-           window.alert('Failed to leave stream')
-           setIsLoading(false)
-         })
-  }
-
-  // Confirm leave page
-  function confirmLeaveStream(streamParticipant){
-    setIsLoading(true)
+  // Leave stream
+  function leaveStream(){
     const action = window.confirm('Are you sure you want to leave?')
     if (action) {
-      leaveStream(streamParticipantInfo)
-      setStreamIsActive(false)
-      Router.push('/discovery')
-    } else {
-      setIsLoading(false)
-      return
-    }
-  }
-
-  // Leave stream on navigation away from page (within app)
-  useEffect(() => {
-    return () => {
-      if (streamIsActive) {
-        leaveStream(streamParticipantInfo)
+      const url = hostname + `/stream/leave`
+      const body = {
+        streamParticipantId: streamParticipantInfo.streamParticipantId,
       }
+      axios.post(url, body)
+           .then(res => {
+             room.disconnect()
+             setStreamIsActive(false)
+             Router.push('/discovery')
+           })
+           .catch(error => {
+             console.error(error)
+             window.alert('Failed to leave stream')
+           })
     }
-  }, [streamIsActive, streamParticipantInfo])
-
-  // Leave stream on navigation away from page (e.g. close tab, navigate to different host, etc)
-  useEffect(() => {
-    window.addEventListener('beforeunload', alertUser)
-    window.addEventListener('unload', endStreamForUser)
-    return () => {
-      if (streamIsActive){
-        window.removeEventListener('beforeunload', alertUser)
-        window.removeEventListener('unload', endStreamForUser)
-      }
-    }
-  }, [streamIsActive, streamParticipantInfo])
-
-  const alertUser = e => {
-    e.preventDefault()
-    e.returnValue = ''
-  }
-
-  const endStreamForUser = function(){
-    leaveStream(streamParticipantInfo)
   }
 
 
@@ -166,7 +124,7 @@ export default function Stream(){
       {Header()}
       <div className={commonStyles.bodyContainer}>
         <div id='remote-media-div'>Hello World!</div>
-        <button className={streamStyles.leaveStreamButton} onClick={function(){confirmLeaveStream(streamParticipantInfo)}}>Leave</button>
+        <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
       </div>
     </div>
   )
