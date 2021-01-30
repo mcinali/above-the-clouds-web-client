@@ -58,48 +58,77 @@ export default function Stream(){
       streamId: parseInt(streamId, 10),
       accountId: parseInt(accountId, 10),
     }
-    // axios.post(url, body)
-    //      .then(res => {
-    //        if (res.data){
-    //          const streamParticipantData = res.data
-    //          setStreamParticipantInfo(res.data)
-    //          createLocalTracks({
-    //            audio: true,
-    //            video: false
-    //          }).then(localTracks => {
-    //            return connect(streamParticipantData.twilioAccessToken, {
-    //              name: streamParticipantData.streamId.toString(),
-    //              tracks: localTracks
-    //            })
-    //          }).then(room => {
-    //            console.log(`Connected to Room: ${room.name}`)
-    //            setRoom(room)
-    //            // Attach new Participant's Media to a <div> element.
-    //            room.on('participantConnected', participant => {
-    //              participant.tracks.forEach(publication => {
-    //                if (publication.isSubscribed) {
-    //                  const track = publication.track
-    //                  document.getElementById('remote-media-div').appendChild(track.attach())
-    //                }
-    //              })
-    //              participant.on('trackSubscribed', track => {
-    //                document.getElementById('remote-media-div').appendChild(track.attach())
-    //              })
-    //           })
-    //           // Attach existing Participants' Media to a <div> element.
-    //           room.participants.forEach(participant => {
-    //             participant.tracks.forEach(publication => {
-    //               if (publication.track) {
-    //                 document.getElementById('remote-media-div').appendChild(publication.track.attach())
-    //               }
-    //             })
-    //
-    //            participant.on('trackSubscribed', track => {
-    //               document.getElementById('remote-media-div').appendChild(track.attach())
-    //             })
-    //           })
-    //          })
-             const streamURL = hostname + `/stream/${27}?accountId=${accountId}`
+    axios.post(url, body)
+         .then(res => {
+           if (res.data){
+             const streamParticipantData = res.data
+             setStreamParticipantInfo(res.data)
+             createLocalTracks({
+               audio: true,
+               video: false
+             }).then(localTracks => {
+               return connect(streamParticipantData.twilioAccessToken, {
+                 name: streamParticipantData.streamId.toString(),
+                 tracks: localTracks
+               })
+             }).then(room => {
+               console.log(`Connected to Room: ${room.name}`)
+               setRoom(room)
+               // Attach new Participant's Media to a <div> element.
+               room.on('participantConnected', participant => {
+                 console.log(participant)
+                 participant.tracks.forEach(publication => {
+                   if (publication.isSubscribed) {
+                     const track = publication.track
+                     document.getElementById('remote-media-div').appendChild(track.attach())
+                   }
+                 })
+                 participant.on('trackSubscribed', track => {
+                   document.getElementById('remote-media-div').appendChild(track.attach())
+                 })
+                 const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
+                 axios.get(streamURL)
+                      .then(res => {
+                        if (res.data) {
+                          console.log(res.data)
+                          setStreamParticipants(res.data.participants)
+                          setIsLoading(false)
+                        }
+                      })
+                      .catch(error => {
+                        console.error(error)
+                        setIsLoading(false)
+                      })
+                })
+                room.on('participantDisconnected', participant => {
+                  const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
+                  axios.get(streamURL)
+                       .then(res => {
+                         if (res.data) {
+                           console.log(res.data)
+                           setStreamParticipants(res.data.participants)
+                           setIsLoading(false)
+                         }
+                       })
+                       .catch(error => {
+                         console.error(error)
+                         setIsLoading(false)
+                       })
+                })
+                // Attach existing Participants' Media to a <div> element.
+                room.participants.forEach(participant => {
+                  participant.tracks.forEach(publication => {
+                    if (publication.track) {
+                      document.getElementById('remote-media-div').appendChild(publication.track.attach())
+                    }
+                  })
+
+                 participant.on('trackSubscribed', track => {
+                    document.getElementById('remote-media-div').appendChild(track.attach())
+                  })
+               })
+             })
+             const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
              axios.get(streamURL)
                   .then(res => {
                     if (res.data) {
@@ -111,19 +140,19 @@ export default function Stream(){
                     }
                   })
                   .catch(error => {
-                    window.alert('Failed to join stream')
+                    window.alert('Failed to fetch stream details')
                     leaveStream(streamParticipantData)
                     console.error(error)
                     setIsLoading(false)
                   })
-         //   }
-         // })
-         // .catch(error => {
-         //   window.alert('Failed to join stream')
-         //   console.error(error)
-         //   setIsLoading(false)
-         //   Router.push('/discovery')
-         // })
+           }
+         })
+         .catch(error => {
+           window.alert('Failed to join stream')
+           console.error(error)
+           setIsLoading(false)
+           Router.push('/discovery')
+         })
     return
   }, [])
 
@@ -138,6 +167,9 @@ export default function Stream(){
       axios.post(url, body)
            .then(res => {
              room.disconnect()
+             // room.localParticipant.audioTracks.forEach((publish) => {
+             //   console.log(publish)
+             // })
              Router.push('/discovery')
            })
            .catch(error => {
