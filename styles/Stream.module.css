@@ -47,7 +47,6 @@
   flex-direction: row;
   width: 460px;
   height: 400px;
-  align-content: space-between;
   justify-content: center;
   align-items: center;
   margin: 20px auto;
