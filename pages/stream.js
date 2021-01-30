@@ -18,7 +18,9 @@ export default function Stream(){
   const [streamParticipants, setStreamParticipants] = useState([])
   const [streamInvitees, setStreamInvitees] = useState([])
   const [streamEmailInvitees, setStreamEmailInvitees] = useState([])
+
   const [room, setRoom] = useState({})
+  const [mute, setMute] = useState(false)
 
   const router = useRouter()
   const streamId = router.query.streamId
@@ -179,6 +181,19 @@ export default function Stream(){
     }
   }
 
+  function muteLocalTracks(){
+    if (mute) {
+      room.localParticipant.audioTracks.forEach(publication => {
+        publication.track.enable()
+        setMute(false)
+      })
+    } else {
+      room.localParticipant.audioTracks.forEach(publication => {
+        publication.track.disable()
+        setMute(true)
+      })
+    }
+  }
 
   return (
     <div className={commonStyles.container}>
@@ -209,6 +224,9 @@ export default function Stream(){
           )}
         </div>
         <div className={streamStyles.buttonContainer}>
+          <button className={streamStyles.muteButton} onClick={function(){muteLocalTracks()}}>
+            { (mute) ? 'Unmute' : 'Mute'}
+          </button>
           <button className={streamStyles.inviteButton}>Invite</button>
           <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
         </div>

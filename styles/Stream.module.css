@@ -41,6 +41,23 @@
   background-color: #F5F5F5;
 }
 
+.muteButton {
+  margin-right: 25px;
+  align-items: center;
+  background-color: white;
+  color:  #0070f3;
+  border: 1px solid #0070f3;
+  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  height: 35px;
+}
+
+.muteButton:hover {
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
 .participantsContainer {
   display: flex;
   flex-wrap: wrap;
