@@ -85,7 +85,7 @@ export default function DiscoveryStreams(accountId) {
               <div className={discoveryStreamsStyles.participantsContainer}>
                 {stream.participants.map((participant,index) =>
                   <div key={index.toString()} className={discoveryStreamsStyles.participantContainer}>
-                    <div className={discoveryStreamsStyles.participantContainerElement}>
+                    <div>
                       <Image src='/bitmoji.png' width='60' height='60' className={discoveryStreamsStyles.image} />
                     </div>
                     <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
