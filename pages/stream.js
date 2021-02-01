@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Router, { useRouter } from "next/router"
+import Router, { useRouter } from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
+import NewStreamModal from '../components/newStreamModal'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
@@ -21,6 +22,7 @@ export default function Stream(){
 
   const [room, setRoom] = useState({})
   const [mute, setMute] = useState(false)
+  const [volume, setVolume] = useState(0.0)
 
   const router = useRouter()
   const streamId = router.query.streamId
@@ -75,24 +77,14 @@ export default function Stream(){
                })
              }).then(room => {
                console.log(`Connected to Room: ${room.name}`)
+               const player = document.getElementById('audio-controller')
                setRoom(room)
                // Attach new Participant's Media to a <div> element.
                room.on('participantConnected', participant => {
-                 console.log(participant)
-                 participant.tracks.forEach(publication => {
-                   if (publication.isSubscribed) {
-                     const track = publication.track
-                     document.getElementById('remote-media-div').appendChild(track.attach())
-                   }
-                 })
-                 participant.on('trackSubscribed', track => {
-                   document.getElementById('remote-media-div').appendChild(track.attach())
-                 })
                  const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
                  axios.get(streamURL)
                       .then(res => {
                         if (res.data) {
-                          console.log(res.data)
                           setStreamParticipants(res.data.participants)
                           setIsLoading(false)
                         }
@@ -101,35 +93,45 @@ export default function Stream(){
                         console.error(error)
                         setIsLoading(false)
                       })
-                })
-                room.on('participantDisconnected', participant => {
-                  const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
-                  axios.get(streamURL)
-                       .then(res => {
-                         if (res.data) {
-                           console.log(res.data)
-                           setStreamParticipants(res.data.participants)
-                           setIsLoading(false)
-                         }
-                       })
-                       .catch(error => {
-                         console.error(error)
-                         setIsLoading(false)
-                       })
-                })
-                // Attach existing Participants' Media to a <div> element.
-                room.participants.forEach(participant => {
-                  participant.tracks.forEach(publication => {
-                    if (publication.track) {
-                      document.getElementById('remote-media-div').appendChild(publication.track.attach())
-                    }
-                  })
-
-                 participant.on('trackSubscribed', track => {
-                    document.getElementById('remote-media-div').appendChild(track.attach())
-                  })
+                 participant.tracks.forEach(publication => {
+                 if (publication.isSubscribed) {
+                   player.appendChild(publication.track.attach())
+                 }
                })
-             })
+               participant.on('trackSubscribed', track => {
+                 player.appendChild(track.attach())
+               })
+              })
+              // Attach existing Participants' Media to a <div> element.
+              room.participants.forEach(participant => {
+                participant.tracks.forEach(publication => {
+                  if (publication.track) {
+                    player.appendChild(publication.track.attach())
+                  }
+                })
+                participant.on('trackSubscribed', track => {
+                  player.appendChild(track.attach())
+                })
+              })
+              // Update stream participants on participant disconnect
+              room.on('participantDisconnected', participant => {
+                const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
+                axios.get(streamURL)
+                     .then(res => {
+                       if (res.data) {
+                         setStreamParticipants(res.data.participants)
+                         setIsLoading(false)
+                       }
+                     })
+                     .catch(error => {
+                       console.error(error)
+                       setIsLoading(false)
+                     })
+              })
+              // Print new dominant speaker in the room
+              room.on('dominantSpeakerChanged', participant => {
+                console.log('The new dominant speaker in the Room is:', participant)
+              })
              const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
              axios.get(streamURL)
                   .then(res => {
@@ -147,8 +149,8 @@ export default function Stream(){
                     console.error(error)
                     setIsLoading(false)
                   })
-           }
-         })
+           })
+         }})
          .catch(error => {
            window.alert('Failed to join stream')
            console.error(error)
@@ -169,9 +171,6 @@ export default function Stream(){
       axios.post(url, body)
            .then(res => {
              room.disconnect()
-             // room.localParticipant.audioTracks.forEach((publish) => {
-             //   console.log(publish)
-             // })
              Router.push('/discovery')
            })
            .catch(error => {
@@ -195,11 +194,15 @@ export default function Stream(){
     }
   }
 
+  function adjustVolume(volume){
+    const player = document.getElementById('audio-controller')
+    player.volume = volume / 100
+  }
+
   return (
     <div className={commonStyles.container}>
       {Header()}
       <div className={commonStyles.bodyContainer}>
-        <div id='remote-media-div'></div>
         <div className={streamStyles.speakerAccessibilityContainer}>
           <a>{streamInfo.speakerAccessibility}</a>
         </div>
@@ -225,8 +228,10 @@ export default function Stream(){
         </div>
         <div className={streamStyles.buttonContainer}>
           <button className={streamStyles.muteButton} onClick={function(){muteLocalTracks()}}>
-            { (mute) ? 'Unmute' : 'Mute'}
+            { (mute) ? 'Unmute Mic' : 'Mute Mic'}
           </button>
+          <audio id='audio-controller'></audio>
+          <input id='vol-control' type='range' min='0' max='100' step='4' onInput={(event) => {adjustVolume(event.target.value)}} onChange={(event) => {adjustVolume(event.target.value)}}></input>
           <button className={streamStyles.inviteButton}>Invite</button>
           <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
         </div>
