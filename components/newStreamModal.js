@@ -118,7 +118,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
           </div>
           <div className={newStreamStyles.invitationsContainer}>
             <div className={newStreamStyles.header}>Invite Participants:</div>
-            {Invitations(accountId, invitations, queueStreamInvitation, discardInvitation, false)}
+            {Invitations(accountId, invitations, queueStreamInvitation, discardInvitation, false, {})}
           </div>
           <div>
             <div className={newStreamStyles.header}>Invitees:</div>

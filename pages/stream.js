@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
-import NewStreamModal from '../components/newStreamModal'
+import StreamInviteModal from '../components/StreamInviteModal'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
@@ -12,7 +12,7 @@ const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
 
 export default function Stream(){
-  const [isLoading, setIsLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false)
   const [streamParticipantInfo, setStreamParticipantInfo] = useState({})
 
   const [streamInfo, setStreamInfo] = useState({})
@@ -54,7 +54,6 @@ export default function Stream(){
 
   // Join stream on page load
   useEffect(() => {
-    setIsLoading(true)
     const url = hostname + `/stream/join`
     const body = {
       streamId: parseInt(streamId, 10),
@@ -84,12 +83,10 @@ export default function Stream(){
                       .then(res => {
                         if (res.data) {
                           setStreamParticipants(res.data.participants)
-                          setIsLoading(false)
                         }
                       })
                       .catch(error => {
                         console.error(error)
-                        setIsLoading(false)
                       })
                  participant.tracks.forEach(publication => {
                  if (publication.isSubscribed) {
@@ -118,12 +115,10 @@ export default function Stream(){
                      .then(res => {
                        if (res.data) {
                          setStreamParticipants(res.data.participants)
-                         setIsLoading(false)
                        }
                      })
                      .catch(error => {
                        console.error(error)
-                       setIsLoading(false)
                      })
               })
               // Print new dominant speaker in the room
@@ -136,22 +131,19 @@ export default function Stream(){
                     if (res.data) {
                       setStreamInfo(res.data.info)
                       setStreamParticipants(res.data.participants)
-                      setIsLoading(false)
                     }
                   })
                   .catch(error => {
                     window.alert('Failed to fetch stream details')
                     leaveStream(streamParticipantData)
                     console.error(error)
-                    setIsLoading(false)
                   })
            })
          }})
          .catch(error => {
            window.alert('Failed to join stream')
            console.error(error)
-           setIsLoading(false)
-           Router.push('/discovery')
+           // Router.push('/discovery')
          })
     return
   }, [])
@@ -228,9 +220,10 @@ export default function Stream(){
           </button>
           <audio id='audio-controller'></audio>
           <input id='vol-control' type='range' min='0' max='100' step='4' onInput={(event) => {adjustVolume(event.target.value)}} onChange={(event) => {adjustVolume(event.target.value)}}></input>
-          <button className={streamStyles.inviteButton}>Invite</button>
+          <button className={streamStyles.inviteButton} onClick={function(){setShowModal(true)}}>Invite</button>
           <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
         </div>
+        {StreamInviteModal(accountId, streamId, streamParticipants, showModal, setShowModal)}
       </div>
     </div>
   )
