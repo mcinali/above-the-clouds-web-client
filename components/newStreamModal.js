@@ -15,7 +15,6 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
   const [capacity, setCapacity] = useState(5)
   const [invitations, setInvitations] = useState([])
   const [disableCreateStream, setDisableCreateStream] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setDisableCreateStream(!(Boolean(topicText) && Boolean(speakerAccessibility)))
@@ -23,7 +22,6 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
 
   function createStream(){
     try {
-      setIsLoading(true)
       const streamURL = hostname + `/stream`
       const streamBody = {
         topicId: topic.topicId,
@@ -46,7 +44,6 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
                  axios.post(streamURL, streamBody)
                       .then(res => {
                         if (res.data && res.data.streamId){
-                          setIsLoading(false)
                           Router.push(
                             {pathname:"/stream",
                             query: {streamId: res.data.streamId}
@@ -65,7 +62,6 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
         axios.post(streamURL, streamBody)
              .then(res => {
                if (res.data){
-                 setIsLoading(false)
                  Router.push(
                    {pathname:"/stream",
                    query: {streamId: res.data.streamId}
