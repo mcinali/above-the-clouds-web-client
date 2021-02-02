@@ -7,8 +7,6 @@ const axios = require('axios')
 
 export default function DiscoveryStreams(accountId) {
   const [streams, setStreams] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState({})
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
@@ -34,21 +32,12 @@ export default function DiscoveryStreams(accountId) {
   }
 
   useEffect(() => {
-    setIsLoading(true)
     axios.get(hostname+`/discovery/${accountId}`)
          .then(res => {
-           if(isLoading){
-             setStreams(res.data)
-             setIsLoading(false)
-           }
+           setStreams(res.data)
          })
          .catch(error => {
-           if (error.response && error.response.data){
-             if (isLoading){
-               setError(error.response.data)
-               setIsLoading(false)
-             }
-           }
+           console.error(error)
          })
     return
   }, [])

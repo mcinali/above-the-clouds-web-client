@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import invitationsStyles from '../styles/Invitations.module.css'
 import userStyles from '../styles/Users.module.css'
@@ -9,12 +9,8 @@ export default function Invitations(accountId, filterList, addInvitation, remove
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState({})
-
   function fetchSuggestions(text){
     try {
-      setIsLoading(true)
       setSearchText(text.trim())
       const url = hostname+`/connections/${accountId}/suggestions`
       const params = {text: text}
@@ -32,20 +28,15 @@ export default function Invitations(accountId, filterList, addInvitation, remove
                  } else {
                    setSearchResults([])
                  }
-                 setIsLoading(false)
              }})
              .catch(error => {
-               if (error.response && error.response.data){
-                 setError(error.response.data)
-               }
-               setIsLoading(false)
+               console.error(error)
              })
       } else {
         setSearchResults([])
       }
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 
@@ -57,32 +48,26 @@ export default function Invitations(accountId, filterList, addInvitation, remove
       })
       return filtrdSuggestions.splice(0,5)
     } catch (error) {
-      setError(error)
+      console.error(error)
     }
   }
 
   function queueAccount(account){
     try {
-      setIsLoading(true)
       addInvitation(account)
       setSearchText('')
       setSearchResults([])
-      setIsLoading(false)
       return
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 
   function discardAccount(){
     try {
-      setIsLoading(true)
       removeInvitation(account)
-      setIsLoading(false)
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 

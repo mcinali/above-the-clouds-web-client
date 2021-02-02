@@ -17,8 +17,6 @@ export default function Stream(){
 
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
-  const [streamInvitees, setStreamInvitees] = useState([])
-  const [streamEmailInvitees, setStreamEmailInvitees] = useState([])
 
   const [room, setRoom] = useState({})
   const [mute, setMute] = useState(false)
@@ -138,8 +136,6 @@ export default function Stream(){
                     if (res.data) {
                       setStreamInfo(res.data.info)
                       setStreamParticipants(res.data.participants)
-                      setStreamInvitees(res.data.invitees)
-                      setStreamEmailInvitees(res.data.emailOutreach)
                       setIsLoading(false)
                     }
                   })
