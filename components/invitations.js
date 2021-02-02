@@ -5,7 +5,7 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function Invitations(accountId, filterList, addInvitation, removeInvitation, disableOptions){
+export default function Invitations(accountId, filterList, addInvitation, removeInvitation, disableOptions, queuedInvitationInSearch){
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
@@ -54,6 +54,7 @@ export default function Invitations(accountId, filterList, addInvitation, remove
 
   function queueAccount(account){
     try {
+      console.log(account)
       addInvitation(account)
       setSearchText('')
       setSearchResults([])
@@ -65,7 +66,7 @@ export default function Invitations(accountId, filterList, addInvitation, remove
 
   function discardAccount(){
     try {
-      removeInvitation(account)
+      removeInvitation()
     } catch (error) {
       console.error(error)
     }
@@ -73,13 +74,41 @@ export default function Invitations(accountId, filterList, addInvitation, remove
 
   return (
     <div>
-      <input
-        key='searchBar'
-        value={searchText}
-        placeholder={"Search by username, full name, or email"}
-        onChange={(e) => fetchSuggestions(e.target.value)}
-        className={invitationsStyles.searchBar}
-      />
+      {(Object.keys(queuedInvitationInSearch).length>0) ?
+        <div>
+          {(queuedInvitationInSearch.accountId) ?
+            <div className={userStyles.row}>
+              <Image src='/bitmoji.png' width='40' height='40' className={userStyles.image} />
+              <div className={userStyles.userInfo}>
+                <a className={userStyles.username}>{queuedInvitationInSearch.username} </a>
+                <a className={userStyles.name}>{`(${queuedInvitationInSearch.firstname} ${queuedInvitationInSearch.lastnameInitial})`}</a>
+              </div>
+              <div className={userStyles.rightContainer}>
+                <div className={userStyles.status}>{queuedInvitationInSearch.status}</div>
+                <button className={userStyles.discardButton} onClick={function(){discardAccount()}}>x</button>
+              </div>
+            </div>
+            :
+            <div className={userStyles.row}>
+              <div className={userStyles.userInfo}>
+                <a className={userStyles.username}>{queuedInvitationInSearch.email} </a>
+              </div>
+              <div className={userStyles.rightContainer}>
+                <div className={userStyles.status}>{queuedInvitationInSearch.status}</div>
+                <button className={userStyles.discardButton} onClick={function(){discardAccount()}}>x</button>
+              </div>
+            </div>
+          }
+        </div>
+        :
+        <input
+          key='searchBar'
+          value={searchText}
+          placeholder={"Search by username, full name, or email"}
+          onChange={(e) => fetchSuggestions(e.target.value)}
+          className={invitationsStyles.searchBar}
+        />
+      }
       <div className={invitationsStyles.dropdown}>
         <div className={invitationsStyles.dropdownContent}>
           {searchResults.map((result, index) => {
@@ -89,7 +118,7 @@ export default function Invitations(accountId, filterList, addInvitation, remove
                     <Image src='/bitmoji.png' width='30' height='30' className={userStyles.image} />
                     <div className={userStyles.userInfo}>
                       <a className={userStyles.username}>{result.username} </a>
-                      <a className={userStyles.name}>{`(${result.firstname} ${result.lastnameInitial} / ${result.email})`}</a>
+                      <a className={userStyles.name}>{`(${result.firstname} ${result.lastnameInitial})`}</a>
                     </div>
                     <div className={userStyles.rightContainer}>
                       <a className={userStyles.status}>{result.status}</a>
