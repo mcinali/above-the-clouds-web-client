@@ -13,34 +13,21 @@ export default function Connections(accountId){
   const [connections, setConnections] = useState([])
   const [inboundRequests, setInboundRequests] = useState([])
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState({})
-
   useEffect(() => {
-    setIsLoading(true)
     const url = hostname+`/connections/${accountId}`
     axios.get(url)
          .then(res => {
-           if(isLoading){
-             setConnections(res.data.connections)
-             setInboundRequests(res.data.inboundRequests)
-             setIsLoading(false)
-           }
+           setConnections(res.data.connections)
+           setInboundRequests(res.data.inboundRequests)
          })
          .catch(error => {
-           if (error.response && error.response.data){
-             if (isLoading){
-               setError(error.response.data)
-               setIsLoading(false)
-             }
-           }
+           console.error(error)
          })
     return
   }, [])
 
   function connect(index, request){
     try {
-      setIsLoading(true)
       const connectionAccountId = request.accountId
       const url = hostname+`/connections/new`
       const body = {
@@ -61,25 +48,19 @@ export default function Connections(accountId){
                inboundRequests.splice(index, 1)
                setConnections(connections)
                setInboundRequests(inboundRequests)
-               setIsLoading(false)
              }
            })
            .catch(error => {
-             if (error.response && error.response.data){
-               setError(error.response.data)
-             }
-             setIsLoading(false)
+             console.error(error)
            })
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
     return
   }
 
   function fetchConnectionSuggestions(text){
     try {
-      setIsLoading(true)
       setSearchText(text.trim())
       const url = hostname+`/connections/${accountId}/suggestions`
       const params = {text: text}
@@ -97,20 +78,15 @@ export default function Connections(accountId){
                  } else {
                    setSearchResults([])
                  }
-                 setIsLoading(false)
              }})
              .catch(error => {
-               if (error.response && error.response.data){
-                 setError(error.response.data)
-               }
-               setIsLoading(false)
+               console.error(error)
              })
       } else {
         setSearchResults([])
       }
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 
@@ -122,37 +98,31 @@ export default function Connections(accountId){
       })
       return filtrdSuggestions.splice(0,5)
     } catch (error) {
-      setError(error)
+      console.error(error)
     }
   }
 
   function queueConnectionRequest(account){
     try {
-      setIsLoading(true)
       setConnectionRequest(account)
       setSearchText('')
       setSearchResults([])
-      setIsLoading(false)
       return
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 
   function discardConnectionRequest(){
     try {
-      setIsLoading(true)
       setConnectionRequest({})
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 
   function sendConnectionRequest(){
     try{
-      setIsLoading(true)
       const connectionAccountId = connectionRequest.accountId
       const connectionEmail = (connectionAccountId) ? null : connectionRequest.email
       const alertName = (connectionRequest.username) ? connectionRequest.username : connectionRequest.email
@@ -167,18 +137,13 @@ export default function Connections(accountId){
              if(res.data){
                setConnectionRequest({})
                alert(`Connection Request Sent to: ${alertName}`)
-               setIsLoading(false)
              }
            })
            .catch(error => {
-             if (error.response && error.response.data){
-               setError(error.response.data)
-             }
-             setIsLoading(false)
+             console.error(error)
            })
     } catch (error) {
-      setError(error)
-      setIsLoading(false)
+      console.error(error)
     }
   }
 
