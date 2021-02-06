@@ -1,0 +1,74 @@
+.discardButton {
+  padding-right: 20px;
+  font-size: 18px;
+  background-color: inherit;
+  color: #0070f3;
+  border: none;
+  overflow: hidden;
+}
+
+.discardButton:hover {
+  cursor: pointer;
+}
+
+.image {
+  left: 0;
+  border: 1px solid #0070f3;
+  border-radius: 50%;
+}
+
+.leftContainer {
+  align-self: flex-start;
+  text-align: left;
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+.name {
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.rightContainer {
+  align-self: flex-start;
+  text-align: right;
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 50px;
+  width: 100%;
+}
+
+.row:hover {
+  background-color: #F5F5F5;
+}
+
+.status {
+  padding-right: 10px;
+  font-size: 12px;
+  font-style: italic;
+  background-color: inherit;
+  color: #0070f3;
+}
+
+.userInfo {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: 600;
+  align-self: flex-start;
+}

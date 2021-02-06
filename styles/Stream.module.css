@@ -1,0 +1,138 @@
+.buttonContainer {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: 5px;
+}
+
+.inviteButton {
+  margin-right: 15px;
+  margin-left: auto;
+  align-items: center;
+  background-color: #0070f3;
+  color:  white;
+  border: 1px solid #0070f3;
+  font-size: 18px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  height: 50px;
+}
+
+.inviteButton:hover {
+  cursor: pointer;
+  opacity: 60%;
+}
+
+.leaveStreamButton {
+  margin-right: 25px;
+  align-items: center;
+  background-color: white;
+  color:  #0070f3;
+  border: 1px solid #0070f3;
+  font-size: 18px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  height: 50px;
+}
+
+.leaveStreamButton:hover {
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.muteButton {
+  margin-right: 25px;
+  align-items: center;
+  background-color: white;
+  color:  #0070f3;
+  border: 1px solid #0070f3;
+  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 32px;
+  height: 35px;
+}
+
+.muteButton:hover {
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.participantsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  width: 460px;
+  height: 400px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px auto;
+  margin-top: 35px;
+}
+
+.participantContainer {
+  float: center;
+  text-align: center;
+  height: 200px;
+  width: 200px;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.participantImage {
+  left: 0;
+  border: 1px solid #0070f3;
+  border-radius: 50%;
+}
+
+.participantName {
+  font-size: 14px;
+}
+
+.participantUsername {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.speakerAccessibilityContainer {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 16px;
+  text-align: right;
+}
+
+.time {
+  margin: 0px;
+  font-size: 20px;
+}
+
+.timeContainer {
+  display: flex;
+  margin: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+.timeSubContainer {
+  height: 100%;
+  float: center;
+  text-align: center;
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.timeLabels {
+  margin: 0px;
+  font-size: 12px;
+}
+
+.topicContainer {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.topicText {
+  font-size: 32px;
+  font-weight: 600;
+}

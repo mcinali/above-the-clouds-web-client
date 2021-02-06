@@ -1,0 +1,87 @@
+.description {
+  line-height: 1.5;
+  font-size: 1.5rem;
+  margin-bottom:2%;
+}
+
+.error {
+  color: #FF6961;
+  font-size: 14px;
+  font-weight: normal;
+  justify-content: left;
+  align-items: left;
+  text-align: left;
+}
+
+.form {
+  font-family:Arial;
+  display: inline-block;
+  margin-bottom: 0%;
+  align-items: center;
+}
+
+.input {
+  width: 50%;
+  height: 2.5rem;
+  font-size: 16px;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 2%;
+  justify-content: center;
+  align-items: center;
+}
+
+.input left {
+  width: 24%;
+}
+
+.input right {
+  width: 24%;
+  margin-left: 2%;
+}
+
+.main {
+  height: 100%;
+  margin-bottom: 5%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.registrationButton {
+  margin-bottom: 0%;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 64px;
+  text-align: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.registrationButton:disabled {
+  opacity: 50%;
+}
+
+.registrationButton:hover {
+  cursor: pointer;
+}
+
+.textlink {
+  color: #0070f3;
+  font-size: 14px;
+  font-weight: normal;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 0px;
+  margin-top: 3%;
+  line-height: 1.15;
+  font-size: 4rem;
+  color: #0070f3;
+}
