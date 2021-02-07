@@ -83,7 +83,6 @@
 .modalFormBody {
   margin-top: 25px;
   width: 500px;
-  height: 400px;
   display: flex;
   flex-direction: column;
   margin-left: auto;
@@ -177,7 +176,7 @@
 }
 
 .modalFormButton {
-  margin: 50px auto;
+  margin: 25px auto;
   display: block;
   background-color: #00bfff;
   color:  white;
@@ -200,26 +199,8 @@
   cursor: default;
 }
 
-.modalFormSideButton {
-  margin-top: 15px;
-  margin-left: 20px;
-  background-color: #00bfff;
-  color:  white;
-  border: 1px solid #00bfff;
-  font-size: 16px;
-  border-radius: 4px;
-  padding: 0px 32px;
-  justify-content: center;
-  align-items: center;
+.modalFormButtonContainer {
+  width: 100%;
   text-align: center;
-  height: 40px;
-}
-
-.modalFormSideButton:hover {
-  cursor: pointer;
-}
-
-.modalFormSideButton:disabled {
-  opacity: 50%;
-  cursor: default;
+  display: inline-block;
 }

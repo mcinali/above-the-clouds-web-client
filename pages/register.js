@@ -155,7 +155,20 @@ export default function Register() {
 
   function sendAccessCode(){
     // TO DO: API request to text user access code
-    setPageIndex(pageIndex + 1)
+    const url = hostname + '/account/accessCode'
+    const body = {
+      phone: phoneNumber,
+    }
+    axios.post(url, body)
+          .then(res => {
+            setPhoneNumberError('')
+            setPageIndex(pageIndex + 1)
+          })
+          .catch(error => {
+            if (error.response && error.response.data && error.response.data.errors){
+              setPhoneNumberError(error.response.data.errors[0])
+            }
+          })
   }
 
   function register(){
@@ -220,18 +233,18 @@ export default function Register() {
             <form className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Phone</div>
-                <div>
-                  <div className={registrationStyles.modalFormBodyUSPhone}>
-                    US +1
-                  </div>
-                  <div className={registrationStyles.modalFormBodyLeftContainer}>
-                    <input className={registrationStyles.modalFormBodyInput} value={phoneNumber} onChange={(event) => {setPhoneNumber(event.target.value.trim())}}></input>
-                  </div>
-                  <button className={registrationStyles.modalFormSideButton} disabled={disableSendCodeButton} onClick={() => {sendAccessCode()}}>Send Code</button>
+                <div className={registrationStyles.modalFormBodyUSPhone}>
+                  US +1
+                </div>
+                <div className={registrationStyles.modalFormBodyLeftContainer}>
+                  <input className={registrationStyles.modalFormBodyInput} value={phoneNumber} onChange={(event) => {setPhoneNumber(event.target.value.trim())}}></input>
                 </div>
                 <div className={registrationStyles.modalFormBodyFootnoteError}>{phoneNumberError}</div>
               </div>
             </form>
+            <div className={registrationStyles.modalFormButtonContainer}>
+              <button className={registrationStyles.modalFormButton} disabled={disableSendCodeButton} onClick={() => {sendAccessCode()}}>Send Code</button>
+            </div>
           </div>
           :
           <div>
@@ -239,9 +252,9 @@ export default function Register() {
               <div className={registrationStyles.modalFormBodyContainer}>
                 <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={accessCode} onChange={(event) => {setAccessCode(event.target.value.trim())}}></input>
                 <div className={registrationStyles.modalFormBodyFootnoteError}>{accessCodeError}</div>
-                <button className={registrationStyles.modalFormButton} disabled={disableRegisterButton} onClick={() => {register()}}>Register</button>
               </div>
             </form>
+            <button className={registrationStyles.modalFormButton} disabled={disableRegisterButton} onClick={() => {register()}}>Register</button>
           </div>
         }
       </div>
