@@ -12,7 +12,8 @@ export default function Register() {
   const [pageIndex, setPageIndex] = useState(1)
   const [backButton, setBackButton] = useState('')
 
-  const [disableNextButton, setDisbaleNextButton] = useState(true)
+  const [disbaleAccountFormCheckButton, setDisbaleAccountFormCheckButton] = useState(true)
+  const [disbaleVerifyEmailAccessCodeButton, setDisbaleVerifyEmailAccessCodeButton] = useState(true)
   const [disableSendCodeButton, setDisableSendCodeButton] = useState(true)
   const [disableRegisterButton, setDisableRegisterButton] = useState(true)
 
@@ -30,6 +31,9 @@ export default function Register() {
   const [passwordCharactersColor, setPasswordCharactersColor] = useState({'color':'grey'})
 
   const [accountCheckError, setAccountCheckError] = useState('')
+
+  const [emailAccessCode, setEmailAccessCode] = useState('')
+  const [emailAccessCodeError, setEmailAccessCodeError] = useState('')
 
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneNumberError, setPhoneNumberError] = useState('')
@@ -76,11 +80,32 @@ export default function Register() {
 
   useEffect(() => {
     if (Boolean(firstname) && Boolean(lastname) && Boolean(username) && Boolean(email) && Boolean(password) && !Boolean(usernameError) && !passwordError){
-      setDisbaleNextButton(false)
+      setDisbaleAccountFormCheckButton(false)
     } else {
-      setDisbaleNextButton(true)
+      setDisbaleAccountFormCheckButton(true)
     }
   }, [firstname, lastname, username, email, password, usernameError, passwordError])
+
+  useEffect(() => {
+    try {
+      const accessCodeLength = emailAccessCode.length
+      const accessCodeNumber = Number(emailAccessCode)
+      const accessCodeInteger = accessCodeNumber % 1
+      if (Number.isNaN(accessCodeNumber) || accessCodeInteger!=0){
+        setEmailAccessCodeError('Enter a valid 6-digit access code')
+      } else {
+        setEmailAccessCodeError('')
+      }
+      if (accessCodeLength==6){
+        setDisbaleVerifyEmailAccessCodeButton(false)
+      } else {
+        setDisbaleVerifyEmailAccessCodeButton(true)
+      }
+    } catch (error) {
+      console.error(error)
+      setDisbaleVerifyEmailAccessCodeButton(true)
+    }
+  }, [emailAccessCode])
 
   useEffect(() => {
     try {
@@ -131,44 +156,72 @@ export default function Register() {
     }
   }, [pageIndex])
 
-  function next(){
-    // TO DO: Check if account already exists
-    const url = hostname + '/account/check'
-    const body = {
-      firstname: firstname,
-      lastname: lastname,
-      username: username,
-      email: email,
-      password: password,
+  function checkAccountForm(){
+    try {
+      const url = hostname + '/account/check'
+      const body = {
+        firstname: firstname,
+        lastname: lastname,
+        username: username,
+        email: email,
+        password: password,
+      }
+      axios.post(url, body)
+            .then(res => {
+              setAccountCheckError('')
+              setPageIndex(pageIndex + 1)
+            })
+            .catch(error => {
+              if (error.response && error.response.data && error.response.data.errors){
+                setAccountCheckError(error.response.data.errors[0])
+              }
+            })
+    } catch (error) {
+      console.error(error)
     }
-    axios.post(url, body)
-          .then(res => {
-            setAccountCheckError('')
-            setPageIndex(pageIndex + 1)
-          })
-          .catch(error => {
-            if (error.response && error.response.data && error.response.data.errors){
-              setAccountCheckError(error.response.data.errors[0])
-            }
-          })
+  }
+
+  function verifyEmailAccessCode(){
+    try {
+      const url = hostname + '/account/verify/email'
+      const body = {
+        accessCode: emailAccessCode,
+      }
+      axios.post(url, body)
+            .then(res => {
+              setEmailAccessCodeError('')
+              setPageIndex(pageIndex + 1)
+            })
+            .catch(error => {
+              if (error.response && error.response.data && error.response.data.errors){
+                setEmailAccessCodeError(error.response.data.errors[0])
+              }
+            })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   function sendAccessCode(){
-    // TO DO: API request to text user access code
-    const url = hostname + '/account/accessCode'
-    const body = {
-      phone: phoneNumber,
+    try {
+      const url = hostname + '/account/phone/code'
+      const body = {
+        phone: phoneNumber,
+      }
+      axios.post(url, body)
+            .then(res => {
+              setPhoneNumberError('')
+              setPageIndex(pageIndex + 1)
+            })
+            .catch(error => {
+              if (error.response && error.response.data && error.response.data.errors){
+                setPhoneNumberError(error.response.data.errors[0])
+              }
+            })
+    } catch (error) {
+      console.error(error)
     }
-    axios.post(url, body)
-          .then(res => {
-            setPhoneNumberError('')
-            setPageIndex(pageIndex + 1)
-          })
-          .catch(error => {
-            if (error.response && error.response.data && error.response.data.errors){
-              setPhoneNumberError(error.response.data.errors[0])
-            }
-          })
+
   }
 
   function register(){
@@ -186,9 +239,6 @@ export default function Register() {
         <div className={registrationStyles.modalHeader}>
           <div className={registrationStyles.modalHeaderNavigationButton} onClick={() => {back()}}>
             {backButton}
-          </div>
-          <div className={registrationStyles.modalHeaderPageIndex}>
-            Page {pageIndex} of 3
           </div>
         </div>
         <div className={registrationStyles.modalTitle}>
@@ -225,14 +275,26 @@ export default function Register() {
                 <div className={registrationStyles.modalFormBodyFootnote} style={passwordCharactersColor}> - At least 1 of each: uppercase letter, lowercase letter, number, and special character</div>
               </div>
             </form>
-            <button className={registrationStyles.modalFormButton} disabled={disableNextButton} onClick={() => {next()}}>Next</button>
+            <button className={registrationStyles.modalFormButton} disabled={disbaleAccountFormCheckButton} onClick={() => {checkAccountForm()}}>Next</button>
           </div>
           :
           (pageIndex==2) ?
           <div>
             <form className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
-                <div className={registrationStyles.modalFormBodyTitle}>Phone</div>
+                <div>An email has been sent to <b>{email}</b></div>
+                <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={emailAccessCode} onChange={(event) => {setEmailAccessCode(event.target.value.trim())}}></input>
+                <div className={registrationStyles.modalFormBodyFootnoteError}>{emailAccessCodeError}</div>
+              </div>
+            </form>
+            <button className={registrationStyles.modalFormButton} disabled={disbaleVerifyEmailAccessCodeButton} onClick={() => {verifyEmailAccessCode()}}>Next</button>
+          </div>
+          :
+          (pageIndex==3) ?
+          <div>
+            <form className={registrationStyles.modalFormBody}>
+              <div className={registrationStyles.modalFormBodyContainer}>
+                <div className={registrationStyles.modalFormBodyTitle}>Verify Phone Number</div>
                 <div className={registrationStyles.modalFormBodyUSPhone}>
                   US +1
                 </div>
@@ -250,6 +312,7 @@ export default function Register() {
           <div>
             <form className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
+                <div>A text message has been sent to <b>{phoneNumber}</b></div>
                 <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={accessCode} onChange={(event) => {setAccessCode(event.target.value.trim())}}></input>
                 <div className={registrationStyles.modalFormBodyFootnoteError}>{accessCodeError}</div>
               </div>
