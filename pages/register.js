@@ -147,8 +147,7 @@ export default function Register() {
             setPageIndex(pageIndex + 1)
           })
           .catch(error => {
-            console.log(error.response.data.errors[0])
-            if (error.response.data && error.response.data.errors){
+            if (error.response && error.response.data && error.response.data.errors){
               setAccountCheckError(error.response.data.errors[0])
             }
           })
