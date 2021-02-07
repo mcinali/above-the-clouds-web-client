@@ -34,12 +34,13 @@ export default function Register() {
 
   const [emailAccessCode, setEmailAccessCode] = useState('')
   const [emailAccessCodeError, setEmailAccessCodeError] = useState('')
+  const [emailAccessToken, setEmailAccessToken] = useState('')
 
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneNumberError, setPhoneNumberError] = useState('')
 
-  const [accessCode, setAccessCode] = useState('')
-  const [accessCodeError, setAccessCodeError] = useState('')
+  const [phoneAccessCode, setPhoneAccessCode] = useState('')
+  const [phoneAccessCodeError, setPhoneAccessCodeError] = useState('')
 
   useEffect(() => {
     const regex = new RegExp('^[a-zA-Z0-9]*$')
@@ -129,13 +130,13 @@ export default function Register() {
 
   useEffect(() => {
     try {
-      const accessCodeLength = accessCode.length
-      const accessCodeNumber = Number(accessCode)
+      const accessCodeLength = phoneAccessCode.length
+      const accessCodeNumber = Number(phoneAccessCode)
       const accessCodeInteger = accessCodeNumber % 1
       if (Number.isNaN(accessCodeNumber) || accessCodeInteger!=0){
-        setAccessCodeError('Enter a valid 6-digit access code')
+        setPhoneAccessCodeError('Enter a valid 6-digit access code')
       } else {
-        setAccessCodeError('')
+        setPhoneAccessCodeError('')
       }
       if (accessCodeLength==6){
         setDisableRegisterButton(false)
@@ -146,7 +147,7 @@ export default function Register() {
       console.error(error)
       setDisableRegisterButton(true)
     }
-  }, [accessCode])
+  }, [phoneAccessCode])
 
   useEffect(() => {
     if (pageIndex > 1){
@@ -158,7 +159,7 @@ export default function Register() {
 
   function checkAccountForm(){
     try {
-      const url = hostname + '/account/check'
+      const url = hostname + '/preregistration/accountDetails/check'
       const body = {
         firstname: firstname,
         lastname: lastname,
@@ -167,15 +168,17 @@ export default function Register() {
         password: password,
       }
       axios.post(url, body)
-            .then(res => {
-              setAccountCheckError('')
-              setPageIndex(pageIndex + 1)
-            })
-            .catch(error => {
-              if (error.response && error.response.data && error.response.data.errors){
-                setAccountCheckError(error.response.data.errors[0])
-              }
-            })
+        .then(res => {
+          setAccountCheckError('')
+          setEmailAccessToken('')
+          setEmailAccessCodeError('')
+          setPageIndex(pageIndex + 1)
+        })
+        .catch(error => {
+          if (error.response && error.response.data && error.response.data.error){
+            setAccountCheckError(error.response.data.error)
+          }
+        })
     } catch (error) {
       console.error(error)
     }
@@ -183,41 +186,53 @@ export default function Register() {
 
   function verifyEmailAccessCode(){
     try {
-      const url = hostname + '/account/verify/email'
+      const url = hostname + '/preregistration/verify/email'
       const body = {
+        email: email,
         accessCode: emailAccessCode,
       }
       axios.post(url, body)
-            .then(res => {
-              setEmailAccessCodeError('')
-              setPageIndex(pageIndex + 1)
-            })
-            .catch(error => {
-              if (error.response && error.response.data && error.response.data.errors){
-                setEmailAccessCodeError(error.response.data.errors[0])
-              }
-            })
+        .then(res => {
+          if (res.data && res.data.accessToken) {
+            const accessToken = res.data.accessToken
+            console.log(accessToken)
+            setEmailAccessToken(accessToken)
+            setEmailAccessCodeError('')
+            setPhoneNumber('')
+            setPhoneNumberError('')
+            setPageIndex(pageIndex + 1)
+          } else {
+            setEmailAccessCodeError('Empty response')
+          }
+        })
+        .catch(error => {
+          if (error.response && error.response.data && error.response.data.error){
+            setEmailAccessCodeError(error.response.data.error)
+          }
+        })
     } catch (error) {
       console.error(error)
     }
   }
 
-  function sendAccessCode(){
+  function sendPhoneAccessCode(){
     try {
-      const url = hostname + '/account/phone/code'
+      const url = hostname + '/preregistration/phone/code'
       const body = {
         phone: phoneNumber,
       }
       axios.post(url, body)
-            .then(res => {
-              setPhoneNumberError('')
-              setPageIndex(pageIndex + 1)
-            })
-            .catch(error => {
-              if (error.response && error.response.data && error.response.data.errors){
-                setPhoneNumberError(error.response.data.errors[0])
-              }
-            })
+        .then(res => {
+          setPhoneNumberError('')
+          setPhoneAccessCode('')
+          setPhoneAccessCodeError('')
+          setPageIndex(pageIndex + 1)
+        })
+        .catch(error => {
+          if (error.response && error.response.data && error.response.data.error){
+            setPhoneNumberError(error.response.data.error)
+          }
+        })
     } catch (error) {
       console.error(error)
     }
@@ -226,6 +241,57 @@ export default function Register() {
 
   function register(){
     // TO DO: API request to register user
+    try {
+      const url = hostname + '/preregistration/verify/phone'
+      const body = {
+        phone: phoneNumber,
+        accessCode: phoneAccessCode,
+      }
+      axios.post(url, body)
+        .then(res => {
+          if (res.data && res.data.accessToken){
+            console.log(res.data.accessToken)
+            const phoneAccessToken = res.data.accessToken
+            console.log(res.data.accessToken)
+            const registrationURL = hostname + '/account/register'
+            console.log(res.data.accessToken)
+            const registrationBody = {
+              firstname: firstname,
+              lastname: lastname,
+              username: username,
+              email: email,
+              password: password,
+              phone: phoneNumber,
+              emailAccessToken: emailAccessToken,
+              phoneAccessToken: phoneAccessToken,
+            }
+            console.log(registrationBody)
+            axios.post(registrationURL, registrationBody)
+              .then(res => {
+                // TO DO: save auth token & push to account setup page
+                const cookie = new Cookies()
+                const accountId = cookie.set('accountId', res.data.accountId)
+                const accountCookie = cookie.get('accountId')
+                Router.push("/discovery")
+              })
+              .catch(error => {
+                console.log(error.response.data)
+                if (error.response && error.response.data && error.response.data.error){
+                  setPhoneAccessCodeError(error.response.data.error)
+                }
+              })
+          }
+        })
+        .catch(error => {
+          if (error.response && error.response.data && error.response.data.error){
+            setPhoneAccessCodeError(error.response.data.error)
+          } else {
+            console.error(error)
+          }
+        })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   function back(){
@@ -305,7 +371,7 @@ export default function Register() {
               </div>
             </form>
             <div className={registrationStyles.modalFormButtonContainer}>
-              <button className={registrationStyles.modalFormButton} disabled={disableSendCodeButton} onClick={() => {sendAccessCode()}}>Send Code</button>
+              <button className={registrationStyles.modalFormButton} disabled={disableSendCodeButton} onClick={() => {sendPhoneAccessCode()}}>Send Code</button>
             </div>
           </div>
           :
@@ -313,8 +379,8 @@ export default function Register() {
             <form className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div>A text message has been sent to <b>{phoneNumber}</b></div>
-                <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={accessCode} onChange={(event) => {setAccessCode(event.target.value.trim())}}></input>
-                <div className={registrationStyles.modalFormBodyFootnoteError}>{accessCodeError}</div>
+                <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={phoneAccessCode} onChange={(event) => {setPhoneAccessCode(event.target.value.trim())}}></input>
+                <div className={registrationStyles.modalFormBodyFootnoteError}>{phoneAccessCodeError}</div>
               </div>
             </form>
             <button className={registrationStyles.modalFormButton} disabled={disableRegisterButton} onClick={() => {register()}}>Register</button>
