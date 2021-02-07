@@ -29,6 +29,8 @@ export default function Register() {
   const [passwordLengthColor, setPasswordLengthColor] = useState({'color':'grey'})
   const [passwordCharactersColor, setPasswordCharactersColor] = useState({'color':'grey'})
 
+  const [accountCheckError, setAccountCheckError] = useState('')
+
   const [phoneNumber, setPhoneNumber] = useState('')
   const [phoneNumberError, setPhoneNumberError] = useState('')
 
@@ -131,8 +133,25 @@ export default function Register() {
 
   function next(){
     // TO DO: Check if account already exists
-    // TO DO: Check if fields are valid
-    setPageIndex(pageIndex + 1)
+    const url = hostname + '/account/check'
+    const body = {
+      firstname: firstname,
+      lastname: lastname,
+      username: username,
+      email: email,
+      password: password,
+    }
+    axios.post(url, body)
+          .then(res => {
+            setAccountCheckError('')
+            setPageIndex(pageIndex + 1)
+          })
+          .catch(error => {
+            console.log(error.response.data.errors[0])
+            if (error.response.data && error.response.data.errors){
+              setAccountCheckError(error.response.data.errors[0])
+            }
+          })
   }
 
   function sendAccessCode(){
@@ -165,6 +184,7 @@ export default function Register() {
         </div>
         {(pageIndex==1) ?
           <div>
+            <div className={registrationStyles.modalAccountCheckError}>{accountCheckError}</div>
             <form className={registrationStyles.modalFormBody}>
               <div>
                 <div className={registrationStyles.modalFormBodyLeftContainer}>
