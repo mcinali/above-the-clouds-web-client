@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Router from "next/router"
 import Cookies from 'universal-cookie'
-import commonStyles from '../styles/Common.module.css'
 import registrationStyles from '../styles/Registration.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
@@ -195,7 +194,6 @@ export default function Register() {
         .then(res => {
           if (res.data && res.data.accessToken) {
             const accessToken = res.data.accessToken
-            console.log(accessToken)
             setEmailAccessToken(accessToken)
             setEmailAccessCodeError('')
             setPhoneNumber('')
@@ -250,11 +248,8 @@ export default function Register() {
       axios.post(url, body)
         .then(res => {
           if (res.data && res.data.accessToken){
-            console.log(res.data.accessToken)
             const phoneAccessToken = res.data.accessToken
-            console.log(res.data.accessToken)
             const registrationURL = hostname + '/account/register'
-            console.log(res.data.accessToken)
             const registrationBody = {
               firstname: firstname,
               lastname: lastname,
@@ -265,7 +260,6 @@ export default function Register() {
               emailAccessToken: emailAccessToken,
               phoneAccessToken: phoneAccessToken,
             }
-            console.log(registrationBody)
             axios.post(registrationURL, registrationBody)
               .then(res => {
                 // TO DO: save auth token & push to account setup page
@@ -275,7 +269,6 @@ export default function Register() {
                 Router.push("/discovery")
               })
               .catch(error => {
-                console.log(error.response.data)
                 if (error.response && error.response.data && error.response.data.error){
                   setPhoneAccessCodeError(error.response.data.error)
                 }
