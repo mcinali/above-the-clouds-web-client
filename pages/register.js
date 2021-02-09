@@ -266,7 +266,7 @@ export default function Register() {
                 const cookie = new Cookies()
                 const accountId = cookie.set('accountId', res.data.accountId)
                 const accountCookie = cookie.get('accountId')
-                Router.push("/discovery")
+                Router.push("/account/setup")
               })
               .catch(error => {
                 if (error.response && error.response.data && error.response.data.error){
