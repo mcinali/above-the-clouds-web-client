@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Router from "next/router"
+import Router, { useRouter } from "next/router"
 import Cookies from 'universal-cookie'
 import registrationStyles from '../styles/Registration.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
+export async function getServerSideProps({ res, query }) {
+  try {
+    const code = query.code
+    console.log(code)
+    const url = hostname + `/invitation/check?code=${code}`
+    const promise = await axios.get(url)
+    if (promise.status > 299){
+      res.writeHead(302, { // or 301
+      Location: "invalid",
+    });
+    res.end()
+    }
+    return { props: { code: code } }
+  } catch (error) {
+    console.error(error)
+    res.writeHead(302, { // or 301
+      Location: "invalid",
+    });
+    res.end()
+  }
+}
 
-export default function Register() {
+export default function Register({ code }) {
   const [pageIndex, setPageIndex] = useState(1)
   const [backButton, setBackButton] = useState('')
 
@@ -59,7 +80,7 @@ export default function Register() {
       setPasswordLengthColor({'color':'#cb4154'})
     }
 
-    const regex = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$')
+    const regex = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])')
     if (password.length==0){
       setPasswordCharactersColor({'color':'grey'})
     }
@@ -158,7 +179,7 @@ export default function Register() {
 
   function checkAccountForm(){
     try {
-      const url = hostname + '/preregistration/accountDetails/check'
+      const url = hostname + `/preregistration/accountDetails/check?code=${code}`
       const body = {
         firstname: firstname,
         lastname: lastname,
@@ -185,7 +206,7 @@ export default function Register() {
 
   function verifyEmailAccessCode(){
     try {
-      const url = hostname + '/preregistration/verify/email'
+      const url = hostname + `/preregistration/verify/email?code=${code}`
       const body = {
         email: email,
         accessCode: emailAccessCode,
@@ -215,7 +236,7 @@ export default function Register() {
 
   function sendPhoneAccessCode(){
     try {
-      const url = hostname + '/preregistration/phone/code'
+      const url = hostname + `/preregistration/phone/code?code=${code}`
       const body = {
         phone: phoneNumber,
       }
@@ -240,7 +261,7 @@ export default function Register() {
   function register(){
     // TO DO: API request to register user
     try {
-      const url = hostname + '/preregistration/verify/phone'
+      const url = hostname + `/preregistration/verify/phone?code=${code}`
       const body = {
         phone: phoneNumber,
         accessCode: phoneAccessCode,
@@ -249,7 +270,7 @@ export default function Register() {
         .then(res => {
           if (res.data && res.data.accessToken){
             const phoneAccessToken = res.data.accessToken
-            const registrationURL = hostname + '/account/register'
+            const registrationURL = hostname + `/account/register?code=${code}`
             const registrationBody = {
               firstname: firstname,
               lastname: lastname,
@@ -290,6 +311,7 @@ export default function Register() {
   function back(){
     setPageIndex(pageIndex - 1)
   }
+
 
   return (
     <div className={registrationStyles.main} style={{backgroundImage: 'url(/images/clouds_v1.jpg)'}}>
