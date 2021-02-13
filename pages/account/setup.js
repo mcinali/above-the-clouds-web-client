@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import accountSetupStyles from '../../styles/AccountSetup.module.css'
+import followsStyles from '../../styles/Follows.module.css'
 const { hostname } = require('../../config')
 const axios = require('axios')
 
@@ -12,8 +13,46 @@ export default function AccountSetup() {
   const [profilePicURL, setProfilePicURL] = useState('/images/default_profile_pic.jpg')
   const [disableTrashProfilePic, setDisableTrashProfilePic] = useState(true)
   const [disableNextButton, setDisableNextButton] = useState(true)
+  const [suggestions, setSuggestions] = useState([])
+
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+
+  function createPictureURLFromArrayBufferString(arraBufferString){
+    try {
+      const arrayBufferString = suggestion.profilePicture
+      const arrayBuffer = arrayBufferString.split(',')
+      const uint8ArrayBuffer = new Uint8Array(arrayBuffer)
+      const blob = new Blob( [ uint8ArrayBuffer ] )
+      const profilePictureURL = URL.createObjectURL(blob)
+      return profilePictureURL
+    } catch (error) {
+      console.error(error)
+      return '/images/default_profile_pic.jpg'
+    }
+  }
+
+  useEffect(() => {
+    const url = hostname + `/follows/following/suggestions/onboarding/${accountId}`
+    axios.get(url)
+      .then(res => {
+        const suggestionsResponse = res.data.suggestions
+        const suggestionsFrmtd = suggestionsResponse.map(suggestion => {
+          const profilePictureURL = (suggestion.profilePicture) ? createPictureURLFromArrayBufferString(suggestion.profilePicture) : '/images/default_profile_pic.jpg'
+          return {
+            accountId: suggestion.accountId,
+            firstname: suggestion.firstname,
+            lastname: suggestion.lastname,
+            username: suggestion.username,
+            profilePicture: profilePictureURL,
+            following: false,
+          }
+        })
+        console.log(suggestions)
+        console.log(suggestionsFrmtd)
+        setSuggestions(suggestionsFrmtd)
+      })
+  }, [])
 
   const upload = () => {
     document.getElementById('file-upload').click()
@@ -67,13 +106,69 @@ export default function AccountSetup() {
     setIndex(index - 1)
   }
 
+  function follow(suggestion, index){
+    const url = hostname + `/follows/follow`
+    const body = {
+      accountId: suggestion.accountId,
+      followerAccountId: accountId,
+    }
+    axios.post(url, body)
+      .then(res => {
+        const newSuggestion = {
+          accountId: suggestion.accountId,
+          firstname: suggestion.firstname,
+          lastname: suggestion.lastname,
+          username: suggestion.username,
+          profilePicture: suggestion.profilePicture,
+          following: true,
+        }
+        const newSuggestions = suggestions.map((oldSuggestion, mapIndex) => {
+          if (index===mapIndex){
+            return newSuggestion
+          } else {
+            return oldSuggestion
+          }
+        })
+        setSuggestions(newSuggestions)
+      })
+      .catch(err => console.error(error))
+  }
+
+  function unfollow(suggestion, index){
+    const url = hostname + `/follows/unfollow`
+    const body = {
+      accountId: suggestion.accountId,
+      followerAccountId: accountId,
+    }
+    axios.post(url, body)
+      .then(res => {
+        const newSuggestion = {
+          accountId: suggestion.accountId,
+          firstname: suggestion.firstname,
+          lastname: suggestion.lastname,
+          username: suggestion.username,
+          profilePicture: suggestion.profilePicture,
+          following: false,
+        }
+        const newSuggestions = suggestions.map((oldSuggestion, mapIndex) => {
+          if (index===mapIndex){
+            return newSuggestion
+          } else {
+            return oldSuggestion
+          }
+        })
+        setSuggestions(newSuggestions)
+      })
+      .catch(err => console.error(error))
+  }
+
   const done = () => {
     Router.push("/discovery")
   }
 
   useEffect(() => {
-    console.log(profilePicURL)
-  }, [profilePicURL])
+    console.log(suggestions)
+  }, [suggestions])
 
   return (
     <div className={accountSetupStyles.main}>
@@ -113,6 +208,11 @@ export default function AccountSetup() {
           </div>
           :
           <div>
+            <div className={accountSetupStyles.modalHeader}>
+              <div className={accountSetupStyles.modalHeaderNavigationButton} onClick={back}>
+                {"< back"}
+              </div>
+            </div>
             <div className={accountSetupStyles.modalTitle}>
               Find people to follow!
             </div>
@@ -120,10 +220,23 @@ export default function AccountSetup() {
               Discover conversations involving people you follow and people they follow.
             </div>
             <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
-              <div className={accountSetupStyles.modalFollowSuggestions} onClick={back}>
-                back
-                <img className={accountSetupStyles.modalProfilePic} src={profilePicURL}/>
-              </div>
+              {suggestions.map((suggestion, index) => {
+                return (
+                  <div key={index.toString()} className={followsStyles.followsRow}>
+                    <img className={followsStyles.followsImage} src={suggestion.profilePicture}/>
+                    <div className={followsStyles.followsUserInfo}>
+                      <a className={followsStyles.followsName}>{`${suggestion.firstname} ${suggestion.lastname}`}</a>
+                      <a className={followsStyles.followsUsername}>{`(${suggestion.username})`} </a>
+                    </div>
+                    {
+                      (suggestion.following) ?
+                      <button className={followsStyles.followsButtonUnfollow} onClick={function(){unfollow(suggestion, index)}}>Unfollow</button>
+                      :
+                      <button className={followsStyles.followsButtonFollow} onClick={function(){follow(suggestion, index)}}>Follow</button>
+                    }
+                  </div>
+                )
+              })}
             </div>
             <div className={accountSetupStyles.modalDoneButtonContainer}>
               <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>

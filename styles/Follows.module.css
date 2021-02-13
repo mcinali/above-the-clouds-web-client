@@ -1,0 +1,71 @@
+.followsButtonFollow {
+  margin-left: auto;
+  background-color: #0070f3;
+  color: white;
+  font-size: 16px;
+  border: 1px solid #0070f3;
+  border-radius: 20px;
+  padding: 0px 15px;
+  height: 30px;
+}
+
+.followsButtonFollow:hover{
+  cursor: pointer;
+}
+
+.followsButtonUnfollow {
+  margin-left: auto;
+  background-color: white;
+  color: #0070f3;
+  font-size: 16px;
+  border: 1px solid #0070f3;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 30px;
+}
+
+.followsButtonUnfollow:hover{
+  cursor:pointer;
+}
+
+.followsImage {
+  left: 0;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+}
+
+.followsName {
+  font-size: 16px;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.followsProfilePic {
+  width: 40px;
+  height: 40px;
+  border: 1px solid grey;
+  border-radius: 50%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.followsRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 60px;
+  width: 100%;
+  padding: 0px 20%;
+}
+
+.followsUserInfo {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.followsUsername {
+  font-size: 14px;
+  align-self: flex-start;
+}
