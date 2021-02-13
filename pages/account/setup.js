@@ -18,9 +18,8 @@ export default function AccountSetup() {
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
 
-  function createPictureURLFromArrayBufferString(arraBufferString){
+  function createPictureURLFromArrayBufferString(arrayBufferString){
     try {
-      const arrayBufferString = suggestion.profilePicture
       const arrayBuffer = arrayBufferString.split(',')
       const uint8ArrayBuffer = new Uint8Array(arrayBuffer)
       const blob = new Blob( [ uint8ArrayBuffer ] )
