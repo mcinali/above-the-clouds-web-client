@@ -20,39 +20,6 @@ export default function AccountSetup() {
   const accountId = cookie.get('accountId')
   const followingSuggestions = FollowingSuggestions(accountId)
 
-  function createPictureURLFromArrayBufferString(arrayBufferString){
-    try {
-      const arrayBuffer = arrayBufferString.split(',')
-      const uint8ArrayBuffer = new Uint8Array(arrayBuffer)
-      const blob = new Blob( [ uint8ArrayBuffer ] )
-      const profilePictureURL = URL.createObjectURL(blob)
-      return profilePictureURL
-    } catch (error) {
-      console.error(error)
-      return '/images/default_profile_pic.jpg'
-    }
-  }
-
-  useEffect(() => {
-    const url = hostname + `/follows/following/suggestions/onboarding/${accountId}`
-    axios.get(url)
-      .then(res => {
-        const suggestionsResponse = res.data.suggestions
-        const suggestionsFrmtd = suggestionsResponse.map(suggestion => {
-          const profilePictureURL = (suggestion.profilePicture) ? createPictureURLFromArrayBufferString(suggestion.profilePicture) : '/images/default_profile_pic.jpg'
-          return {
-            accountId: suggestion.accountId,
-            firstname: suggestion.firstname,
-            lastname: suggestion.lastname,
-            username: suggestion.username,
-            profilePicture: profilePictureURL,
-            following: false,
-          }
-        })
-        setSuggestions(suggestionsFrmtd)
-      })
-  }, [])
-
   const upload = () => {
     document.getElementById('file-upload').click()
   }
@@ -108,10 +75,6 @@ export default function AccountSetup() {
   const done = () => {
     Router.push("/discovery")
   }
-
-  useEffect(() => {
-    console.log(suggestions)
-  }, [suggestions])
 
   return (
     <div className={accountSetupStyles.main}>
