@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
 import StreamInviteModal from '../components/StreamInviteModal'
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
@@ -202,10 +203,10 @@ export default function Stream(){
           {streamParticipants.map((participant,index) =>
             <div key={index.toString()} className={streamStyles.participantContainer}>
               <div>
-                <Image src='/bitmoji.png' width='135' height='135' className={streamStyles.image} />
+                <img className={streamStyles.participantImage} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
               </div>
+              <div className={streamStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
               <div className={streamStyles.participantUsername}>{`${participant.username}`}</div>
-              <div className={streamStyles.participantName}>{`(${participant.firstname} ${participant.lastname})`}</div>
             </div>
           )}
         </div>

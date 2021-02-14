@@ -86,7 +86,6 @@ export default function DiscoveryStreams(accountId) {
               </div>
               <div className={discoveryStreamsStyles.cardButtonContainer}>
                 <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
-                <button className={discoveryStreamsStyles.cardButton}>Fork</button>
               </div>
             </div>
           )}
