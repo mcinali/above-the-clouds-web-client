@@ -1,19 +1,4 @@
-.followsButtonFollow {
-  margin-left: auto;
-  background-color: #0070f3;
-  color: white;
-  font-size: 16px;
-  border: 1px solid #0070f3;
-  border-radius: 20px;
-  padding: 0px 15px;
-  height: 30px;
-}
-
-.followsButtonFollow:hover{
-  cursor: pointer;
-}
-
-.followsButtonUnfollow {
+.buttonFollow {
   margin-left: auto;
   background-color: white;
   color: #0070f3;
@@ -24,24 +9,42 @@
   height: 30px;
 }
 
-.followsButtonUnfollow:hover{
-  cursor:pointer;
+.buttonFollow:hover{
+  cursor: pointer;
+  background-color: #F5F5F5;
 }
 
-.followsImage {
+.buttonUnfollow {
+  margin-left: auto;
+  background-color: white;
+  color: grey;
+  font-size: 16px;
+  border: 1px solid grey;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 30px;
+}
+
+.buttonUnfollow:hover{
+  cursor:pointer;
+  background-color: #F5F5F5;
+}
+
+.image {
   left: 0;
   border-radius: 50%;
   height: 40px;
   width: 40px;
 }
 
-.followsName {
+.name {
   font-size: 16px;
   font-weight: 600;
   align-self: flex-start;
+  margin-bottom: 2px;
 }
 
-.followsProfilePic {
+.profilePic {
   width: 40px;
   height: 40px;
   border: 1px solid grey;
@@ -50,22 +53,31 @@
   background-repeat: no-repeat;
 }
 
-.followsRow {
+.row {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
   height: 60px;
   width: 100%;
-  padding: 0px 20%;
+  padding: 0px 1%;
 }
 
-.followsUserInfo {
+.title {
+  font-size: 14px;
+  color: grey;
+  margin-bottom: 15px;
+}
+
+.userInfo {
   margin-left: 15px;
   display: flex;
   flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.followsUsername {
-  font-size: 14px;
+.username {
+  font-size: 12px;
   align-self: flex-start;
 }

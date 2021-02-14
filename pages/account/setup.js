@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
 import Cookies from 'universal-cookie'
+import FollowingSuggestions from '../../components/followingSuggestions'
 import accountSetupStyles from '../../styles/AccountSetup.module.css'
 import followsStyles from '../../styles/Follows.module.css'
 const { hostname } = require('../../config')
@@ -17,6 +18,7 @@ export default function AccountSetup() {
 
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+  const followingSuggestions = FollowingSuggestions(accountId)
 
   function createPictureURLFromArrayBufferString(arrayBufferString){
     try {
@@ -47,8 +49,6 @@ export default function AccountSetup() {
             following: false,
           }
         })
-        console.log(suggestions)
-        console.log(suggestionsFrmtd)
         setSuggestions(suggestionsFrmtd)
       })
   }, [])
@@ -103,62 +103,6 @@ export default function AccountSetup() {
 
   const back = () => {
     setIndex(index - 1)
-  }
-
-  function follow(suggestion, index){
-    const url = hostname + `/follows/follow`
-    const body = {
-      accountId: suggestion.accountId,
-      followerAccountId: accountId,
-    }
-    axios.post(url, body)
-      .then(res => {
-        const newSuggestion = {
-          accountId: suggestion.accountId,
-          firstname: suggestion.firstname,
-          lastname: suggestion.lastname,
-          username: suggestion.username,
-          profilePicture: suggestion.profilePicture,
-          following: true,
-        }
-        const newSuggestions = suggestions.map((oldSuggestion, mapIndex) => {
-          if (index===mapIndex){
-            return newSuggestion
-          } else {
-            return oldSuggestion
-          }
-        })
-        setSuggestions(newSuggestions)
-      })
-      .catch(err => console.error(error))
-  }
-
-  function unfollow(suggestion, index){
-    const url = hostname + `/follows/unfollow`
-    const body = {
-      accountId: suggestion.accountId,
-      followerAccountId: accountId,
-    }
-    axios.post(url, body)
-      .then(res => {
-        const newSuggestion = {
-          accountId: suggestion.accountId,
-          firstname: suggestion.firstname,
-          lastname: suggestion.lastname,
-          username: suggestion.username,
-          profilePicture: suggestion.profilePicture,
-          following: false,
-        }
-        const newSuggestions = suggestions.map((oldSuggestion, mapIndex) => {
-          if (index===mapIndex){
-            return newSuggestion
-          } else {
-            return oldSuggestion
-          }
-        })
-        setSuggestions(newSuggestions)
-      })
-      .catch(err => console.error(error))
   }
 
   const done = () => {
@@ -219,30 +163,13 @@ export default function AccountSetup() {
               Discover conversations involving people you follow and people they follow.
             </div>
             <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
-              {suggestions.map((suggestion, index) => {
-                return (
-                  <div key={index.toString()} className={followsStyles.followsRow}>
-                    <img className={followsStyles.followsImage} src={suggestion.profilePicture}/>
-                    <div className={followsStyles.followsUserInfo}>
-                      <a className={followsStyles.followsName}>{`${suggestion.firstname} ${suggestion.lastname}`}</a>
-                      <a className={followsStyles.followsUsername}>{`(${suggestion.username})`} </a>
-                    </div>
-                    {
-                      (suggestion.following) ?
-                      <button className={followsStyles.followsButtonUnfollow} onClick={function(){unfollow(suggestion, index)}}>Unfollow</button>
-                      :
-                      <button className={followsStyles.followsButtonFollow} onClick={function(){follow(suggestion, index)}}>Follow</button>
-                    }
-                  </div>
-                )
-              })}
+              {followingSuggestions}
             </div>
             <div className={accountSetupStyles.modalDoneButtonContainer}>
               <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>
             </div>
           </div>
         }
-
       </div>
     </div>
   )

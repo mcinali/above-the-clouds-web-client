@@ -27,6 +27,9 @@
 .name {
   font-size: 14px;
   align-self: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rightContainer {
@@ -61,14 +64,13 @@
   margin-left: 15px;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .username {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   align-self: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
