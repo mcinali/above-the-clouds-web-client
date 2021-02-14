@@ -2,15 +2,15 @@
   margin: 0px auto;
   display: block;
   background-color: #0070f3;
-  color:  white;
+  color: white;
   border: 1px solid #0070f3;
-  font-size: 18px;
-  border-radius: 8px;
-  padding: 10px 32px;
+  font-size: 16px;
+  border-radius: 20px;
+  padding: 0px 15px;
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 50px;
+  height: 42px;
 }
 
 .newStreamButton:hover {
@@ -29,16 +29,22 @@
 
 .panelLeft {
   position: relative;
-  width: 34%;
-  padding-left: 1%;
+  width: 375px;
+  padding-left: 40px;
   float: left;
   height: 100%;
   z-index: 1;
 }
 
+.panelLeftMainContainer {
+  margin: 10px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
 .panelRight {
   position: relative;
-  width: 66%;
+  width: 68%;
   padding-left: 1%;
   float: left;
   height: 100%;

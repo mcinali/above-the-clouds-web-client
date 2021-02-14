@@ -7,8 +7,8 @@ import discoveryStyles from '../styles/Discovery.module.css'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import NewStreamModal from '../components/newStreamModal'
-import Connections from '../components/connections'
-import DiscoveryStreams from '../components/DiscoveryStreams'
+import FollowingSuggestions from '../components/followingSuggestions'
+import DiscoveryStreams from '../components/discoveryStreams'
 
 export default function Discovery() {
   const [showModal, setShowModal] = useState(false)
@@ -20,7 +20,9 @@ export default function Discovery() {
       {Header()}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
-          {Connections(accountId)}
+          <div className={discoveryStyles.panelLeftMainContainer}>
+            {FollowingSuggestions(accountId)}
+          </div>
         </div>
         <div className={discoveryStyles.panelRight}>
           <div className={discoveryStyles.newStreamContainer}>

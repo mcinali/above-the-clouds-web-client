@@ -182,11 +182,6 @@ export default function Stream(){
     }
   }
 
-  function adjustVolume(volume){
-    const player = document.getElementById('audio-controller')
-    player.volume = volume / 100
-  }
-
   return (
     <div className={commonStyles.container}>
       {Header()}
@@ -210,7 +205,7 @@ export default function Stream(){
                 <Image src='/bitmoji.png' width='135' height='135' className={streamStyles.image} />
               </div>
               <div className={streamStyles.participantUsername}>{`${participant.username}`}</div>
-              <div className={streamStyles.participantName}>{`(${participant.firstname} ${participant.lastnameInitial})`}</div>
+              <div className={streamStyles.participantName}>{`(${participant.firstname} ${participant.lastname})`}</div>
             </div>
           )}
         </div>
@@ -219,7 +214,6 @@ export default function Stream(){
             { (mute) ? 'Unmute Mic' : 'Mute Mic'}
           </button>
           <audio id='audio-controller'></audio>
-          <input id='vol-control' type='range' min='0' max='100' step='4' onInput={(event) => {adjustVolume(event.target.value)}} onChange={(event) => {adjustVolume(event.target.value)}}></input>
           <button className={streamStyles.inviteButton} onClick={function(){setShowModal(true)}}>Invite</button>
           <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
         </div>

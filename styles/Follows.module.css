@@ -1,0 +1,83 @@
+.buttonFollow {
+  margin-left: auto;
+  background-color: white;
+  color: #0070f3;
+  font-size: 16px;
+  border: 1px solid #0070f3;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 30px;
+}
+
+.buttonFollow:hover{
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.buttonUnfollow {
+  margin-left: auto;
+  background-color: white;
+  color: grey;
+  font-size: 16px;
+  border: 1px solid grey;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 30px;
+}
+
+.buttonUnfollow:hover{
+  cursor:pointer;
+  background-color: #F5F5F5;
+}
+
+.image {
+  left: 0;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  align-self: flex-start;
+  margin-bottom: 2px;
+}
+
+.profilePic {
+  width: 40px;
+  height: 40px;
+  border: 1px solid grey;
+  border-radius: 50%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 60px;
+  width: 100%;
+  padding: 0px 1%;
+}
+
+.title {
+  font-size: 14px;
+  color: grey;
+  margin-bottom: 15px;
+}
+
+.userInfo {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.username {
+  font-size: 12px;
+  align-self: flex-start;
+}

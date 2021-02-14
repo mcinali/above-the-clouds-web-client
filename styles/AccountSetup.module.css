@@ -1,0 +1,223 @@
+.main {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.modal {
+  width: 900px;
+  min-height: 650px;
+  position: fixed;
+  margin-top: 25px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: white;
+  opacity: 100%;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 10px;
+  z-index: 2;
+  overflow: scroll;
+}
+
+.modalDoneButton {
+  background-color: white;
+  color: #0070f3;
+  font-size: 18px;
+  border: 1px solid #0070f3;
+  border-radius: 10px;
+  margin: 15px auto;
+  display: flex;
+  padding: 0px 40px;
+  align-items: center;
+  height: 40px;
+}
+
+.modalDoneButton:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
+.modalFollowSuggestionsContainer {
+  width: 100%;
+  height: 400px;
+  margin-top: 25px;
+  padding: 5px 28%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  overflow: scroll;
+}
+
+.modalFollowSuggestions {
+  width: 500px;
+  height: 400px;
+  padding: 5px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.modalHeader {
+  width: 98%;
+  height: 30px;
+  margin: 10px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalHeaderNavigationButton {
+  float: left;
+  padding-left: 10px;
+  font-size: 18px;
+  color: #0070f3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.modalHeaderNavigationButton:hover{
+  cursor: pointer;
+}
+
+.modalNavigationButtonContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 15px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modalNextButton {
+  background-color: #0070f3;
+  color: white;
+  font-size: 20px;
+  border: 1px solid white;
+  border-radius: 10px;
+  margin: 15px auto;
+  display: flex;
+  padding: 0px 40px;
+  align-items: center;
+  height: 40px;
+}
+
+.modalNextButton:hover {
+  opacity: 80%;
+  cursor: pointer;
+}
+
+.modalNextButton:disabled {
+  opacity: 50%;
+  cursor: default;
+}
+
+.modalProfilePic {
+  width: 250px;
+  height: 250px;
+  border: 1px solid grey;
+  border-radius: 50%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.modalProfilePicButtonContainer {
+  width: 100%;
+  height: 50px;
+  margin-top: 15px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalProfilePicContainer {
+  width: 100%;
+  height: 300px;
+  margin-top: 15px;
+  font-size: 18px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modalProfilePicTrashButton {
+  color: #0070f3;
+  font-size: 16px;
+  border: none;
+  background: none;
+}
+
+.modalProfilePicTrashButton:hover {
+  cursor: pointer;
+}
+
+.modalProfilePicTrashButton:disabled {
+  display: none;
+  cursor: default;
+}
+
+.modalProfilePicTrashButtonContainer {
+  width: 250px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modalProfilePicUploadButton {
+  background-color: white;
+  color: #0070f3;
+  font-size: 18px;
+  border: 1px solid #0070f3;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0px 32px;
+  height: 30px;
+}
+
+.modalProfilePicUploadButton:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
+.modalSkipButton {
+  color: #0070f3;
+  font-size: 14px;
+}
+
+.modalSkipButton:hover {
+  cursor: pointer;
+}
+
+.modalSubtitle {
+  width: 100%;
+  height: 50px;
+  margin-top: 15px;
+  padding: 0 100px;
+  font-size: 18px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center
+}
+
+.modalTitle {
+  width: 100%;
+  height: 50px;
+  margin-top: 20px;
+  font-size: 32px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center
+}
