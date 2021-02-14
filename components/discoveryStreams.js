@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Router from "next/router"
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import discoveryStreamsStyles from '../styles/DiscoveryStreams.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
@@ -34,6 +35,7 @@ export default function DiscoveryStreams(accountId) {
   useEffect(() => {
     axios.get(hostname+`/discovery/${accountId}`)
          .then(res => {
+           console.log(res.data)
            setStreams(res.data)
          })
          .catch(error => {
@@ -60,30 +62,30 @@ export default function DiscoveryStreams(accountId) {
           {streams.map((stream, index) =>
             <div id="card" key={index.toString()} className={discoveryStreamsStyles.card}>
               <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
-                <a>{stream.info.speakerAccessibility}</a>
+                <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
               </div>
               <div className={discoveryStreamsStyles.topicContainer}>
-                <a className={discoveryStreamsStyles.topicText}>{stream.info.topic}</a>
+                <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
               </div>
               <div className={discoveryStreamsStyles.timeContainer}>
                 <div className={discoveryStreamsStyles.timeSubContainer}>
-                  <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.info.startTime)}</div>
+                  <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
                   <div className={discoveryStreamsStyles.timeLabels}>{'hr : min : sec'}</div>
                 </div>
               </div>
               <div className={discoveryStreamsStyles.participantsContainer}>
-                {stream.participants.map((participant,index) =>
+                {stream.participants.details.map((participant,index) =>
                   <div key={index.toString()} className={discoveryStreamsStyles.participantContainer}>
                     <div>
-                      <Image src='/bitmoji.png' width='60' height='60' className={discoveryStreamsStyles.image} />
+                      <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
                     </div>
+                    <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
                     <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
-                    <div className={discoveryStreamsStyles.participantName}>{`(${participant.firstname} ${participant.lastnameInitial})`}</div>
                   </div>
                 )}
               </div>
               <div className={discoveryStreamsStyles.cardButtonContainer}>
-                <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream.info)}}>Join</button>
+                <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
                 <button className={discoveryStreamsStyles.cardButton}>Fork</button>
               </div>
             </div>
