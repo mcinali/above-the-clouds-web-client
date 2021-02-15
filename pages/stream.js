@@ -8,6 +8,7 @@ import StreamInviteModal from '../components/StreamInviteModal'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
+import followsStyles from '../styles/Follows.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
@@ -93,6 +94,7 @@ export default function Stream(){
                  axios.get(streamURL)
                       .then(res => {
                         if (res.data) {
+                          console.log(res.data)
                           setStreamParticipants(res.data.participants)
                         }
                       })
@@ -140,6 +142,7 @@ export default function Stream(){
              axios.get(streamURL)
                   .then(res => {
                     if (res.data) {
+                      console.log(res.data)
                       setStreamInfo(res.data.info)
                       setStreamParticipants(res.data.participants)
                     }
@@ -193,6 +196,36 @@ export default function Stream(){
     }
   }
 
+  function follow(participant, index){
+    const url = hostname + `/follows/follow`
+    const body = {
+      accountId: participant.accountId,
+      followerAccountId: accountId,
+    }
+    axios.post(url, body)
+      .then(res => {
+        const newStreamParticipants = streamParticipants
+        newStreamParticipants[index].following = true
+        setSuggestions(newStreamParticipants)
+      })
+      .catch(error => console.error(error))
+  }
+
+  function unfollow(participant, index){
+    const url = hostname + `/follows/unfollow`
+    const body = {
+      accountId: participant.accountId,
+      followerAccountId: accountId,
+    }
+    axios.post(url, body)
+      .then(res => {
+        const newStreamParticipants = streamParticipants
+        newStreamParticipants[index].following = false
+        setSuggestions(newStreamParticipants)
+      })
+      .catch(error => console.error(error))
+  }
+
   return (
     <div className={commonStyles.container}>
       {Header(accountInfo)}
@@ -217,6 +250,15 @@ export default function Stream(){
               </div>
               <div className={streamStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
               <div className={streamStyles.participantUsername}>{`${participant.username}`}</div>
+              {
+                (participant.following==null) ?
+                <div></div>
+                :
+                (participant.following) ?
+                <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Unfollow</button>
+                :
+                <button className={followsStyles.buttonFollow} onClick={function(){follow(participant, index)}}>Follow</button>
+              }
             </div>
           )}
         </div>
