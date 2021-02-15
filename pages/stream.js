@@ -94,7 +94,6 @@ export default function Stream(){
                  axios.get(streamURL)
                       .then(res => {
                         if (res.data) {
-                          console.log(res.data)
                           setStreamParticipants(res.data.participants)
                         }
                       })
@@ -142,7 +141,6 @@ export default function Stream(){
              axios.get(streamURL)
                   .then(res => {
                     if (res.data) {
-                      console.log(res.data)
                       setStreamInfo(res.data.info)
                       setStreamParticipants(res.data.participants)
                     }
@@ -228,6 +226,7 @@ export default function Stream(){
 
   return (
     <div className={commonStyles.container}>
+      {StreamInviteModal(accountId, streamId, showModal, setShowModal)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
@@ -270,7 +269,6 @@ export default function Stream(){
           <button className={streamStyles.inviteButton} onClick={function(){setShowModal(true)}}>Invite</button>
           <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
         </div>
-        {StreamInviteModal(accountId, streamId, streamParticipants, showModal, setShowModal)}
       </div>
     </div>
   )

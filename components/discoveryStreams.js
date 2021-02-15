@@ -35,7 +35,6 @@ export default function DiscoveryStreams(accountId) {
   useEffect(() => {
     axios.get(hostname+`/discovery/${accountId}`)
          .then(res => {
-           console.log(res.data)
            setStreams(res.data)
          })
          .catch(error => {
