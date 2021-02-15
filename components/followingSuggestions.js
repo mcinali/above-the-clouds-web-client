@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import followsStyles from '../styles/Follows.module.css'
 import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
@@ -8,37 +9,11 @@ const axios = require('axios')
 export default function FollowingSuggestions(accountId){
   const [suggestions, setSuggestions] = useState([])
 
-  function createPictureURLFromArrayBufferString(arrayBufferString){
-    try {
-      const arrayBuffer = arrayBufferString.split(',')
-      const uint8ArrayBuffer = new Uint8Array(arrayBuffer)
-      const blob = new Blob( [ uint8ArrayBuffer ] )
-      const profilePictureURL = URL.createObjectURL(blob)
-      return profilePictureURL
-    } catch (error) {
-      console.error(error)
-      return '/images/default_profile_pic.jpg'
-    }
-  }
-
   useEffect(() => {
     const url = hostname + `/follows/suggestions/${accountId}`
     axios.get(url)
       .then(res => {
-        const suggestionsResponse = res.data.suggestions
-        const suggestionsFrmtd = suggestionsResponse.map(suggestion => {
-          const profilePictureURL = (suggestion.profilePicture) ? createPictureURLFromArrayBufferString(suggestion.profilePicture) : '/images/default_profile_pic.jpg'
-          return {
-            accountId: suggestion.accountId,
-            firstname: suggestion.firstname,
-            lastname: suggestion.lastname,
-            username: suggestion.username,
-            profilePicture: profilePictureURL,
-            following: false,
-          }
-        })
-        console.log(suggestionsFrmtd)
-        setSuggestions(suggestionsFrmtd)
+        setSuggestions(res.data.suggestions)
       })
       .catch(error => console.error(error))
   }, [])
@@ -105,7 +80,7 @@ export default function FollowingSuggestions(accountId){
       {suggestions.map((suggestion, index) => {
         return (
           <div key={index.toString()} className={followsStyles.row}>
-            <img className={followsStyles.image} src={suggestion.profilePicture}/>
+            <img className={followsStyles.image} src={createPictureURLFromArrayBufferString(suggestion.profilePicture)}/>
             <div className={followsStyles.userInfo}>
               <a className={followsStyles.name}>{`${suggestion.firstname} ${suggestion.lastname}`}</a>
               <a className={followsStyles.username}>{`${suggestion.username}`} </a>

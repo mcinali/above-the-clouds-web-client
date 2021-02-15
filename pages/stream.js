@@ -5,6 +5,7 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
 import StreamInviteModal from '../components/StreamInviteModal'
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
@@ -22,11 +23,21 @@ export default function Stream(){
   const [mute, setMute] = useState(false)
   const [volume, setVolume] = useState(0.0)
 
-  const router = useRouter()
-  const streamId = router.query.streamId
-
+  const [accountInfo, setAccountInfo] = useState({})
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    axios.get(url)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  const router = useRouter()
+  const streamId = router.query.streamId
 
   const [date, setDate] = useState(new Date())
 
@@ -184,10 +195,10 @@ export default function Stream(){
 
   return (
     <div className={commonStyles.container}>
-      {Header()}
+      {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
-          <a>{streamInfo.speakerAccessibility}</a>
+          <a>{(streamInfo.inviteOnly) ? 'Invite-Only' : ''}</a>
         </div>
         <div className={streamStyles.topicContainer}>
           <div className={streamStyles.topicText}>{streamInfo.topic}</div>
@@ -202,10 +213,10 @@ export default function Stream(){
           {streamParticipants.map((participant,index) =>
             <div key={index.toString()} className={streamStyles.participantContainer}>
               <div>
-                <Image src='/bitmoji.png' width='135' height='135' className={streamStyles.image} />
+                <img className={streamStyles.participantImage} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
               </div>
+              <div className={streamStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
               <div className={streamStyles.participantUsername}>{`${participant.username}`}</div>
-              <div className={streamStyles.participantName}>{`(${participant.firstname} ${participant.lastname})`}</div>
             </div>
           )}
         </div>

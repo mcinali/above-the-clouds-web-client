@@ -5,8 +5,33 @@
   width: 100%;
   height: 100%;
   background: #636363;
-  z-index: 1;
+  z-index: 3;
   opacity: 80%;
+  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.bodyContainer {
+  width: 100%;
+  padding: 10px 8%;
+}
+
+.checkbox {
+  float: left;
+}
+
+.checkboxContainer {
+  float: right;
+  width: 100px;
+  display: flex;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  margin-left: 5px;
 }
 
 .createStreamButton {
@@ -43,7 +68,6 @@
 }
 
 .exitButton {
-  margin-top: 10px;
   margin-right: 10px;
   font-size: 20px;
   color: #696969;
@@ -68,23 +92,34 @@
 }
 
 .header {
+  width: 50%;
+  float: left;
   font-size: 20px;
   margin-bottom: 10px;
+  color: #0070f3;
 }
 
 .invitationsContainer {
-  padding: 10px;
+  margin-top: 15px;
+  width: 100%;
 }
 
 .inviteesContainer {
-  padding-left: 10px;
-  height: 200px;
+  margin-top: 15px;
+  width: 100%;
+  height: 190px;
+  z-index: auto;
+}
+
+.inviteesQueuedContainer {
   overflow: scroll;
+  width: 100%;
+  height: 100%;
 }
 
 .modal {
-  width: 900px;
-  min-height: 650px;
+  width: 750px;
+  height: 600px;
   position: fixed;
   margin-top: 25px;
   left: 50%;
@@ -93,19 +128,30 @@
   opacity: 100%;
   border: 1px solid #eaeaea;
   border-radius: 10px;
-  z-index: 2;
+  z-index: 4;
   overflow: scroll;
 }
 
 .modalContainer {
-  margin-left: 10px;
-  padding-left: 5px;
-  width: 885px;
-  height: 600px;
+  margin: 10px 10px;
 }
 
-.radioContainer {
-  margin-left: 15px;
+.removeInviteeButton {
+  margin: 10px auto;
+  display: block;
+  background-color: white;
+  color: #0070f3;
+  font-size: 12px;
+  border: 1px solid #0070f3;
+  border-radius: 10px;
+  padding: auto 15px;
+  text-align: center;
+  height: 20px;
+}
+
+.removeInviteeButton:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
 }
 
 .speakerAccessibilityContainer {
@@ -114,14 +160,15 @@
 
 .textForm {
   width: 100%;
-  height: 50px;
-  min-width: 315px;
+  min-height: 80px;
   border: 1px solid #eaeaea;
-  font-size: 20px;
+  font: inherit;
+  font-size: 32px;
+  font-weight: 600;
   border-radius: 16px;
-  padding-left: 16px;
-}
-
-.topicContainer {
-  padding: 10px;
+  padding: 5px 15px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
 }

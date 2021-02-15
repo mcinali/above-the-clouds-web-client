@@ -81,17 +81,20 @@
 
 .participantImage {
   left: 0;
-  border: 1px solid #0070f3;
   border-radius: 50%;
+  height: 150px;
+  width: 150px;
+  margin-bottom: 5px;
 }
 
 .participantName {
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
 }
 
 .participantUsername {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 12px;
 }
 
 .speakerAccessibilityContainer {
@@ -103,7 +106,7 @@
 
 .time {
   margin: 0px;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .timeContainer {
@@ -123,7 +126,7 @@
 
 .timeLabels {
   margin: 0px;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .topicContainer {
