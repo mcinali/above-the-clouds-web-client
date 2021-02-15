@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Router from "next/router"
 import Invitations from '../components/invitations'
 import Image from 'next/image'
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import streamInvitesStyles from '../styles/StreamInvites.module.css'
 import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
@@ -93,10 +94,10 @@ export default function StreamInviteModal(accountId, streamId, streamParticipant
                   <div key={index.toString()} className={userStyles.row}>
                     {(invitation.inviteeAccountId) ?
                       <div className={userStyles.row}>
-                        <Image src='/bitmoji.png' width='40' height='40' className={userStyles.image} />
+                        <img className={userStyles.image} src={createPictureURLFromArrayBufferString(invitation.profilePicture)}/>
                         <div className={userStyles.userInfo}>
+                          <a className={userStyles.name}>{`${invitation.firstname} ${invitation.lastname}`}</a>
                           <a className={userStyles.username}>{invitation.username} </a>
-                          <a className={userStyles.name}>{`(${invitation.firstname} ${invitation.lastnameInitial})`}</a>
                         </div>
                       </div>
                       :

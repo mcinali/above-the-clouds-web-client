@@ -9,15 +9,29 @@ import Header from '../components/header'
 import NewStreamModal from '../components/newStreamModal'
 import FollowingSuggestions from '../components/followingSuggestions'
 import DiscoveryStreams from '../components/discoveryStreams'
+const { hostname } = require('../config')
+const axios = require('axios')
 
 export default function Discovery() {
   const [showModal, setShowModal] = useState(false)
+  const [accountInfo, setAccountInfo] = useState({})
 
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    axios.get(url)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
   return (
     <div className={commonStyles.container}>
-      {Header()}
+      {NewStreamModal(accountId, showModal, setShowModal)}
+      {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
@@ -30,7 +44,6 @@ export default function Discovery() {
           </div>
           {DiscoveryStreams(accountId)}
         </div>
-        {NewStreamModal(accountId, showModal, setShowModal)}
       </div>
     </div>
   )

@@ -1,29 +1,27 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import invitationsStyles from '../styles/Invitations.module.css'
 import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function Invitations(accountId, filterList, addInvitation, removeInvitation, disableOptions, queuedInvitationInSearch){
+export default function Invitations(accountId, filterList, addInvitation, removeInvitation, queuedInvitationInSearch){
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
   function fetchSuggestions(text){
     try {
-      setSearchText(text.trim())
-      const url = hostname+`/connections/${accountId}/suggestions`
-      const params = {text: text}
-      if (Boolean(text)){
-        axios.get(url, {params: params})
+      const searchText = text.trim()
+      setSearchText(searchText)
+      const url = hostname+`/suggestions?accountId=${accountId}&text=${searchText}`
+      if (Boolean(searchText)){
+        axios.get(url)
              .then(res => {
                if (res.data){
-                 const regex = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/
+                 console.log(res.data)
                  const suggestions = filterSuggestions(res.data)
                  if (suggestions.length>0) {
-                   setSearchResults(suggestions)
-                 } else if (regex.test(text)){
-                   const suggestions = [{"accountId":null,"email":text}]
                    setSearchResults(suggestions)
                  } else {
                    setSearchResults([])
@@ -54,7 +52,6 @@ export default function Invitations(accountId, filterList, addInvitation, remove
 
   function queueAccount(account){
     try {
-      console.log(account)
       addInvitation(account)
       setSearchText('')
       setSearchResults([])
@@ -75,30 +72,16 @@ export default function Invitations(accountId, filterList, addInvitation, remove
   return (
     <div>
       {(Object.keys(queuedInvitationInSearch).length>0) ?
-        <div>
-          {(queuedInvitationInSearch.accountId) ?
-            <div className={userStyles.row}>
-              <Image src='/bitmoji.png' width='40' height='40' className={userStyles.image} />
-              <div className={userStyles.userInfo}>
-                <a className={userStyles.username}>{queuedInvitationInSearch.username} </a>
-                <a className={userStyles.name}>{`(${queuedInvitationInSearch.firstname} ${queuedInvitationInSearch.lastnameInitial})`}</a>
-              </div>
-              <div className={userStyles.rightContainer}>
-                <div className={userStyles.status}>{queuedInvitationInSearch.status}</div>
-                <button className={userStyles.discardButton} onClick={function(){discardAccount()}}>x</button>
-              </div>
-            </div>
-            :
-            <div className={userStyles.row}>
-              <div className={userStyles.userInfo}>
-                <a className={userStyles.username}>{queuedInvitationInSearch.email} </a>
-              </div>
-              <div className={userStyles.rightContainer}>
-                <div className={userStyles.status}>{queuedInvitationInSearch.status}</div>
-                <button className={userStyles.discardButton} onClick={function(){discardAccount()}}>x</button>
-              </div>
-            </div>
-          }
+        <div className={userStyles.row}>
+          <img className={userStyles.image} src={createPictureURLFromArrayBufferString(queuedInvitationInSearch.profilePicture)}/>
+          <div className={userStyles.userInfo}>
+            <a className={userStyles.name}>{`${queuedInvitationInSearch.firstname} ${queuedInvitationInSearch.lastname}`}</a>
+            <a className={userStyles.username}>{queuedInvitationInSearch.username} </a>
+          </div>
+          <div className={userStyles.rightContainer}>
+            <div className={userStyles.status}>{(queuedInvitationInSearch.following) ? 'Following' : ''}</div>
+            <button className={userStyles.discardButton} onClick={function(){discardAccount()}}>x</button>
+          </div>
         </div>
         :
         <input
@@ -113,24 +96,16 @@ export default function Invitations(accountId, filterList, addInvitation, remove
         <div className={invitationsStyles.dropdownContent}>
           {searchResults.map((result, index) => {
             return (
-                (result.accountId) ?
-                  <button className={invitationsStyles.dropdownButton} key={index.toString()} onClick={function(){queueAccount(result)}} disabled={!(disableOptions) ? disableOptions : Boolean(result.status)}>
-                    <Image src='/bitmoji.png' width='30' height='30' className={userStyles.image} />
-                    <div className={userStyles.userInfo}>
-                      <a className={userStyles.username}>{result.username} </a>
-                      <a className={userStyles.name}>{`(${result.firstname} ${result.lastnameInitial})`}</a>
-                    </div>
-                    <div className={userStyles.rightContainer}>
-                      <a className={userStyles.status}>{result.status}</a>
-                    </div>
-                  </button>
-                  :
-                  <div className={invitationsStyles.dropdownRow} key={index.toString()} onClick={function(){queueAccount(result)}}>
-                    <div className={userStyles.userInfo}>
-                      <a className={userStyles.username}>{result.email} </a>
-                      <a className={userStyles.name}>(Send Email Invite)</a>
-                    </div>
-                  </div>
+              <button className={invitationsStyles.dropdownButton} key={index.toString()} onClick={function(){queueAccount(result)}}>
+                <img className={userStyles.image} src={createPictureURLFromArrayBufferString(result.profilePicture)}/>
+                <div className={userStyles.userInfo}>
+                  <a className={userStyles.name}>{`${result.firstname} ${result.lastname}`}</a>
+                  <a className={userStyles.username}>{result.username} </a>
+                </div>
+                <div className={userStyles.rightContainer}>
+                  <a className={userStyles.status}>{(result.following) ? '(Following)': ''}</a>
+                </div>
+              </button>
             )
           })}
         </div>

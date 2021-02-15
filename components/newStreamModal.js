@@ -1,34 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import Router from "next/router"
+import Router from 'next/router'
 import Invitations from '../components/invitations'
 import Image from 'next/image'
+import { createPictureURLFromArrayBufferString } from '../utilities'
 import newStreamStyles from '../styles/NewStream.module.css'
 import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
 export default function NewStreamModal(accountId, showModal, setShowModal, forkedTopic){
-  const displayModal = showModal ? {"display":"block"} : {"display":"none"}
+  const displayModal = showModal ? {'display':'block'} : {'display':'none'}
   const [topicText, setTopicText] = useState('')
   const [topic, setTopic] = (forkedTopic) ? useState(forkedTopic) : useState({})
-  const [speakerAccessibility, setSpeakerAccessibility] = useState('')
+  const [inviteOnly, setInviteOnly] = useState(false)
   const [capacity, setCapacity] = useState(5)
   const [invitations, setInvitations] = useState([])
   const [disableCreateStream, setDisableCreateStream] = useState(true)
 
   useEffect(() => {
-    setDisableCreateStream(!(Boolean(topicText) && Boolean(speakerAccessibility)))
+    setDisableCreateStream(!Boolean(topicText))
   })
 
   function createStream(){
     try {
+      const invitationAccountIds = invitations.map(item => {return {accountId: item.accountId}})
       const streamURL = hostname + `/stream`
       const streamBody = {
         topicId: topic.topicId,
         accountId: accountId,
-        speakerAccessibility: speakerAccessibility,
+        inviteOnly: inviteOnly,
         capacity: 5,
-        invitees:invitations,
+        invitees:invitationAccountIds,
       }
       if (!streamBody.topicId){
         const topicURL = hostname + `/topic`
@@ -45,7 +47,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
                       .then(res => {
                         if (res.data && res.data.streamId){
                           Router.push(
-                            {pathname:"/stream",
+                            {pathname:'/stream',
                             query: {streamId: res.data.streamId}
                           })
                         }
@@ -63,7 +65,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
              .then(res => {
                if (res.data){
                  Router.push(
-                   {pathname:"/stream",
+                   {pathname:'/stream',
                    query: {streamId: res.data.streamId}
                  })
                }
@@ -79,7 +81,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
 
   function closeModal(){
     setTopicText('')
-    setSpeakerAccessibility('')
+    setInviteOnly(false)
     setInvitations([])
     setShowModal(false)
   }
@@ -102,54 +104,48 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
           <div className={newStreamStyles.exitButtonContainer}>
             <button className={newStreamStyles.exitButton} onClick={function(){closeModal()}}>x</button>
           </div>
-          <div className={newStreamStyles.formContainer}>
-            <form>
-              <div className={newStreamStyles.topicContainer}>
+          <div className={newStreamStyles.bodyContainer}>
+            <div className={newStreamStyles.formContainer}>
+              <form>
                 <div className={newStreamStyles.header}>Topic: </div>
-                <input value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></input>
-              </div>
-              <div className={newStreamStyles.speakerAccessibilityContainer}>
-                <div className={newStreamStyles.header}>Participants: </div>
-                <input type="Radio" className={newStreamStyles.radioContainer} value="invite-only" checked={speakerAccessibility=="invite-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>invite-only
-                <input type="Radio" className={newStreamStyles.radioContainer} value="network-only" checked={speakerAccessibility=="network-only"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>network-only
-                <input type="Radio" className={newStreamStyles.radioContainer} value="public" checked={speakerAccessibility=="public"} onChange={(e) => setSpeakerAccessibility(e.target.value)}/>public
-              </div>
-            </form>
-          </div>
-          <div className={newStreamStyles.invitationsContainer}>
-            <div className={newStreamStyles.header}>Invite Participants:</div>
-            {Invitations(accountId, invitations, queueStreamInvitation, discardInvitation, false, {})}
-          </div>
-          <div>
-            <div className={newStreamStyles.header}>Invitees:</div>
+                <div className={newStreamStyles.checkboxContainer}>
+                  <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
+                  <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
+                </div>
+                <textarea area maxLength='64' cols='32' rows='2' value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></textarea>
+              </form>
+            </div>
+            <div className={newStreamStyles.invitationsContainer}>
+              <div className={newStreamStyles.header}>Invite Participants:</div>
+              {Invitations(accountId, invitations, queueStreamInvitation, discardInvitation, {})}
+            </div>
             <div className={newStreamStyles.inviteesContainer}>
-              {invitations.map((invitation, index) => {
-                return (
-                  <div key={index.toString()} className={userStyles.row}>
-                    {(invitation.accountId) ?
+              <div className={newStreamStyles.header}>Invitees:</div>
+              <div className={newStreamStyles.inviteesQueuedContainer}>
+                {invitations.map((invitation, index) => {
+                  return (
+                    <div key={index.toString()} className={userStyles.row}>
                       <div className={userStyles.row}>
-                        <Image src='/bitmoji.png' width='40' height='40' className={userStyles.image} />
+                        <img className={userStyles.image} src={createPictureURLFromArrayBufferString(invitation.profilePicture)}/>
                         <div className={userStyles.userInfo}>
+                          <a className={userStyles.name}>{`${invitation.firstname} ${invitation.lastname}`}</a>
                           <a className={userStyles.username}>{invitation.username} </a>
-                          <a className={userStyles.name}>{`(${invitation.firstname} ${invitation.lastnameInitial} / ${invitation.email})`}</a>
+                        </div>
+                        <div className={userStyles.rightContainer}>
+                          <a className={userStyles.status}>{(invitation.following) ? '(Following)': ''}</a>
                         </div>
                       </div>
-                      :
-                      <div className={userStyles.userInfo}>
-                        <a className={userStyles.username}>{invitation.email} </a>
+                      <div className={userStyles.rightContainer}>
+                        <button className={newStreamStyles.removeInviteeButton} onClick={function(){discardInvitation(index)}}>Remove</button>
                       </div>
-                    }
-                    <div className={userStyles.rightContainer}>
-                      <div className={userStyles.status}>{invitation.status}</div>
-                      <button className={userStyles.discardButton} onClick={function(){discardInvitation(index)}}>x</button>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
-          </div>
-          <div className={newStreamStyles.createStreamButtonContainer}>
-            <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Stream</button>
+            <div className={newStreamStyles.createStreamButtonContainer}>
+              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Stream</button>
+            </div>
           </div>
         </div>
       </div>

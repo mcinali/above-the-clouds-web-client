@@ -39,7 +39,6 @@
 .panelLeftMainContainer {
   margin: 10px;
   padding: 10px;
-  overflow-y: auto;
 }
 
 .panelRight {

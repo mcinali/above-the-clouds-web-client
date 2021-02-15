@@ -13,8 +13,9 @@
 
 .image {
   left: 0;
-  border: 1px solid #0070f3;
   border-radius: 50%;
+  height: 40px;
+  width: 40px;
 }
 
 .leftContainer {
@@ -26,6 +27,7 @@
 
 .name {
   font-size: 14px;
+  font-weight: 600;
   align-self: flex-start;
   white-space: nowrap;
   overflow: hidden;
@@ -33,10 +35,11 @@
 }
 
 .rightContainer {
+  height: 100%;
   align-self: flex-start;
-  text-align: right;
+  text-align: left;
   flex-grow: 1;
-  padding-right: 10px;
+  padding: 5px 10px;
 }
 
 .row {
@@ -68,7 +71,6 @@
 
 .username {
   font-size: 14px;
-  font-weight: 600;
   align-self: flex-start;
   white-space: nowrap;
   overflow: hidden;

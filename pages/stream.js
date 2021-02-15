@@ -23,11 +23,21 @@ export default function Stream(){
   const [mute, setMute] = useState(false)
   const [volume, setVolume] = useState(0.0)
 
-  const router = useRouter()
-  const streamId = router.query.streamId
-
+  const [accountInfo, setAccountInfo] = useState({})
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    axios.get(url)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  const router = useRouter()
+  const streamId = router.query.streamId
 
   const [date, setDate] = useState(new Date())
 
@@ -185,10 +195,10 @@ export default function Stream(){
 
   return (
     <div className={commonStyles.container}>
-      {Header()}
+      {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
-          <a>{streamInfo.speakerAccessibility}</a>
+          <a>{(streamInfo.inviteOnly) ? 'Invite-Only' : ''}</a>
         </div>
         <div className={streamStyles.topicContainer}>
           <div className={streamStyles.topicText}>{streamInfo.topic}</div>
