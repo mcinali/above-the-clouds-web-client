@@ -4,6 +4,36 @@
   height: 0;
 }
 
+.buttonFollow {
+  background-color: white;
+  color: #0070f3;
+  font-size: 14px;
+  border: 1px solid #0070f3;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 24px;
+}
+
+.buttonFollow:hover{
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.buttonUnfollow {
+  background-color: white;
+  color: grey;
+  font-size: 14px;
+  border: 1px solid grey;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 24px;
+}
+
+.buttonUnfollow:hover{
+  cursor:pointer;
+  background-color: #F5F5F5;
+}
+
 .card {
   width: 750px;
   height: 500px;
@@ -83,6 +113,7 @@
 }
 
 .participantUsername {
+  margin-bottom: 10px;
   font-size: 12px;
 }
 

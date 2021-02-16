@@ -26,24 +26,11 @@ export default function FollowingSuggestions(accountId){
     }
     axios.post(url, body)
       .then(res => {
-        const newSuggestion = {
-          accountId: suggestion.accountId,
-          firstname: suggestion.firstname,
-          lastname: suggestion.lastname,
-          username: suggestion.username,
-          profilePicture: suggestion.profilePicture,
-          following: true,
-        }
-        const newSuggestions = suggestions.map((oldSuggestion, mapIndex) => {
-          if (index===mapIndex){
-            return newSuggestion
-          } else {
-            return oldSuggestion
-          }
-        })
+        const newSuggestions = suggestions
+        newSuggestions[index].following = true
         setSuggestions(newSuggestions)
       })
-      .catch(err => console.error(error))
+      .catch(error => console.error(error))
   }
 
   function unfollow(suggestion, index){
@@ -54,24 +41,11 @@ export default function FollowingSuggestions(accountId){
     }
     axios.post(url, body)
       .then(res => {
-        const newSuggestion = {
-          accountId: suggestion.accountId,
-          firstname: suggestion.firstname,
-          lastname: suggestion.lastname,
-          username: suggestion.username,
-          profilePicture: suggestion.profilePicture,
-          following: false,
-        }
-        const newSuggestions = suggestions.map((oldSuggestion, mapIndex) => {
-          if (index===mapIndex){
-            return newSuggestion
-          } else {
-            return oldSuggestion
-          }
-        })
+        const newSuggestions = suggestions
+        newSuggestions[index].following = false
         setSuggestions(newSuggestions)
       })
-      .catch(err => console.error(error))
+      .catch(error => console.error(error))
   }
 
   return (

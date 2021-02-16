@@ -35,7 +35,6 @@ export default function DiscoveryStreams(accountId) {
   useEffect(() => {
     axios.get(hostname+`/discovery/${accountId}`)
          .then(res => {
-           console.log(res.data)
            setStreams(res.data)
          })
          .catch(error => {
@@ -55,12 +54,42 @@ export default function DiscoveryStreams(accountId) {
     }
   }
 
+  function follow(participant, streamIndex, participantIndex){
+    const url = hostname + `/follows/follow`
+    const body = {
+      accountId: participant.accountId,
+      followerAccountId: accountId,
+    }
+    axios.post(url, body)
+      .then(res => {
+        const newStreams = streams
+        newStreams[streamIndex].participants.details[participantIndex].following = true
+        setStreams(newStreams)
+    })
+      .catch(error => console.error(error))
+  }
+
+  function unfollow(participant, streamIndex, participantIndex){
+    const url = hostname + `/follows/unfollow`
+    const body = {
+      accountId: participant.accountId,
+      followerAccountId: accountId,
+    }
+    axios.post(url, body)
+      .then(res => {
+        const newStreams = streams
+        newStreams[streamIndex].participants.details[participantIndex].following = false
+        setStreams(newStreams)
+      })
+      .catch(error => console.error(error))
+  }
+
   return (
     <div>
       <div id="cardList" className={discoveryStreamsStyles.cardList}>
         <div id="cardContainer">
-          {streams.map((stream, index) =>
-            <div id="card" key={index.toString()} className={discoveryStreamsStyles.card}>
+          {streams.map((stream, streamIndex) =>
+            <div id="card" key={streamIndex.toString()} className={discoveryStreamsStyles.card}>
               <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
                 <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
               </div>
@@ -74,13 +103,22 @@ export default function DiscoveryStreams(accountId) {
                 </div>
               </div>
               <div className={discoveryStreamsStyles.participantsContainer}>
-                {stream.participants.details.map((participant,index) =>
-                  <div key={index.toString()} className={discoveryStreamsStyles.participantContainer}>
+                {stream.participants.details.map((participant, participantIndex) =>
+                  <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
                     <div>
                       <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
                     </div>
                     <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
                     <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
+                    {
+                      (participant.following==null) ?
+                      <div></div>
+                      :
+                      (participant.following) ?
+                      <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Unfollow</button>
+                      :
+                      <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
+                    }
                   </div>
                 )}
               </div>

@@ -8,34 +8,46 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function StreamInviteModal(accountId, streamId, streamParticipants, showModal, setShowModal){
+export default function StreamInviteModal(accountId, streamId, showModal, setShowModal){
   const displayModal = showModal ? {"display":"block"} : {"display":"none"}
   const [queuedInvite, setQueuedInvite] = useState({})
   const [streamInvitees, setStreamInvitees] = useState([])
+  const [inviteesFilterList, setInviteesFilterList] = useState([])
 
   useEffect(() => {
-    if (showModal){
+    if (showModal || inviteesFilterList.length==0){
       const url = hostname + `/stream/${streamId}?accountId=${accountId}`
       axios.get(url)
            .then(res => {
-             if (res.data && res.data.invitees){
+             if (res.data && res.data.invitees && res.data.participants){
+               const participants = res.data.participants
                const invitees = res.data.invitees
-               const inviteesFiltered = filterStreamInvitees(invitees)
+               const inviteesFiltered = filterStreamInvitees(invitees, participants)
+               const combinedAccountIds = createInviteesFilterList(invitees, participants)
               setStreamInvitees(inviteesFiltered)
+              setInviteesFilterList(combinedAccountIds)
              }
            })
            .catch(error => {
              console.error(error)
            })
     }
-  }, [showModal])
+  }, [showModal, inviteesFilterList])
 
-  function filterStreamInvitees(invitees){
-    const participantAccountIds = streamParticipants.map(participant => participant.accountId)
+  function filterStreamInvitees(invitees, participants){
+    const participantAccountIds = participants.map(participant => participant.accountId)
     const inviteesFiltered = invitees.filter(invitee => {
       if (!Boolean(invitee.inviteeAccountId) || !participantAccountIds.includes(invitee.inviteeAccountId)) { return invitee }
     })
     return inviteesFiltered
+  }
+
+  function createInviteesFilterList(invitees, participants){
+    const participantAccountIds = participants.map(participant => participant.accountId)
+    const inviteeAccountIds = invitees.map(invitee => invitee.inviteeAccountId)
+    const combinedAccountIds = [...new Set(participantAccountIds.concat(inviteeAccountIds))]
+    const inviteesFilterListObjects = combinedAccountIds.map(id => { return {accountId: id }})
+    return inviteesFilterListObjects
   }
 
   function closeModal(){
@@ -46,7 +58,7 @@ export default function StreamInviteModal(accountId, streamId, streamParticipant
     setQueuedInvite(account)
   }
 
-  function removedQueuedInvite(){
+  function removeQueuedInvite(){
     setQueuedInvite({})
   }
 
@@ -55,17 +67,15 @@ export default function StreamInviteModal(accountId, streamId, streamParticipant
     const body = {
       streamId: streamId,
       accountId: accountId,
-      inviteeAccountId: (queuedInvite.accountId) ? queuedInvite.accountId : null,
-      inviteeEmail: (queuedInvite.accountId) ? null : queuedInvite.email,
+      inviteeAccountId: queuedInvite.accountId,
     }
     axios.post(url, body)
         .then(res => {
-          console.log(res)
           if (res.data){
             const invitees = [res.data].concat(streamInvitees)
             setStreamInvitees(invitees)
           }
-          removedQueuedInvite()
+          removeQueuedInvite()
         })
         .catch(error => {
           console.error(error)
@@ -74,18 +84,17 @@ export default function StreamInviteModal(accountId, streamId, streamParticipant
 
   return (
     <div>
-      <div className={streamInvitesStyles.modalBackground} style={displayModal}>
-        <div className={streamInvitesStyles.modalContainer}>
-          <div className={streamInvitesStyles.exitButtonContainer}>
-            <button className={streamInvitesStyles.exitButton} onClick={function(){closeModal()}}>x</button>
-          </div>
-          <div>
+      <div className={streamInvitesStyles.modalBackground} style={displayModal}></div>
+      <div className={streamInvitesStyles.modalContainer} style={displayModal}>
+        <div className={streamInvitesStyles.exitButtonContainer}>
+          <button className={streamInvitesStyles.exitButton} onClick={function(){closeModal()}}>x</button>
+        </div>
+        <div className={streamInvitesStyles.bodyContainer}>
+          <div className={streamInvitesStyles.invitationsContainer}>
             <div className={streamInvitesStyles.header}>Invite Participants:</div>
-            <div>
-              {Invitations(accountId, streamInvitees, queueInvite, removedQueuedInvite, false, queuedInvite)}
-            </div>
-            <button className={streamInvitesStyles.inviteButton} onClick={function(){sendInvite()}} disabled={Object.keys(queuedInvite).length==0}>Send Invite!</button>
+            {Invitations(accountId, inviteesFilterList, queueInvite, removeQueuedInvite, queuedInvite)}
           </div>
+          <button className={streamInvitesStyles.inviteButton} onClick={function(){sendInvite()}} disabled={Object.keys(queuedInvite).length==0}>Send Invite!</button>
           <div>
             <div className={streamInvitesStyles.header}>Invitees:</div>
             <div className={streamInvitesStyles.inviteesContainer}>

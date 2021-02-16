@@ -19,7 +19,6 @@ export default function Invitations(accountId, filterList, addInvitation, remove
         axios.get(url)
              .then(res => {
                if (res.data){
-                 console.log(res.data)
                  const suggestions = filterSuggestions(res.data)
                  if (suggestions.length>0) {
                    setSearchResults(suggestions)
@@ -79,8 +78,10 @@ export default function Invitations(accountId, filterList, addInvitation, remove
             <a className={userStyles.username}>{queuedInvitationInSearch.username} </a>
           </div>
           <div className={userStyles.rightContainer}>
-            <div className={userStyles.status}>{(queuedInvitationInSearch.following) ? 'Following' : ''}</div>
-            <button className={userStyles.discardButton} onClick={function(){discardAccount()}}>x</button>
+            <a className={userStyles.status}>{(queuedInvitationInSearch.following) ? '(Following)': ''}</a>
+          </div>
+          <div className={userStyles.rightContainer}>
+            <button className={invitationsStyles.removeInviteeButton} onClick={function(){discardAccount()}}>Remove</button>
           </div>
         </div>
         :
