@@ -6,7 +6,7 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function Invitations(accountId, filterList, addInvitation, removeInvitation, queuedInvitationInSearch){
+export default function Invitations(accountId, accessToken, filterList, addInvitation, removeInvitation, queuedInvitationInSearch){
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
@@ -15,8 +15,13 @@ export default function Invitations(accountId, filterList, addInvitation, remove
       const searchText = text.trim()
       setSearchText(searchText)
       const url = hostname+`/suggestions?accountId=${accountId}&text=${searchText}`
+      const headers = {
+        headers: {
+          'token': accessToken,
+        }
+      }
       if (Boolean(searchText)){
-        axios.get(url)
+        axios.get(url, headers)
              .then(res => {
                if (res.data){
                  const suggestions = filterSuggestions(res.data)

@@ -18,7 +18,10 @@ export default function AccountSetup() {
 
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
-  const followingSuggestions = FollowingSuggestions(accountId)
+  const hasToken = cookie.get('hasToken')
+  const accessToken = (hasToken) ? cookie.get('token') : null
+
+  const followingSuggestions = FollowingSuggestions(accountId, accessToken)
 
   const upload = () => {
     document.getElementById('file-upload').click()
@@ -49,7 +52,8 @@ export default function AccountSetup() {
     formData.append('accountId', accountId)
     axios.post(url, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'token': accessToken,
       }
     })
       .then(res => {

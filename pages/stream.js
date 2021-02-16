@@ -27,10 +27,17 @@ export default function Stream(){
   const [accountInfo, setAccountInfo] = useState({})
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+  const hasToken = cookie.get('hasToken')
+  const accessToken = (hasToken) ? cookie.get('token') : null
 
   useEffect(() => {
     const url = hostname + `/account/${accountId}`
-    axios.get(url)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
       .then(res => {
         setAccountInfo(res.data)
       })
@@ -71,7 +78,12 @@ export default function Stream(){
       streamId: parseInt(streamId, 10),
       accountId: parseInt(accountId, 10),
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
          .then(res => {
            if (res.data){
              const streamParticipantData = res.data
@@ -91,7 +103,7 @@ export default function Stream(){
                // Attach new Participant's Media to a <div> element.
                room.on('participantConnected', participant => {
                  const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
-                 axios.get(streamURL)
+                 axios.get(streamURL, headers)
                       .then(res => {
                         if (res.data) {
                           setStreamParticipants(res.data.participants)
@@ -123,7 +135,7 @@ export default function Stream(){
               // Update stream participants on participant disconnect
               room.on('participantDisconnected', participant => {
                 const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
-                axios.get(streamURL)
+                axios.get(streamURL, headers)
                      .then(res => {
                        if (res.data) {
                          setStreamParticipants(res.data.participants)
@@ -138,7 +150,7 @@ export default function Stream(){
                 console.log('The new dominant speaker in the Room is:', participant)
               })
              const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
-             axios.get(streamURL)
+             axios.get(streamURL, headers)
                   .then(res => {
                     if (res.data) {
                       setStreamInfo(res.data.info)
@@ -166,9 +178,16 @@ export default function Stream(){
     if (action) {
       const url = hostname + `/stream/leave`
       const body = {
+        accountId: accountId,
+        streamId: streamId,
         streamParticipantId: streamParticipantInfo.streamParticipantId,
       }
-      axios.post(url, body)
+      const headers = {
+        headers: {
+          'token': accessToken,
+        }
+      }
+      axios.post(url, body, headers)
            .then(res => {
              room.disconnect()
              Router.push('/discovery')
@@ -200,7 +219,12 @@ export default function Stream(){
       accountId: participant.accountId,
       followerAccountId: accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
         const newStreamParticipants = streamParticipants
         newStreamParticipants[index].following = true
@@ -215,7 +239,12 @@ export default function Stream(){
       accountId: participant.accountId,
       followerAccountId: accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
         const newStreamParticipants = streamParticipants
         newStreamParticipants[index].following = false
@@ -226,7 +255,7 @@ export default function Stream(){
 
   return (
     <div className={commonStyles.container}>
-      {StreamInviteModal(accountId, streamId, showModal, setShowModal)}
+      {StreamInviteModal(accountId, accessToken, streamId, showModal, setShowModal)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>

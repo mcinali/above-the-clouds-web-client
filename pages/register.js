@@ -285,8 +285,11 @@ export default function Register({ code }) {
               .then(res => {
                 // TO DO: save auth token & push to account setup page
                 const cookie = new Cookies()
-                const accountId = cookie.set('accountId', res.data.accountId)
-                const accountCookie = cookie.get('accountId')
+                cookie.set('accountId', res.data.accountId)
+                if (res.data.hasToken){
+                  cookie.set('hasToken', res.data.hasToken)
+                  cookie.set('token', res.data.accessToken)
+                }
                 Router.push("/account/setup")
               })
               .catch(error => {

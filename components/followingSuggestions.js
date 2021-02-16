@@ -6,12 +6,17 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function FollowingSuggestions(accountId){
+export default function FollowingSuggestions(accountId, accessToken){
   const [suggestions, setSuggestions] = useState([])
 
   useEffect(() => {
-    const url = hostname + `/follows/suggestions/${accountId}`
-    axios.get(url)
+    const url = hostname + `/follows/suggestions?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
       .then(res => {
         setSuggestions(res.data.suggestions)
       })
@@ -24,7 +29,12 @@ export default function FollowingSuggestions(accountId){
       accountId: suggestion.accountId,
       followerAccountId: accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
         const newSuggestions = suggestions
         newSuggestions[index].following = true
@@ -39,7 +49,12 @@ export default function FollowingSuggestions(accountId){
       accountId: suggestion.accountId,
       followerAccountId: accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
         const newSuggestions = suggestions
         newSuggestions[index].following = false
