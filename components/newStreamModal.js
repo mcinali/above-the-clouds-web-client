@@ -8,10 +8,10 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function NewStreamModal(accountId, showModal, setShowModal, forkedTopic){
+export default function NewStreamModal(accountId, accessToken, showModal, setShowModal){
   const displayModal = showModal ? {'display':'block'} : {'display':'none'}
   const [topicText, setTopicText] = useState('')
-  const [topic, setTopic] = (forkedTopic) ? useState(forkedTopic) : useState({})
+  const [topic, setTopic] = useState('')
   const [inviteOnly, setInviteOnly] = useState(false)
   const [capacity, setCapacity] = useState(5)
   const [invitations, setInvitations] = useState([])
@@ -32,18 +32,23 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
         capacity: 5,
         invitees:invitationAccountIds,
       }
+      const headers = {
+        headers: {
+          'token': accessToken,
+        }
+      }
       if (!streamBody.topicId){
         const topicURL = hostname + `/topic`
         const topicBody = {
           accountId: accountId,
           topic: topicText,
         }
-        axios.post(topicURL, topicBody)
+        axios.post(topicURL, topicBody, headers)
              .then(res => {
                if (res.data){
                  setTopic(res.data)
                  streamBody['topicId'] = res.data.topicId
-                 axios.post(streamURL, streamBody)
+                 axios.post(streamURL, streamBody, headers)
                       .then(res => {
                         if (res.data && res.data.streamId){
                           Router.push(
@@ -61,7 +66,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
                 console.error(error)
              })
       } else {
-        axios.post(streamURL, streamBody)
+        axios.post(streamURL, streamBody, headers)
              .then(res => {
                if (res.data){
                  Router.push(
@@ -117,7 +122,7 @@ export default function NewStreamModal(accountId, showModal, setShowModal, forke
             </div>
             <div className={newStreamStyles.invitationsContainer}>
               <div className={newStreamStyles.header}>Invite Participants:</div>
-              {Invitations(accountId, invitations, queueStreamInvitation, discardInvitation, {})}
+              {Invitations(accountId, accessToken, invitations, queueStreamInvitation, discardInvitation, {})}
             </div>
             <div className={newStreamStyles.inviteesContainer}>
               <div className={newStreamStyles.header}>Invitees:</div>

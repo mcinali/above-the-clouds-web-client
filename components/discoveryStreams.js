@@ -6,12 +6,12 @@ import discoveryStreamsStyles from '../styles/DiscoveryStreams.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function DiscoveryStreams(accountId) {
+export default function DiscoveryStreams(accountId, accessToken) {
   const [streams, setStreams] = useState([])
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -33,7 +33,13 @@ export default function DiscoveryStreams(accountId) {
   }
 
   useEffect(() => {
-    axios.get(hostname+`/discovery/${accountId}`)
+    const url = hostname+`/discovery?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
          .then(res => {
            setStreams(res.data)
          })
@@ -57,10 +63,15 @@ export default function DiscoveryStreams(accountId) {
   function follow(participant, streamIndex, participantIndex){
     const url = hostname + `/follows/follow`
     const body = {
-      accountId: participant.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: participant.accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
         const newStreams = streams
         newStreams[streamIndex].participants.details[participantIndex].following = true
@@ -72,10 +83,15 @@ export default function DiscoveryStreams(accountId) {
   function unfollow(participant, streamIndex, participantIndex){
     const url = hostname + `/follows/unfollow`
     const body = {
-      accountId: participant.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: participant.accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
         const newStreams = streams
         newStreams[streamIndex].participants.details[participantIndex].following = false

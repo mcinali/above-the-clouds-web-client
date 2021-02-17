@@ -18,10 +18,17 @@ export default function Discovery() {
 
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
+  const hasToken = cookie.get('hasToken')
+  const accessToken = (hasToken) ? cookie.get('token') : null
 
   useEffect(() => {
     const url = hostname + `/account/${accountId}`
-    axios.get(url)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
       .then(res => {
         setAccountInfo(res.data)
       })
@@ -30,19 +37,19 @@ export default function Discovery() {
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(accountId, showModal, setShowModal)}
+      {NewStreamModal(accountId, accessToken, showModal, setShowModal)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
-            {FollowingSuggestions(accountId)}
+            {FollowingSuggestions(accountId, accessToken)}
           </div>
         </div>
         <div className={discoveryStyles.panelRight}>
           <div className={discoveryStyles.newStreamContainer}>
             <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
           </div>
-          {DiscoveryStreams(accountId)}
+          {DiscoveryStreams(accountId, accessToken)}
         </div>
       </div>
     </div>

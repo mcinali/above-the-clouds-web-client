@@ -6,47 +6,76 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function FollowingSuggestions(accountId){
+export default function FollowingSuggestions(accountId, accessToken){
   const [suggestions, setSuggestions] = useState([])
 
   useEffect(() => {
-    const url = hostname + `/follows/suggestions/${accountId}`
-    axios.get(url)
+    const url = hostname + `/follows/suggestions?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
       .then(res => {
         setSuggestions(res.data.suggestions)
       })
       .catch(error => console.error(error))
   }, [])
 
-  function follow(suggestion, index){
+  function follow(suggestions, index){
+    const suggestion = suggestions[index]
     const url = hostname + `/follows/follow`
     const body = {
-      accountId: suggestion.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: suggestion.accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
+        console.log(res)
         const newSuggestions = suggestions
+        console.log('Old Suggestions: ', newSuggestions)
         newSuggestions[index].following = true
+        console.log('New Suggestions: ', newSuggestions)
         setSuggestions(newSuggestions)
+        console.log('Finished!')
       })
       .catch(error => console.error(error))
   }
 
-  function unfollow(suggestion, index){
+  function unfollow(suggestions, index){
+    const suggestion = suggestions[index]
     const url = hostname + `/follows/unfollow`
     const body = {
-      accountId: suggestion.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: suggestion.accountId,
     }
-    axios.post(url, body)
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.post(url, body, headers)
       .then(res => {
+        console.log(res)
         const newSuggestions = suggestions
+        console.log('Old Suggestions: ', newSuggestions)
         newSuggestions[index].following = false
+        console.log('New Suggestions: ', newSuggestions)
         setSuggestions(newSuggestions)
+        console.log('Finished!')
       })
       .catch(error => console.error(error))
   }
+
+  useEffect(() => {
+    console.log(suggestions)
+  }, [suggestions])
 
   return (
     <div>
@@ -61,9 +90,9 @@ export default function FollowingSuggestions(accountId){
             </div>
             {
               (suggestion.following) ?
-              <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(suggestion, index)}}>Unfollow</button>
+              <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(suggestions, index)}}>Unfollow</button>
               :
-              <button className={followsStyles.buttonFollow} onClick={function(){follow(suggestion, index)}}>Follow</button>
+              <button className={followsStyles.buttonFollow} onClick={function(){follow(suggestions, index)}}>Follow</button>
             }
           </div>
         )
