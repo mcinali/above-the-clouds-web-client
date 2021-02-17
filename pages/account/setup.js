@@ -21,8 +21,6 @@ export default function AccountSetup() {
   const hasToken = cookie.get('hasToken')
   const accessToken = (hasToken) ? cookie.get('token') : null
 
-  const followingSuggestions = FollowingSuggestions(accountId, accessToken)
-
   const upload = () => {
     document.getElementById('file-upload').click()
   }
@@ -80,63 +78,68 @@ export default function AccountSetup() {
     Router.push("/discovery")
   }
 
+  useEffect(() => {
+    if (index==1){
+      document.getElementById("index1").style.display = "block"
+      document.getElementById("index2").style.display = "none"
+    } else {
+      document.getElementById("index1").style.display = "none"
+      document.getElementById("index2").style.display = "block"
+    }
+  }, [index])
+
   return (
     <div className={accountSetupStyles.main}>
       <div className={accountSetupStyles.modal}>
-        {
-          (index==1)
-          ?
-          <div>
-            <div className={accountSetupStyles.modalTitle}>
-              Welcome <b>{}</b>!
-            </div>
-            <div className={accountSetupStyles.modalSubtitle}>
-              Upload a profile picture for your account:
-            </div>
-            <div className={accountSetupStyles.modalProfilePicContainer}>
-              <div className={accountSetupStyles.modalProfilePicTrashButtonContainer}>
-                <button className={accountSetupStyles.modalProfilePicTrashButton} disabled={disableTrashProfilePic} onClick={trashImage}>
-                  x
-                </button>
-              </div>
-              <img className={accountSetupStyles.modalProfilePic} src={profilePicURL}/>
-              <div className={accountSetupStyles.modalProfilePicButtonContainer}>
-                <label onClick={upload} className={accountSetupStyles.modalProfilePicUploadButton}>
-                  Upload
-                </label>
-                <input id='file-upload' hidden type='file' accept='.png,.jpg,.jpeg,.ico' onChange={handleChange}/>
-              </div>
-            </div>
-            <div className={accountSetupStyles.modalNavigationButtonContainer}>
-              <button className={accountSetupStyles.modalNextButton} disabled={disableNextButton} onClick={saveProfilePic}>
-                Next
+        <div id="index1">
+          <div className={accountSetupStyles.modalTitle}>
+            Welcome <b>{}</b>!
+          </div>
+          <div className={accountSetupStyles.modalSubtitle}>
+            Upload a profile picture for your account:
+          </div>
+          <div className={accountSetupStyles.modalProfilePicContainer}>
+            <div className={accountSetupStyles.modalProfilePicTrashButtonContainer}>
+              <button className={accountSetupStyles.modalProfilePicTrashButton} disabled={disableTrashProfilePic} onClick={trashImage}>
+                x
               </button>
-              <div className={accountSetupStyles.modalSkipButton} onClick={skip}>
-                Skip
-              </div>
+            </div>
+            <img className={accountSetupStyles.modalProfilePic} src={profilePicURL}/>
+            <div className={accountSetupStyles.modalProfilePicButtonContainer}>
+              <label onClick={upload} className={accountSetupStyles.modalProfilePicUploadButton}>
+                Upload
+              </label>
+              <input id='file-upload' hidden type='file' accept='.png,.jpg,.jpeg,.ico' onChange={handleChange}/>
             </div>
           </div>
-          :
-          <div>
-            <div className={accountSetupStyles.modalHeader}>
-              <div className={accountSetupStyles.modalHeaderNavigationButton} onClick={back}>
-                {"< back"}
-              </div>
-            </div>
-            <div className={accountSetupStyles.modalTitle}>
-              Find people to follow!
-            </div>
-            <div className={accountSetupStyles.modalSubtitle}>
-              Discover conversations involving people you follow and people they follow.
-            </div>
-            <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
-              {followingSuggestions}
-            </div>
-            <div className={accountSetupStyles.modalDoneButtonContainer}>
-              <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>
+          <div className={accountSetupStyles.modalNavigationButtonContainer}>
+            <button className={accountSetupStyles.modalNextButton} disabled={disableNextButton} onClick={saveProfilePic}>
+              Next
+            </button>
+            <div className={accountSetupStyles.modalSkipButton} onClick={skip}>
+              Skip
             </div>
           </div>
-        }
+        </div>
+        <div id="index2">
+          <div className={accountSetupStyles.modalHeader}>
+            <div className={accountSetupStyles.modalHeaderNavigationButton} onClick={back}>
+              {"< back"}
+            </div>
+          </div>
+          <div className={accountSetupStyles.modalTitle}>
+            Find people to follow!
+          </div>
+          <div className={accountSetupStyles.modalSubtitle}>
+            Discover conversations involving people you follow and people they follow.
+          </div>
+          <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
+            {FollowingSuggestions(accountId, accessToken)}
+          </div>
+          <div className={accountSetupStyles.modalDoneButtonContainer}>
+            <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>
+          </div>
+        </div>
       </div>
     </div>
   )

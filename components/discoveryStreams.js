@@ -11,7 +11,7 @@ export default function DiscoveryStreams(accountId, accessToken) {
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -63,8 +63,8 @@ export default function DiscoveryStreams(accountId, accessToken) {
   function follow(participant, streamIndex, participantIndex){
     const url = hostname + `/follows/follow`
     const body = {
-      accountId: participant.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: participant.accountId,
     }
     const headers = {
       headers: {
@@ -83,8 +83,8 @@ export default function DiscoveryStreams(accountId, accessToken) {
   function unfollow(participant, streamIndex, participantIndex){
     const url = hostname + `/follows/unfollow`
     const body = {
-      accountId: participant.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: participant.accountId,
     }
     const headers = {
       headers: {

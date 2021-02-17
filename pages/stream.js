@@ -50,7 +50,7 @@ export default function Stream(){
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -216,8 +216,8 @@ export default function Stream(){
   function follow(participant, index){
     const url = hostname + `/follows/follow`
     const body = {
-      accountId: participant.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: participant.accountId,
     }
     const headers = {
       headers: {
@@ -236,8 +236,8 @@ export default function Stream(){
   function unfollow(participant, index){
     const url = hostname + `/follows/unfollow`
     const body = {
-      accountId: participant.accountId,
-      followerAccountId: accountId,
+      accountId: accountId,
+      followingAccountId: participant.accountId,
     }
     const headers = {
       headers: {
