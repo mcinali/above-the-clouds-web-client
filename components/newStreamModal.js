@@ -5,10 +5,9 @@ import Image from 'next/image'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import newStreamStyles from '../styles/NewStream.module.css'
 import userStyles from '../styles/Users.module.css'
-const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function NewStreamModal(accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic){
+export default function NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic){
   const displayModal = showModal ? {'display':'block'} : {'display':'none'}
   const [topicText, setTopicText] = useState('')
   const [inviteOnly, setInviteOnly] = useState(false)
@@ -134,7 +133,7 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
             </div>
             <div className={newStreamStyles.invitationsContainer}>
               <div className={newStreamStyles.header}>Invite Participants:</div>
-              {Invitations(accountId, accessToken, invitations, queueStreamInvitation, discardInvitation, {})}
+              {Invitations(hostname, accountId, accessToken, invitations, queueStreamInvitation, discardInvitation, {})}
             </div>
             <div className={newStreamStyles.inviteesContainer}>
               <div className={newStreamStyles.header}>Invitees:</div>

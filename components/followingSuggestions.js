@@ -3,10 +3,9 @@ import Image from 'next/image'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import followsStyles from '../styles/Follows.module.css'
 import userStyles from '../styles/Users.module.css'
-const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function FollowingSuggestions(accountId, accessToken){
+export default function FollowingSuggestions(hostname, accountId, accessToken){
   const [suggestions, setSuggestions] = useState([])
 
   useEffect(() => {

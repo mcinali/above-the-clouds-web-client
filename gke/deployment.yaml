@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+      tier: web
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: web
+    spec:
+      containers:
+      - image: gcr.io/above-the-clouds-app/frontend:1.0.0
+        imagePullPolicy: Always
+        name: frontend
+        ports:
+        - containerPort: 3000
+        env:
+        - name: RUNTIME_ENV
+          value: "prod"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000

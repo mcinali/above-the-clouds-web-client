@@ -3,10 +3,9 @@ import Image from 'next/image'
 import Router from "next/router"
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import discoveryStreamsStyles from '../styles/DiscoveryStreams.module.css'
-const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function DiscoveryStreams(accountId, accessToken, setShowModal, setForkedTopic) {
+export default function DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic) {
   const [streams, setStreams] = useState([])
   const [date, setDate] = useState(new Date())
 

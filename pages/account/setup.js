@@ -26,22 +26,21 @@ export async function getServerSideProps({ req, res, query }) {
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
-        Location: "login",
+        Location: "/login",
       })
       res.end()
     }
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
   } catch (error) {
-    // console.error(error)
     res.writeHead(302, {
-      Location: "discovery",
+      Location: "/discovery",
     });
     res.end()
   }
 }
 
-export default function AccountSetup({ accountId, accessToken }) {
+export default function AccountSetup({ accountId, accessToken, hostname }) {
   const [index, setIndex] = useState(1)
   const [profilePicObject, setProfilePicObject] = useState({})
   const [profilePicURL, setProfilePicURL] = useState('/images/default_profile_pic.jpg')
@@ -162,7 +161,7 @@ export default function AccountSetup({ accountId, accessToken }) {
             Discover conversations involving people you follow and people they follow.
           </div>
           <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
-            {FollowingSuggestions(accountId, accessToken)}
+            {FollowingSuggestions(hostname, accountId, accessToken)}
           </div>
           <div className={accountSetupStyles.modalDoneButtonContainer}>
             <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>

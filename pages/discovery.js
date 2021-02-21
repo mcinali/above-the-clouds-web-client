@@ -29,23 +29,22 @@ export async function getServerSideProps({ req, res, query }) {
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
-        Location: "login",
+        Location: "/login",
       })
       res.end()
     }
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
   } catch (error) {
-    // console.error(error)
     res.writeHead(302, {
-      Location: "discovery",
+      Location: "/login",
     });
     res.end()
   }
 }
 
 
-export default function Discovery({ accountId, accessToken }) {
+export default function Discovery({ accountId, accessToken, hostname }) {
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})
@@ -66,19 +65,19 @@ export default function Discovery({ accountId, accessToken }) {
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
+      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
-            {FollowingSuggestions(accountId, accessToken)}
+            {FollowingSuggestions(hostname, accountId, accessToken)}
           </div>
         </div>
         <div className={discoveryStyles.panelRight}>
           <div className={discoveryStyles.newStreamContainer}>
             <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
           </div>
-          {DiscoveryStreams(accountId, accessToken, setShowModal, setForkedTopic)}
+          {DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic)}
         </div>
       </div>
     </div>

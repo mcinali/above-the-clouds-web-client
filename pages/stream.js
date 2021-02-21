@@ -4,7 +4,7 @@ import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
-import StreamInviteModal from '../components/StreamInviteModal'
+import StreamInviteModal from '../components/streamInviteModal'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
@@ -30,7 +30,7 @@ export async function getServerSideProps({ req, res, query }) {
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
-        Location: "login",
+        Location: "/login",
       })
       res.end()
     }
@@ -40,17 +40,16 @@ export async function getServerSideProps({ req, res, query }) {
     }
     const streamId = query.streamId
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, streamId: streamId } }
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname } }
   } catch (error) {
-    // console.error(error)
     res.writeHead(302, {
-      Location: "discovery",
+      Location: "/discovery",
     });
     res.end()
   }
 }
 
-export default function Stream({ accountId, accessToken, streamId }){
+export default function Stream({ accountId, accessToken, streamId, hostname }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
@@ -331,7 +330,7 @@ export default function Stream({ accountId, accessToken, streamId }){
 
   return (
     <div className={commonStyles.container}>
-      {StreamInviteModal(accountId, accessToken, streamId, showModal, setShowModal)}
+      {StreamInviteModal(hostname, accountId, accessToken, streamId, showModal, setShowModal)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>

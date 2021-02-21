@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "docker_build": "./docker.sh build",
+    "docker_push": "./docker.sh push",
+    "deploy": "./gke/gke.sh deploy"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
