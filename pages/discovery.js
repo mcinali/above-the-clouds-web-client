@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Router from "next/router"
 import Image from 'next/image'
 import commonStyles from '../styles/Common.module.css'
 import discoveryStyles from '../styles/Discovery.module.css'
@@ -12,42 +11,44 @@ import DiscoveryStreams from '../components/discoveryStreams'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, query }) {
   try {
     // Authenticate accountId + token before serving page
-    const url = hostname + `/authenticate`
+    // Get accountId + token from cookies
     const cookie = new Cookies(req.headers.cookie)
-    const body = {
-      accountId: cookie.get('accountId'),
-      token: cookie.get('token'),
+    const accountId = cookie.get('accountId')
+    const token = cookie.get('token')
+    // Add accountId as query param + token as header
+    const url = hostname + `/auth/validate?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': token,
+      }
     }
-    const promise = await axios.post(url, body)
+    // Check for valid token
+    const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
         Location: "login",
       })
       res.end()
     }
-    return { props: {} }
+    // Pass in props to react function
+    return { props: { accountId: accountId, accessToken: token } }
   } catch (error) {
     // console.error(error)
     res.writeHead(302, {
-      Location: "login",
+      Location: "discovery",
     });
     res.end()
   }
 }
 
 
-export default function Discovery({}) {
+export default function Discovery({ accountId, accessToken }) {
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})
-
-  const cookie = new Cookies()
-  const accountId = cookie.get('accountId')
-  const hasToken = cookie.get('hasToken')
-  const accessToken = (Boolean(hasToken)) ? cookie.get('token') : null
 
   useEffect(() => {
     const url = hostname + `/account/${accountId}`

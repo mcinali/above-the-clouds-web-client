@@ -15,13 +15,19 @@ const { connect, createLocalTracks } = require('twilio-video')
 export async function getServerSideProps({ req, res, query }) {
   try {
     // Authenticate accountId + token before serving page
-    const url = hostname + `/authenticate`
+    // Get accountId + token from cookies
     const cookie = new Cookies(req.headers.cookie)
-    const body = {
-      accountId: cookie.get('accountId'),
-      token: cookie.get('token'),
+    const accountId = cookie.get('accountId')
+    const token = cookie.get('token')
+    // Add accountId as query param + token as header
+    const url = hostname + `/auth/validate?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': token,
+      }
     }
-    const promise = await axios.post(url, body)
+    // Check for valid token
+    const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
         Location: "login",
@@ -33,7 +39,8 @@ export async function getServerSideProps({ req, res, query }) {
       throw Error('bad query')
     }
     const streamId = query.streamId
-    return { props: { streamId: streamId } }
+    // Pass in props to react function
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId } }
   } catch (error) {
     // console.error(error)
     res.writeHead(302, {
@@ -43,9 +50,9 @@ export async function getServerSideProps({ req, res, query }) {
   }
 }
 
-export default function Stream({ streamId }){
+export default function Stream({ accountId, accessToken, streamId }){
+  const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const [streamParticipantInfo, setStreamParticipantInfo] = useState({})
 
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
@@ -55,10 +62,6 @@ export default function Stream({ streamId }){
   const [volume, setVolume] = useState(0.0)
 
   const [accountInfo, setAccountInfo] = useState({})
-  const cookie = new Cookies()
-  const accountId = cookie.get('accountId')
-  const hasToken = cookie.get('hasToken')
-  const accessToken = (hasToken) ? cookie.get('token') : null
 
   const [date, setDate] = useState(new Date())
 
@@ -112,10 +115,11 @@ export default function Stream({ streamId }){
     }
     axios.post(url, body, headers)
          .then(res => {
-           console.log(res.data)
+           setIsActive(true)
            if (res.data){
              const streamParticipantData = res.data
-             setStreamParticipantInfo(res.data)
+             const cookie = new Cookies()
+             cookie.set('streamParticipantId', streamParticipantData.streamParticipantId)
              createLocalTracks({
                audio: true,
                video: false
@@ -200,15 +204,29 @@ export default function Stream({ streamId }){
     return
   }, [])
 
+  // Confirm leave stream
+  function confirmLeaveStream(){
+    try {
+      const action = window.confirm('Are you sure you want to leave?')
+      if (action){
+        leaveStream()
+      }
+    } catch (error) {
+      console.error(error)
+      window.alert('Failed to leave stream')
+    }
+  }
+
   // Leave stream
   function leaveStream(){
-    const action = window.confirm('Are you sure you want to leave?')
-    if (action) {
+    try {
       const url = hostname + `/stream/leave`
+      const cookie = new Cookies()
+      const streamParticipantId = cookie.get('streamParticipantId')
       const body = {
         accountId: accountId,
         streamId: streamId,
-        streamParticipantId: streamParticipantInfo.streamParticipantId,
+        streamParticipantId: streamParticipantId,
       }
       const headers = {
         headers: {
@@ -217,13 +235,18 @@ export default function Stream({ streamId }){
       }
       axios.post(url, body, headers)
            .then(res => {
-             room.disconnect()
+             if (Object.keys(room).length>0){
+               room.disconnect()
+             }
              Router.push('/discovery')
            })
            .catch(error => {
              console.error(error)
-             window.alert('Failed to leave stream')
+             throw new Error(error)
            })
+    } catch (error) {
+      console.error(error)
+      throw new Error(error)
     }
   }
 
@@ -281,6 +304,31 @@ export default function Stream({ streamId }){
       .catch(error => console.error(error))
   }
 
+  // Alert user before exiting page
+  useEffect(() => {
+    if (isActive){
+      window.addEventListener('popstate', leaveStreamSilently)
+      window.addEventListener('onbeforeunload', affirmLeaveStream)
+      window.addEventListener('unload', leaveStreamSilently)
+      return () => {
+        window.removeEventListener('popstate', leaveStreamSilently)
+        window.removeEventListener('onbeforeunload', affirmLeaveStream)
+        window.removeEventListener('unload', leaveStreamSilently)
+      }
+    }
+  }, [isActive])
+
+  const leaveStreamSilently = (event) => {
+    leaveStream()
+  }
+
+  const affirmLeaveStream = () => {
+    event.preventDefault()
+    event.returnValue = ''
+    confirm('You are exiting the stream')
+    leaveStream()
+  }
+
   return (
     <div className={commonStyles.container}>
       {StreamInviteModal(accountId, accessToken, streamId, showModal, setShowModal)}
@@ -324,7 +372,7 @@ export default function Stream({ streamId }){
           </button>
           <audio id='audio-controller'></audio>
           <button className={streamStyles.inviteButton} onClick={function(){setShowModal(true)}}>Invite</button>
-          <button className={streamStyles.leaveStreamButton} onClick={function(){leaveStream()}}>Leave</button>
+          <button className={streamStyles.leaveStreamButton} onClick={function(){confirmLeaveStream()}}>Leave</button>
         </div>
       </div>
     </div>

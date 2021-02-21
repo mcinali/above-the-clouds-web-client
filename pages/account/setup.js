@@ -8,18 +8,46 @@ import followsStyles from '../../styles/Follows.module.css'
 const { hostname } = require('../../config')
 const axios = require('axios')
 
-export default function AccountSetup() {
+export async function getServerSideProps({ req, res, query }) {
+  try {
+    // Authenticate accountId + token before serving page
+    // Get accountId + token from cookies
+    const cookie = new Cookies(req.headers.cookie)
+    const accountId = cookie.get('accountId')
+    const token = cookie.get('token')
+    // Add accountId as query param + token as header
+    const url = hostname + `/auth/validate?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': token,
+      }
+    }
+    // Check for valid token
+    const promise = await axios.get(url, headers)
+    if (promise.status != 200){
+      res.writeHead(302, {
+        Location: "login",
+      })
+      res.end()
+    }
+    // Pass in props to react function
+    return { props: { accountId: accountId, accessToken: token } }
+  } catch (error) {
+    // console.error(error)
+    res.writeHead(302, {
+      Location: "discovery",
+    });
+    res.end()
+  }
+}
+
+export default function AccountSetup({ accountId, accessToken }) {
   const [index, setIndex] = useState(1)
   const [profilePicObject, setProfilePicObject] = useState({})
   const [profilePicURL, setProfilePicURL] = useState('/images/default_profile_pic.jpg')
   const [disableTrashProfilePic, setDisableTrashProfilePic] = useState(true)
   const [disableNextButton, setDisableNextButton] = useState(true)
   const [suggestions, setSuggestions] = useState([])
-
-  const cookie = new Cookies()
-  const accountId = cookie.get('accountId')
-  const hasToken = cookie.get('hasToken')
-  const accessToken = (hasToken) ? cookie.get('token') : null
 
   const upload = () => {
     document.getElementById('file-upload').click()
