@@ -23,10 +23,6 @@ export default function FollowingSuggestions(accountId, accessToken){
       .catch(error => console.error(error))
   }, [])
 
-  useEffect(() => {
-    console.log(suggestions)
-  }, [suggestions])
-
   function follow(suggestions, index){
     const suggestion = suggestions[index]
     const url = hostname + `/follows/follow`
@@ -41,8 +37,17 @@ export default function FollowingSuggestions(accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newSuggestions = suggestions
-        newSuggestions[index].following = true
+        console.log(suggestion)
+        console.log(index)
+        const newSuggestions = suggestions.map((suggestion, suggestionIndex) => {
+          if (index==suggestionIndex){
+            suggestion.following = true
+            return suggestion
+          } else {
+            return suggestion
+          }
+        })
+        console.log(newSuggestions)
         setSuggestions(newSuggestions)
       })
       .catch(error => console.error(error))
@@ -62,8 +67,17 @@ export default function FollowingSuggestions(accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newSuggestions = suggestions
-        newSuggestions[index].following = false
+        console.log(suggestion)
+        console.log(index)
+        const newSuggestions = suggestions.map((suggestion, suggestionIndex) => {
+          if (index==suggestionIndex){
+            suggestion.following = false
+            return suggestion
+          } else {
+            return suggestion
+          }
+        })
+        console.log(newSuggestions)
         setSuggestions(newSuggestions)
       })
       .catch(error => console.error(error))
