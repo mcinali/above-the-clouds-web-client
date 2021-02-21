@@ -8,25 +8,30 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function NewStreamModal(accountId, accessToken, showModal, setShowModal){
+export default function NewStreamModal(accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic){
   const displayModal = showModal ? {'display':'block'} : {'display':'none'}
   const [topicText, setTopicText] = useState('')
-  const [topic, setTopic] = useState('')
   const [inviteOnly, setInviteOnly] = useState(false)
   const [capacity, setCapacity] = useState(5)
   const [invitations, setInvitations] = useState([])
   const [disableCreateStream, setDisableCreateStream] = useState(true)
 
   useEffect(() => {
+    if ((Object.keys(forkedTopic).length>0)){
+      setTopicText(forkedTopic.topicText)
+    }
+  }, [forkedTopic])
+
+  useEffect(() => {
     setDisableCreateStream(!Boolean(topicText))
-  })
+  }, [topicText])
+
 
   function createStream(){
     try {
       const invitationAccountIds = invitations.map(item => {return {accountId: item.accountId}})
       const streamURL = hostname + `/stream`
       const streamBody = {
-        topicId: topic.topicId,
         accountId: accountId,
         inviteOnly: inviteOnly,
         capacity: 5,
@@ -37,7 +42,7 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
           'token': accessToken,
         }
       }
-      if (!streamBody.topicId){
+      if (Object.keys(forkedTopic).length==0){
         const topicURL = hostname + `/topic`
         const topicBody = {
           accountId: accountId,
@@ -46,7 +51,6 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
         axios.post(topicURL, topicBody, headers)
              .then(res => {
                if (res.data){
-                 setTopic(res.data)
                  streamBody['topicId'] = res.data.topicId
                  axios.post(streamURL, streamBody, headers)
                       .then(res => {
@@ -66,6 +70,7 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
                 console.error(error)
              })
       } else {
+        streamBody['topicId'] = forkedTopic.topicId
         axios.post(streamURL, streamBody, headers)
              .then(res => {
                if (res.data){
@@ -88,6 +93,7 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
     setTopicText('')
     setInviteOnly(false)
     setInvitations([])
+    setForkedTopic({})
     setShowModal(false)
   }
 
@@ -97,8 +103,8 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
   }
 
   function discardInvitation(index){
-    invitations.splice(index, 1)
-    setInvitations(invitations)
+    const invitationsSpliced = invitations.filter((invitation,arrayIndex) => arrayIndex!=index)
+    setInvitations(invitationsSpliced)
   }
 
   return (
@@ -117,7 +123,13 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
                   <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
                   <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
                 </div>
-                <textarea area maxLength='64' cols='32' rows='2' value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></textarea>
+                {(Object.keys(forkedTopic).length==0)
+                  ?
+                    <textarea area maxLength='64' cols='32' rows='2' value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></textarea>
+                  :
+                    <div className={newStreamStyles.textFormFixed}>{topicText}</div>
+                }
+
               </form>
             </div>
             <div className={newStreamStyles.invitationsContainer}>
