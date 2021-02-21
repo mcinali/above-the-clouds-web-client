@@ -17,7 +17,7 @@ export async function getServerSideProps({ res, query }) {
       })
       res.end()
     }
-    return { props: { code: code } }
+    return { props: { code: code, hostname: hostname } }
   } catch (error) {
     console.error(error)
     res.writeHead(302, {
@@ -27,7 +27,7 @@ export async function getServerSideProps({ res, query }) {
   }
 }
 
-export default function Register({ code }) {
+export default function Register({ code, hostname }) {
   const [pageIndex, setPageIndex] = useState(1)
   const [backButton, setBackButton] = useState('')
 

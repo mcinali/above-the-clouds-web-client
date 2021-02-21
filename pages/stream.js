@@ -40,7 +40,7 @@ export async function getServerSideProps({ req, res, query }) {
     }
     const streamId = query.streamId
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, streamId: streamId } }
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname } }
   } catch (error) {
     res.writeHead(302, {
       Location: "/discovery",
@@ -49,7 +49,7 @@ export async function getServerSideProps({ req, res, query }) {
   }
 }
 
-export default function Stream({ accountId, accessToken, streamId }){
+export default function Stream({ accountId, accessToken, streamId, hostname }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
 

@@ -34,7 +34,7 @@ export async function getServerSideProps({ req, res, query }) {
       res.end()
     }
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
   } catch (error) {
     res.writeHead(302, {
       Location: "/login",
@@ -44,7 +44,7 @@ export async function getServerSideProps({ req, res, query }) {
 }
 
 
-export default function Discovery({ accountId, accessToken }) {
+export default function Discovery({ accountId, accessToken, hostname }) {
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})

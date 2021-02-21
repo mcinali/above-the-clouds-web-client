@@ -31,7 +31,7 @@ export async function getServerSideProps({ req, res, query }) {
       res.end()
     }
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
   } catch (error) {
     res.writeHead(302, {
       Location: "/discovery",
@@ -40,7 +40,7 @@ export async function getServerSideProps({ req, res, query }) {
   }
 }
 
-export default function AccountSetup({ accountId, accessToken }) {
+export default function AccountSetup({ accountId, accessToken, hostname }) {
   const [index, setIndex] = useState(1)
   const [profilePicObject, setProfilePicObject] = useState({})
   const [profilePicURL, setProfilePicURL] = useState('/images/default_profile_pic.jpg')
