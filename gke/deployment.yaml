@@ -25,3 +25,11 @@ spec:
         env:
         - name: RUNTIME_ENV
           value: "prod"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
