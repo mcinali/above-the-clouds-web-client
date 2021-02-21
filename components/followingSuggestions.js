@@ -23,6 +23,10 @@ export default function FollowingSuggestions(accountId, accessToken){
       .catch(error => console.error(error))
   }, [])
 
+  useEffect(() => {
+    console.log(suggestions)
+  }, [suggestions])
+
   function follow(suggestions, index){
     const suggestion = suggestions[index]
     const url = hostname + `/follows/follow`
@@ -37,13 +41,9 @@ export default function FollowingSuggestions(accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        console.log(res)
         const newSuggestions = suggestions
-        console.log('Old Suggestions: ', newSuggestions)
         newSuggestions[index].following = true
-        console.log('New Suggestions: ', newSuggestions)
         setSuggestions(newSuggestions)
-        console.log('Finished!')
       })
       .catch(error => console.error(error))
   }
@@ -62,20 +62,12 @@ export default function FollowingSuggestions(accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        console.log(res)
         const newSuggestions = suggestions
-        console.log('Old Suggestions: ', newSuggestions)
         newSuggestions[index].following = false
-        console.log('New Suggestions: ', newSuggestions)
         setSuggestions(newSuggestions)
-        console.log('Finished!')
       })
       .catch(error => console.error(error))
   }
-
-  useEffect(() => {
-    console.log(suggestions)
-  }, [suggestions])
 
   return (
     <div>

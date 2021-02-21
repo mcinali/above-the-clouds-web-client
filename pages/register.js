@@ -9,7 +9,6 @@ const axios = require('axios')
 export async function getServerSideProps({ res, query }) {
   try {
     const code = query.code
-    console.log(code)
     const url = hostname + `/invitation/check?code=${code}`
     const promise = await axios.get(url)
     if (promise.status > 299){

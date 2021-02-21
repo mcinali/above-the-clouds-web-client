@@ -18,7 +18,6 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
 
   useEffect(() => {
     if ((Object.keys(forkedTopic).length>0)){
-      console.log(forkedTopic)
       setTopicText(forkedTopic.topicText)
     }
   }, [forkedTopic])
@@ -104,8 +103,8 @@ export default function NewStreamModal(accountId, accessToken, showModal, setSho
   }
 
   function discardInvitation(index){
-    invitations.splice(index, 1)
-    setInvitations(invitations)
+    const invitationsSpliced = invitations.filter((invitation,arrayIndex) => arrayIndex!=index)
+    setInvitations(invitationsSpliced)
   }
 
   return (
