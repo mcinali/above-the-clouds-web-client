@@ -15,6 +15,7 @@ const axios = require('axios')
 export default function Discovery() {
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState({})
+  const [forkedTopic, setForkedTopic] = useState({})
 
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
@@ -37,7 +38,7 @@ export default function Discovery() {
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(accountId, accessToken, showModal, setShowModal)}
+      {NewStreamModal(accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
@@ -49,7 +50,7 @@ export default function Discovery() {
           <div className={discoveryStyles.newStreamContainer}>
             <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
           </div>
-          {DiscoveryStreams(accountId, accessToken)}
+          {DiscoveryStreams(accountId, accessToken, setShowModal, setForkedTopic)}
         </div>
       </div>
     </div>
