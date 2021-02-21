@@ -15,13 +15,19 @@ const { connect, createLocalTracks } = require('twilio-video')
 export async function getServerSideProps({ req, res, query }) {
   try {
     // Authenticate accountId + token before serving page
-    const url = hostname + `/authenticate`
+    // Get accountId + token from cookies
     const cookie = new Cookies(req.headers.cookie)
-    const body = {
-      accountId: cookie.get('accountId'),
-      token: cookie.get('token'),
+    const accountId = cookie.get('accountId')
+    const token = cookie.get('token')
+    // Add accountId as query param + token as header
+    const url = hostname + `/auth/validate?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': token,
+      }
     }
-    const promise = await axios.post(url, body)
+    // Check for valid token
+    const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
         Location: "login",
@@ -33,7 +39,8 @@ export async function getServerSideProps({ req, res, query }) {
       throw Error('bad query')
     }
     const streamId = query.streamId
-    return { props: { streamId: streamId } }
+    // Pass in props to react function
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId } }
   } catch (error) {
     // console.error(error)
     res.writeHead(302, {
@@ -43,7 +50,7 @@ export async function getServerSideProps({ req, res, query }) {
   }
 }
 
-export default function Stream({ streamId }){
+export default function Stream({ accountId, accessToken, streamId }){
   const [showModal, setShowModal] = useState(false)
   const [streamParticipantInfo, setStreamParticipantInfo] = useState({})
 
@@ -55,10 +62,6 @@ export default function Stream({ streamId }){
   const [volume, setVolume] = useState(0.0)
 
   const [accountInfo, setAccountInfo] = useState({})
-  const cookie = new Cookies()
-  const accountId = cookie.get('accountId')
-  const hasToken = cookie.get('hasToken')
-  const accessToken = (hasToken) ? cookie.get('token') : null
 
   const [date, setDate] = useState(new Date())
 
