@@ -11,7 +11,7 @@ export default function DiscoveryStreams(accountId, accessToken, setShowModal, s
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 10000)
+    const timerId = setInterval(() => tick(), 1000)
     return function cleanup() {
       clearInterval(timerId)
     }

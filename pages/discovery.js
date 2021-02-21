@@ -12,7 +12,34 @@ import DiscoveryStreams from '../components/discoveryStreams'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function Discovery() {
+export async function getServerSideProps({ req, res }) {
+  try {
+    // Authenticate accountId + token before serving page
+    const url = hostname + `/authenticate`
+    const cookie = new Cookies(req.headers.cookie)
+    const body = {
+      accountId: cookie.get('accountId'),
+      token: cookie.get('token'),
+    }
+    const promise = await axios.post(url, body)
+    if (promise.status != 200){
+      res.writeHead(302, {
+        Location: "login",
+      })
+      res.end()
+    }
+    return { props: {} }
+  } catch (error) {
+    // console.error(error)
+    res.writeHead(302, {
+      Location: "login",
+    });
+    res.end()
+  }
+}
+
+
+export default function Discovery({}) {
   const [showModal, setShowModal] = useState(false)
   const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})
@@ -20,7 +47,7 @@ export default function Discovery() {
   const cookie = new Cookies()
   const accountId = cookie.get('accountId')
   const hasToken = cookie.get('hasToken')
-  const accessToken = (hasToken) ? cookie.get('token') : null
+  const accessToken = (Boolean(hasToken)) ? cookie.get('token') : null
 
   useEffect(() => {
     const url = hostname + `/account/${accountId}`

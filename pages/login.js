@@ -3,6 +3,6 @@ import Link from 'next/link'
 
 export default function Login() {
   return (
-    <div></div>
+    <div>Login Page!</div>
   )
 }

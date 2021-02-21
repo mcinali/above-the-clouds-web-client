@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Router, { useRouter } from 'next/router'
+import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
@@ -8,12 +8,42 @@ import StreamInviteModal from '../components/StreamInviteModal'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
-import followsStyles from '../styles/Follows.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
 
-export default function Stream(){
+export async function getServerSideProps({ req, res, query }) {
+  try {
+    // Authenticate accountId + token before serving page
+    const url = hostname + `/authenticate`
+    const cookie = new Cookies(req.headers.cookie)
+    const body = {
+      accountId: cookie.get('accountId'),
+      token: cookie.get('token'),
+    }
+    const promise = await axios.post(url, body)
+    if (promise.status != 200){
+      res.writeHead(302, {
+        Location: "login",
+      })
+      res.end()
+    }
+    // Return streamId from query before serving page
+    if (Object.keys(query).length==0){
+      throw Error('bad query')
+    }
+    const streamId = query.streamId
+    return { props: { streamId: streamId } }
+  } catch (error) {
+    // console.error(error)
+    res.writeHead(302, {
+      Location: "discovery",
+    });
+    res.end()
+  }
+}
+
+export default function Stream({ streamId }){
   const [showModal, setShowModal] = useState(false)
   const [streamParticipantInfo, setStreamParticipantInfo] = useState({})
 
@@ -30,6 +60,8 @@ export default function Stream(){
   const hasToken = cookie.get('hasToken')
   const accessToken = (hasToken) ? cookie.get('token') : null
 
+  const [date, setDate] = useState(new Date())
+
   useEffect(() => {
     const url = hostname + `/account/${accountId}`
     const headers = {
@@ -44,13 +76,8 @@ export default function Stream(){
       .catch(error => console.error(error))
   }, [])
 
-  const router = useRouter()
-  const streamId = router.query.streamId
-
-  const [date, setDate] = useState(new Date())
-
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 60000)
+    const timerId = setInterval(() => tick(), 1000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -85,6 +112,7 @@ export default function Stream(){
     }
     axios.post(url, body, headers)
          .then(res => {
+           console.log(res.data)
            if (res.data){
              const streamParticipantData = res.data
              setStreamParticipantInfo(res.data)
@@ -167,7 +195,7 @@ export default function Stream(){
          .catch(error => {
            window.alert('Failed to join stream')
            console.error(error)
-           // Router.push('/discovery')
+           Router.push('/discovery')
          })
     return
   }, [])
@@ -283,9 +311,9 @@ export default function Stream(){
                 <div></div>
                 :
                 (participant.following) ?
-                <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Unfollow</button>
+                <button className={streamStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Unfollow</button>
                 :
-                <button className={followsStyles.buttonFollow} onClick={function(){follow(participant, index)}}>Follow</button>
+                <button className={streamStyles.buttonFollow} onClick={function(){follow(participant, index)}}>Follow</button>
               }
             </div>
           )}

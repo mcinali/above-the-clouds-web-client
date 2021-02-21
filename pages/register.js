@@ -12,17 +12,17 @@ export async function getServerSideProps({ res, query }) {
     const url = hostname + `/invitation/check?code=${code}`
     const promise = await axios.get(url)
     if (promise.status > 299){
-      res.writeHead(302, { // or 301
-      Location: "invalid",
-    });
-    res.end()
+      res.writeHead(302, {
+        Location: "login",
+      })
+      res.end()
     }
     return { props: { code: code } }
   } catch (error) {
     console.error(error)
-    res.writeHead(302, { // or 301
-      Location: "invalid",
-    });
+    res.writeHead(302, {
+      Location: "login",
+    })
     res.end()
   }
 }
@@ -314,7 +314,6 @@ export default function Register({ code }) {
     setPageIndex(pageIndex - 1)
   }
 
-
   return (
     <div className={registrationStyles.main} style={{backgroundImage: 'url(/images/clouds_v1.jpg)'}}>
       Above the Clouds
@@ -330,7 +329,7 @@ export default function Register({ code }) {
         {(pageIndex==1) ?
           <div>
             <div className={registrationStyles.modalAccountCheckError}>{accountCheckError}</div>
-            <form className={registrationStyles.modalFormBody}>
+            <form onSubmit={e => { e.preventDefault()}} className={registrationStyles.modalFormBody}>
               <div>
                 <div className={registrationStyles.modalFormBodyLeftContainer}>
                   <div className={registrationStyles.modalFormBodyTitle}>First name</div>
@@ -363,7 +362,7 @@ export default function Register({ code }) {
           :
           (pageIndex==2) ?
           <div>
-            <form className={registrationStyles.modalFormBody}>
+            <form onSubmit={e => { e.preventDefault()}} className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div>An email has been sent to <b>{email}</b></div>
                 <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={emailAccessCode} onChange={(event) => {setEmailAccessCode(event.target.value.trim())}}></input>
@@ -375,7 +374,7 @@ export default function Register({ code }) {
           :
           (pageIndex==3) ?
           <div>
-            <form className={registrationStyles.modalFormBody}>
+            <form onSubmit={e => { e.preventDefault()}} className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Verify Phone Number</div>
                 <div className={registrationStyles.modalFormBodyUSPhone}>
@@ -393,7 +392,7 @@ export default function Register({ code }) {
           </div>
           :
           <div>
-            <form className={registrationStyles.modalFormBody}>
+            <form onSubmit={e => { e.preventDefault()}} className={registrationStyles.modalFormBody}>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div>A text message has been sent to <b>{phoneNumber}</b></div>
                 <input className={registrationStyles.modalFormBodyInputAccessCode} placeholder="Enter 6-digit code" value={phoneAccessCode} onChange={(event) => {setPhoneAccessCode(event.target.value.trim())}}></input>
