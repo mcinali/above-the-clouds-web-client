@@ -161,7 +161,7 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
             Discover conversations involving people you follow and people they follow.
           </div>
           <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
-            {FollowingSuggestions(accountId, accessToken)}
+            {FollowingSuggestions(hostname, accountId, accessToken)}
           </div>
           <div className={accountSetupStyles.modalDoneButtonContainer}>
             <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>

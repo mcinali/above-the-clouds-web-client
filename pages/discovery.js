@@ -65,19 +65,19 @@ export default function Discovery({ accountId, accessToken, hostname }) {
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
+      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
-            {FollowingSuggestions(accountId, accessToken)}
+            {FollowingSuggestions(hostname, accountId, accessToken)}
           </div>
         </div>
         <div className={discoveryStyles.panelRight}>
           <div className={discoveryStyles.newStreamContainer}>
             <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
           </div>
-          {DiscoveryStreams(accountId, accessToken, setShowModal, setForkedTopic)}
+          {DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic)}
         </div>
       </div>
     </div>

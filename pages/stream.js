@@ -330,7 +330,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
 
   return (
     <div className={commonStyles.container}>
-      {StreamInviteModal(accountId, accessToken, streamId, showModal, setShowModal)}
+      {StreamInviteModal(hostname, accountId, accessToken, streamId, showModal, setShowModal)}
       {Header(accountInfo)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>

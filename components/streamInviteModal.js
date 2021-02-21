@@ -8,7 +8,7 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function StreamInviteModal(accountId, accessToken, streamId, showModal, setShowModal){
+export default function StreamInviteModal(hostname, accountId, accessToken, streamId, showModal, setShowModal){
   const displayModal = showModal ? {"display":"block"} : {"display":"none"}
   const [queuedInvite, setQueuedInvite] = useState({})
   const [streamInvitees, setStreamInvitees] = useState([])
@@ -102,7 +102,7 @@ export default function StreamInviteModal(accountId, accessToken, streamId, show
         <div className={streamInvitesStyles.bodyContainer}>
           <div className={streamInvitesStyles.invitationsContainer}>
             <div className={streamInvitesStyles.header}>Invite Participants:</div>
-            {Invitations(accountId, accessToken, inviteesFilterList, queueInvite, removeQueuedInvite, queuedInvite)}
+            {Invitations(hostname, accountId, accessToken, inviteesFilterList, queueInvite, removeQueuedInvite, queuedInvite)}
           </div>
           <button className={streamInvitesStyles.inviteButton} onClick={function(){sendInvite()}} disabled={Object.keys(queuedInvite).length==0}>Send Invite!</button>
           <div>

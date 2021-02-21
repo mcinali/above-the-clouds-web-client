@@ -6,7 +6,7 @@ import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 
-export default function Invitations(accountId, accessToken, filterList, addInvitation, removeInvitation, queuedInvitationInSearch){
+export default function Invitations(hostname, accountId, accessToken, filterList, addInvitation, removeInvitation, queuedInvitationInSearch){
   const [searchText, setSearchText] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
