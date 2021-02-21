@@ -29,16 +29,15 @@ export async function getServerSideProps({ req, res, query }) {
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
-        Location: "login",
+        Location: "/login",
       })
       res.end()
     }
     // Pass in props to react function
     return { props: { accountId: accountId, accessToken: token } }
   } catch (error) {
-    // console.error(error)
     res.writeHead(302, {
-      Location: "discovery",
+      Location: "/login",
     });
     res.end()
   }

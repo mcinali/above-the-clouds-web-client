@@ -1,5 +1,7 @@
-// const hostname = 'https://abovethecloudsapp.com'
-const hostname = 'http://0.0.0.0:8080'
+const env = process.env.NODE_ENV
+const localhost = 'http://localhost:8080'
+const gcphost = 'https://api.abovethecloudsapp.com'
+const hostname = (env=='prod') ? gcphost : localhost
 
 module.exports = {
   hostname,
