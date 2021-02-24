@@ -143,9 +143,6 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
             <button className={accountSetupStyles.modalNextButton} disabled={disableNextButton} onClick={saveProfilePic}>
               Next
             </button>
-            <div className={accountSetupStyles.modalSkipButton} onClick={skip}>
-              Skip
-            </div>
           </div>
         </div>
         <div id="index2">
