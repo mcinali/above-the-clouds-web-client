@@ -29,7 +29,7 @@ export async function getServerSideProps({ req, res, query }) {
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
       res.writeHead(302, {
-        Location: "/login",
+        Location: "/landing",
       })
       res.end()
     }
@@ -37,7 +37,7 @@ export async function getServerSideProps({ req, res, query }) {
     return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
   } catch (error) {
     res.writeHead(302, {
-      Location: "/login",
+      Location: "/landing",
     });
     res.end()
   }

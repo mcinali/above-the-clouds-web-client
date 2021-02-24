@@ -11,11 +11,8 @@ export default function Landing() {
         </h1>
         <p className={landingStyles.description}>A Space for Meaningful Conversations</p>
         <button className={landingStyles.registrationButton}>
-          <Link href="/register">Sign Up</Link>
+          <Link href="/login">Log In</Link>
         </button>
-        <p className={landingStyles.textlink}>
-          <Link href="/login">Already have an account? Login here</Link>
-        </p>
       </div>
     </div>
   )

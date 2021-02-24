@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
 import Router, { useRouter } from "next/router"
-import Cookies from 'universal-cookie'
+import { setCookie } from '../utilities'
 import registrationStyles from '../styles/Registration.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
@@ -283,12 +282,9 @@ export default function Register({ code, hostname }) {
             axios.post(registrationURL, registrationBody)
               .then(res => {
                 // TO DO: save auth token & push to account setup page
-                const cookie = new Cookies()
-                cookie.set('accountId', res.data.accountId)
-                if (res.data.hasToken){
-                  cookie.set('hasToken', res.data.hasToken)
-                  cookie.set('token', res.data.accessToken)
-                }
+                setCookie('accountId', res.data.accountId)
+                setCookie('hasToken', res.data.hasToken)
+                setCookie('token', res.data.token)
                 Router.push("/account/setup")
               })
               .catch(error => {
@@ -316,7 +312,6 @@ export default function Register({ code, hostname }) {
 
   return (
     <div className={registrationStyles.main} style={{backgroundImage: 'url(/images/clouds_v1.jpg)'}}>
-      Above the Clouds
       <div className={registrationStyles.modal}>
         <div className={registrationStyles.modalHeader}>
           <div className={registrationStyles.modalHeaderNavigationButton} onClick={() => {back()}}>
