@@ -29,10 +29,8 @@ export async function getServerSideProps({ req, res, query }) {
     // Check for valid token
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
-      res.writeHead(302, {
-        Location: "/landing",
-      })
-      res.end()
+      res.writeHead(307, { Location: '/landing' }).end()
+      return { props: {ok: false, reason: 'Access not permitted' } }
     }
     // Return streamId from query before serving page
     if (Object.keys(query).length==0){
@@ -42,10 +40,8 @@ export async function getServerSideProps({ req, res, query }) {
     // Pass in props to react function
     return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname } }
   } catch (error) {
-    res.writeHead(302, {
-      Location: "/discovery",
-    });
-    res.end()
+    res.writeHead(307, { Location: '/landing' }).end()
+    return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 

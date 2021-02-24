@@ -11,18 +11,13 @@ export async function getServerSideProps({ res, query }) {
     const url = hostname + `/invitation/check?code=${code}`
     const promise = await axios.get(url)
     if (promise.status > 299){
-      res.writeHead(302, {
-        Location: "login",
-      })
-      res.end()
+      res.writeHead(307, { Location: '/landing' }).end()
+      return { props: {ok: false, reason: 'Invalid invitation code' } }
     }
     return { props: { code: code, hostname: hostname } }
   } catch (error) {
-    console.error(error)
-    res.writeHead(302, {
-      Location: "login",
-    })
-    res.end()
+    res.writeHead(307, { Location: '/landing' }).end()
+    return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 
