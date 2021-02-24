@@ -40,7 +40,7 @@ export async function getServerSideProps({ req, res, query }) {
     // Pass in props to react function
     return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname } }
   } catch (error) {
-    res.writeHead(307, { Location: '/landing' }).end()
+    res.writeHead(307, { Location: '/discovery' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }

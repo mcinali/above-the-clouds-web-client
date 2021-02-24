@@ -6,8 +6,16 @@ import { setCookie } from '../utilities'
 const { hostname } = require('../config')
 const axios = require('axios')
 
+export async function getServerSideProps({ res, query }) {
+  try {
+    return { props: { hostname: hostname } }
+  } catch (error) {
+    res.writeHead(307, { Location: '/landing' }).end()
+    return { props: {ok: false, reason: 'Issues accessing page' } }
+  }
+}
 
-export default function Login() {
+export default function Login({ hostname }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
