@@ -1,6 +1,7 @@
 .description {
+  margin-top: 5%;
   line-height: 1.5;
-  font-size: 1.5rem;
+  font-size: 18px;
   margin-bottom:5%;
 }
 
@@ -12,6 +13,12 @@
   margin-top: 10px;
 }
 
+.formBodyFootnote {
+    text-align: left;
+    font-size: 12px;
+    color: grey;
+}
+
 .formBodyFootnoteError {
     margin-left: 75px;
     text-align: left;
@@ -21,6 +28,13 @@
     position: relative;
     overflow: auto;
     text-align: left;
+}
+
+.formBodyFootnoteTitle {
+    text-align: left;
+    font-size: 12px;
+    color: grey;
+    font-weight: 600;
 }
 
 .formBodyInput {
@@ -50,10 +64,10 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 15px 64px;
+  padding: 15px 3%;
   align-items: center;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .loginButton:disabled {
@@ -66,6 +80,23 @@
   cursor: pointer;
 }
 
+.loginButtonInverse {
+  margin-top: 2%;
+  background-color: white;
+  color: #0070f3;
+  border: solid 1px #0070f3;
+  border-radius: 8px;
+  padding: 15px 3%;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+}
+
+.loginButtonInverse:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
 .main {
   height: 100%;
   top: 0px;
@@ -75,6 +106,20 @@
   background-size: 100% 100%;
   background-repeat: no-repeat;
   z-index: 1;
+}
+
+.subtitle {
+  margin-top: 7%;
+  margin-bottom: 5%;
+  font-size: 42px;
+  font-weight: 400;
+}
+
+.subHeading {
+  margin-top: 7%;
+  margin-bottom: 5%;
+  font-size: 36px;
+  font-weight: 200;
 }
 
 .title {

@@ -13,6 +13,9 @@ export default function Landing() {
         <button className={landingStyles.registrationButton}>
           <Link href="/login">Log In</Link>
         </button>
+        <div className={landingStyles.textlink}>
+          <Link href="/password_reset/email">Forgot Password?</Link>
+        </div>
       </div>
     </div>
   )

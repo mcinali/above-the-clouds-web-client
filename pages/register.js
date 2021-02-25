@@ -67,7 +67,7 @@ export default function Register({ code, hostname }) {
   useEffect(() => {
     if (password.length==0){
       setPasswordLengthColor({'color':'grey'})
-    } else if (password.length >= 8 && password.length <=20){
+    } else if (password.length >= 8){
       setPasswordLengthColor({'color':'#2E8B57'})
     } else {
       setPasswordLengthColor({'color':'#cb4154'})
@@ -125,12 +125,13 @@ export default function Register({ code, hostname }) {
     try {
       const phoneNumberCheckNumber = Number(phoneNumber)
       const phoneNumberCheckInteger = phoneNumberCheckNumber % 1
-      if (Number.isNaN(phoneNumberCheckNumber) || phoneNumberCheckInteger!=0){
+      const validInteger = (Number.isNaN(phoneNumberCheckNumber) || phoneNumberCheckInteger!=0) ? false : true
+      if (!validInteger){
         setPhoneNumberError('Enter a valid phone number')
       } else {
         setPhoneNumberError('')
       }
-      if ((phoneNumberCheckNumber >= 2010000000) && (phoneNumberCheckNumber <= 9899999999)){
+      if ((phoneNumberCheckNumber >= 2010000000) && (phoneNumberCheckNumber <= 9899999999) && validInteger){
         setDisableSendCodeButton(false)
       } else {
         setDisableSendCodeButton(true)
@@ -146,12 +147,13 @@ export default function Register({ code, hostname }) {
       const accessCodeLength = phoneAccessCode.length
       const accessCodeNumber = Number(phoneAccessCode)
       const accessCodeInteger = accessCodeNumber % 1
-      if (Number.isNaN(accessCodeNumber) || accessCodeInteger!=0){
+      const validInteger = (Number.isNaN(accessCodeNumber) || accessCodeInteger!=0) ? false : true
+      if (!validInteger){
         setPhoneAccessCodeError('Enter a valid 6-digit access code')
       } else {
         setPhoneAccessCodeError('')
       }
-      if (accessCodeLength==6){
+      if (accessCodeLength==6 && validInteger){
         setDisableRegisterButton(false)
       } else {
         setDisableRegisterButton(true)
@@ -343,7 +345,7 @@ export default function Register({ code, hostname }) {
                 <div className={registrationStyles.modalFormBodyTitle}>Password</div>
                 <input className={registrationStyles.modalFormBodyInput} value={password} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
                 <div className={registrationStyles.modalFormBodyFootnoteTitle}>Your Password must have:</div>
-                <div className={registrationStyles.modalFormBodyFootnote} style={passwordLengthColor}> - 8 to 20 characters</div>
+                <div className={registrationStyles.modalFormBodyFootnote} style={passwordLengthColor}> - At least 8 characters</div>
                 <div className={registrationStyles.modalFormBodyFootnote} style={passwordCharactersColor}> - At least 1 of each: uppercase letter, lowercase letter, number, and special character</div>
               </div>
             </form>
