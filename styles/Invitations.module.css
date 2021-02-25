@@ -64,9 +64,9 @@
 }
 
 .loader {
-  position:fixed;
-  margin: 5.5% 11%;
-  right: 0px;
+  position: fixed;
+  right: 11%;
+  margin: 1% auto;
   border: 3px solid #f3f3f3;
   border-radius: 50%;
   border-top: 3px solid #3498db;
@@ -74,6 +74,7 @@
   height: 20px;
   -webkit-animation: spin 0.5s linear infinite; /* Safari */
   animation: spin 0.5s linear infinite;
+  z-index: 7;
 }
 
 /* Safari */
@@ -149,4 +150,10 @@
   font-size: 16px;
   border-radius: 16px;
   padding-left: 16px;
+}
+
+.wrapper {
+  display: inline-block;
+  width: 100%;
+  margin: 0 auto;
 }

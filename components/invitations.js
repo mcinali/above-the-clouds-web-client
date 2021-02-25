@@ -104,7 +104,7 @@ export default function Invitations(hostname, accountId, accessToken, filterList
           </div>
         </div>
         :
-        <div>
+        <div className={invitationsStyles.wrapper}>
           <div id='loader' className={invitationsStyles.loader}></div>
           <input
             key='searchBar'
