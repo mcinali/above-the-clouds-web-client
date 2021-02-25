@@ -42,6 +42,20 @@ export default function Invitations(hostname, accountId, accessToken, filterList
     }
   }
 
+  useEffect(() => {
+    document.getElementById('loader').style.display = 'block'
+    const timeOutId = setTimeout(() => {
+      fetchSuggestions(searchText)
+    }, 1000)
+    return () => {
+      clearTimeout(timeOutId)
+    }
+  }, [searchText])
+
+  useEffect(() => {
+    document.getElementById('loader').style.display = 'none'
+  }, [searchResults])
+
   function filterSuggestions(suggestions){
     try {
       const accounts = filterList.map(filterItem => filterItem.accountId)
@@ -90,13 +104,16 @@ export default function Invitations(hostname, accountId, accessToken, filterList
           </div>
         </div>
         :
-        <input
-          key='searchBar'
-          value={searchText}
-          placeholder={"Search by username, full name, or email"}
-          onChange={(e) => fetchSuggestions(e.target.value)}
-          className={invitationsStyles.searchBar}
-        />
+        <div>
+          <div id='loader' className={invitationsStyles.loader}></div>
+          <input
+            key='searchBar'
+            value={searchText}
+            placeholder={"Search by username, full name, or email"}
+            onChange={(e) => setSearchText(e.target.value)}
+            className={invitationsStyles.searchBar}
+          />
+        </div>
       }
       <div className={invitationsStyles.dropdown}>
         <div className={invitationsStyles.dropdownContent}>
