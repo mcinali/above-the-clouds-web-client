@@ -93,7 +93,7 @@ export default function Register({ code, hostname }) {
   }, [password])
 
   useEffect(() => {
-    if (Boolean(firstname) && Boolean(lastname) && Boolean(username) && Boolean(email) && Boolean(password) && !Boolean(usernameError) && !passwordError){
+    if (Boolean(firstname.trim()) && Boolean(lastname.trim()) && Boolean(username) && Boolean(email) && Boolean(password) && !Boolean(usernameError) && !passwordError){
       setDisbaleAccountFormCheckButton(false)
     } else {
       setDisbaleAccountFormCheckButton(true)
@@ -176,8 +176,8 @@ export default function Register({ code, hostname }) {
     try {
       const url = hostname + `/preregistration/accountDetails/check?code=${code}`
       const body = {
-        firstname: firstname,
-        lastname: lastname,
+        firstname: firstname.trim(),
+        lastname: lastname.trim(),
         username: username,
         email: email,
         password: password,
@@ -267,8 +267,8 @@ export default function Register({ code, hostname }) {
             const phoneAccessToken = res.data.accessToken
             const registrationURL = hostname + `/account/register?code=${code}`
             const registrationBody = {
-              firstname: firstname,
-              lastname: lastname,
+              firstname: firstname.trim(),
+              lastname: lastname.trim(),
               username: username,
               email: email,
               password: password,
@@ -325,11 +325,11 @@ export default function Register({ code, hostname }) {
               <div>
                 <div className={registrationStyles.modalFormBodyLeftContainer}>
                   <div className={registrationStyles.modalFormBodyTitle}>First name</div>
-                  <input className={registrationStyles.modalFormBodyInput} value={firstname} onChange={(event) => {setFirstname(event.target.value.trim())}}></input>
+                  <input className={registrationStyles.modalFormBodyInput} value={firstname} onChange={(event) => {setFirstname(event.target.value)}}></input>
                 </div>
                 <div className={registrationStyles.modalFormBodyRightContainer}>
                   <div className={registrationStyles.modalFormBodyTitle}>Last name</div>
-                  <input className={registrationStyles.modalFormBodyInput} value={lastname} onChange={(event) => {setLastname(event.target.value.trim())}}></input>
+                  <input className={registrationStyles.modalFormBodyInput} value={lastname} onChange={(event) => {setLastname(event.target.value)}}></input>
                 </div>
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>

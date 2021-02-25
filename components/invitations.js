@@ -12,8 +12,8 @@ export default function Invitations(hostname, accountId, accessToken, filterList
 
   function fetchSuggestions(text){
     try {
+      setSearchText(text)
       const searchText = text.trim()
-      setSearchText(searchText)
       const url = hostname+`/suggestions?accountId=${accountId}&text=${searchText}`
       const headers = {
         headers: {
