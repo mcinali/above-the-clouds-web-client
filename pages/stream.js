@@ -52,7 +52,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
 
-  const [room, setRoom] = useState({})
+  // const [room, setRoom] = useState({})
   const [mute, setMute] = useState(false)
   const [volume, setVolume] = useState(0.0)
 
@@ -113,8 +113,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
            setIsActive(true)
            if (res.data){
              const streamParticipantData = res.data
-             const cookie = new Cookies()
-             cookie.set('streamParticipantId', streamParticipantData.streamParticipantId)
+             window.sessionStorage.setItem('streamParticipantId', streamParticipantData.streamParticipantId)
              createLocalTracks({
                audio: true,
                video: false
@@ -125,8 +124,11 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
                })
              }).then(room => {
                console.log(`Connected to Room: ${room.name}`)
+               console.log(room)
+               window.sessionStorage.setItem('twilioRoomSID', room.sid)
+               window.sessionStorage.setItem('twilioParticipantSID', room.localParticipant.sid)
                const player = document.getElementById('audio-controller')
-               setRoom(room)
+               // setRoom(room)
                // Attach new Participant's Media to a <div> element.
                room.on('participantConnected', participant => {
                  const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
@@ -205,6 +207,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
       const action = window.confirm('Are you sure you want to leave?')
       if (action){
         leaveStream()
+        Router.push('/discovery')
       }
     } catch (error) {
       console.error(error)
@@ -216,12 +219,15 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   function leaveStream(){
     try {
       const url = hostname + `/stream/leave`
-      const cookie = new Cookies()
-      const streamParticipantId = cookie.get('streamParticipantId')
+      const streamParticipantId = window.sessionStorage.getItem('streamParticipantId')
+      const twilioRoomSID = window.sessionStorage.getItem('twilioRoomSID')
+      const twilioParticipantSID = window.sessionStorage.getItem('twilioParticipantSID')
       const body = {
         accountId: accountId,
         streamId: streamId,
         streamParticipantId: streamParticipantId,
+        twilioRoomSID: twilioRoomSID,
+        twilioParticipantSID: twilioParticipantSID,
       }
       const headers = {
         headers: {
@@ -230,10 +236,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
       }
       axios.post(url, body, headers)
            .then(res => {
-             if (Object.keys(room).length>0){
-               room.disconnect()
-             }
-             Router.push('/discovery')
+             console.log(`User ${twilioParticipantSID} left room ${twilioRoomSID}`)
            })
            .catch(error => {
              console.error(error)
@@ -246,6 +249,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   }
 
   function muteLocalTracks(){
+    const room = window.sessionStorage.getItem('room')
     if (mute) {
       room.localParticipant.audioTracks.forEach(publication => {
         publication.track.enable()
@@ -301,28 +305,23 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
 
   // Alert user before exiting page
   useEffect(() => {
+    const active = window.sessionStorage.getItem('active')
     if (isActive){
-      window.addEventListener('popstate', leaveStreamSilently)
-      window.addEventListener('onbeforeunload', affirmLeaveStream)
-      window.addEventListener('unload', leaveStreamSilently)
+      window.addEventListener("beforeunload", leaveStreamInBackground)
+      window.addEventListener("popstate", leaveStreamInBackground)
       return () => {
-        window.removeEventListener('popstate', leaveStreamSilently)
-        window.removeEventListener('onbeforeunload', affirmLeaveStream)
-        window.removeEventListener('unload', leaveStreamSilently)
+        window.removeEventListener("beforeunload", leaveStreamInBackground)
+        window.removeEventListener("popstate", leaveStreamInBackground)
       }
     }
   }, [isActive])
 
-  const leaveStreamSilently = (event) => {
+  const leaveStreamInBackground = (event) => {
+    event.preventDefault()
     leaveStream()
+    return event.returnValue = ''
   }
 
-  const affirmLeaveStream = () => {
-    event.preventDefault()
-    event.returnValue = ''
-    confirm('You are exiting the stream')
-    leaveStream()
-  }
 
   return (
     <div className={commonStyles.container}>
