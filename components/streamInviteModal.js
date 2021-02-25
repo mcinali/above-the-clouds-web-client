@@ -37,7 +37,7 @@ export default function StreamInviteModal(hostname, accountId, accessToken, stre
              console.error(error)
            })
     }
-  }, [showModal, inviteesFilterList])
+  }, [showModal])
 
   function filterStreamInvitees(invitees, participants){
     const participantAccountIds = participants.map(participant => participant.accountId)
