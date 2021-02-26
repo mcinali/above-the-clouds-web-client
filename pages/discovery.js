@@ -31,8 +31,9 @@ export async function getServerSideProps({ req, res, query }) {
       res.writeHead(307, { Location: '/landing' }).end()
       return { props: {ok: false, reason: 'Access not permitted' } }
     }
+    const newStreamModal = (Object.keys(query).length==0) ? false : Boolean(query.newStreamModal)
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname, newStreamModal: newStreamModal } }
   } catch (error) {
     res.writeHead(307, { Location: '/landing' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
@@ -40,12 +41,13 @@ export async function getServerSideProps({ req, res, query }) {
 }
 
 
-export default function Discovery({ accountId, accessToken, hostname }) {
-  const [showModal, setShowModal] = useState(false)
+export default function Discovery({ accountId, accessToken, hostname, newStreamModal }) {
+  const [showModal, setShowModal] = useState(newStreamModal)
   const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})
 
   useEffect(() => {
+    window.history.replaceState(null, '', '/discovery')
     const url = hostname + `/account/${accountId}`
     const headers = {
       headers: {

@@ -55,7 +55,7 @@ export default function Entry({ accountId, accessToken, hostname }) {
 
   function newStream(){
     try {
-      Router.push("/new_stream")
+      Router.push("/discovery?newStreamModal=true")
     } catch (error) {
       console.error(error)
     }

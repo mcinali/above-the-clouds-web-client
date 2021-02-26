@@ -117,7 +117,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
           <div className={newStreamStyles.bodyContainer}>
             <div className={newStreamStyles.formContainer}>
               <form>
-                <div className={newStreamStyles.header}>Topic: </div>
+                <div className={newStreamStyles.header}>Stream Topic: </div>
                 <div className={newStreamStyles.checkboxContainer}>
                   <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
                   <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>

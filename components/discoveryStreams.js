@@ -10,7 +10,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -26,8 +26,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     // const days = (parseInt(dateDiff / (24*60*60*1000))).toString().padStart(2, '0')
     const hrs = (parseInt(dateDiff / (60*60*1000)) % 24).toString().padStart(2, '0')
     const mins = (parseInt(dateDiff / (60*1000)) % (60)).toString().padStart(2, '0')
-    const secs = (parseInt(dateDiff / (1000)) % (60)).toString().padStart(2, '0')
-    const result = `${hrs} : ${mins} :  ${secs}`
+    const result = `${hrs} : ${mins}`
     return result
   }
 
@@ -130,7 +129,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
                   <div className={discoveryStreamsStyles.timeContainer}>
                     <div className={discoveryStreamsStyles.timeSubContainer}>
                       <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
-                      <div className={discoveryStreamsStyles.timeLabels}>{'hr : min : sec'}</div>
+                      <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
                     </div>
                   </div>
                   <div className={discoveryStreamsStyles.participantsContainer}>
