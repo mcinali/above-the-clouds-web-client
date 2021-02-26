@@ -51,6 +51,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
 
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
+  const [room, setRoom] = useState({})
 
   // const [room, setRoom] = useState({})
   const [mute, setMute] = useState(false)
@@ -124,7 +125,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
                })
              }).then(room => {
                console.log(`Connected to Room: ${room.name}`)
-               console.log(room)
+               setRoom(room)
                window.sessionStorage.setItem('twilioRoomSID', room.sid)
                window.sessionStorage.setItem('twilioParticipantSID', room.localParticipant.sid)
                const player = document.getElementById('audio-controller')
@@ -249,7 +250,6 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   }
 
   function muteLocalTracks(){
-    const room = window.sessionStorage.getItem('room')
     if (mute) {
       room.localParticipant.audioTracks.forEach(publication => {
         publication.track.enable()

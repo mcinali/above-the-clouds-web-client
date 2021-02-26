@@ -43,7 +43,15 @@ export default function Invitations(hostname, accountId, accessToken, filterList
   }
 
   useEffect(() => {
-    document.getElementById('loader').style.display = 'block'
+    if (Object.keys(queuedInvitationInSearch).length==0){
+      document.getElementById('loader').style.display = 'none'
+    }
+  }, [queuedInvitationInSearch])
+
+  useEffect(() => {
+    if (document.getElementById('loader')){
+      document.getElementById('loader').style.display = 'block'
+    }
     const timeOutId = setTimeout(() => {
       fetchSuggestions(searchText)
     }, 1000)
@@ -53,7 +61,9 @@ export default function Invitations(hostname, accountId, accessToken, filterList
   }, [searchText])
 
   useEffect(() => {
-    document.getElementById('loader').style.display = 'none'
+    if (document.getElementById('loader')){
+      document.getElementById('loader').style.display = 'none'
+    }
   }, [searchResults])
 
   function filterSuggestions(suggestions){
