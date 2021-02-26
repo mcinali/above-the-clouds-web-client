@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
+import Router from 'next/router'
 import entryStyles from '../styles/Entry.module.css'
 import commonStyles from '../styles/Common.module.css'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
-import NewStreamModal from '../components/newStreamModal'
-import FollowingSuggestions from '../components/followingSuggestions'
-import DiscoveryStreams from '../components/discoveryStreams'
 const { hostname } = require('../config')
 const axios = require('axios')
 
@@ -57,23 +53,41 @@ export default function Entry({ accountId, accessToken, hostname }) {
       .catch(error => console.error(error))
   }, [])
 
+  function newStream(){
+    try {
+      Router.push("/new_stream")
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function discovery(){
+    try {
+      Router.push("/discovery")
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
-    <div className={commonStyles.container}>
+    <div className={entryStyles.main} style={{backgroundImage: 'url(/images/clouds_v1.jpg)'}}>
       {Header(accountInfo)}
-      <div className={entryStyles.background}>
+      <div>
         <div className={entryStyles.modal}>
           <div className={entryStyles.title}>Welcome to
             <a> Above the Clouds!</a>
           </div>
           <div className={entryStyles.cardContainer}>
-            <div className={entryStyles.card}>
+            <button className={entryStyles.card} onClick={function(){newStream()}}>
               <div className={entryStyles.cardTitle}> <a>Start</a> a stream</div>
               <div className={entryStyles.cardDescription}>Start a new stream, invite friends, and hang out until your followers and/or invitees to join you.</div>
-            </div>
-            <div className={entryStyles.card}>
+            </button>
+            <button className={entryStyles.card} onClick={function(){discovery()}}>
               <div className={entryStyles.cardTitle}><a>Discover</a> streams</div>
-              <div className={entryStyles.cardDescription}>Discover your followers streams and streams you've been invited to.</div>
-            </div>
+              <div className={entryStyles.cardDescription}>
+                Discover your followers streams and streams you've been invited to.
+              </div>
+            </button>
           </div>
         </div>
       </div>
