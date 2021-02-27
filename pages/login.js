@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Router, { useRouter } from "next/router"
+import Link from 'next/link'
 import loginStyles from '../styles/Login.module.css'
 import commonStyles from '../styles/Common.module.css'
 import { setCookie } from '../utilities'
@@ -62,6 +63,9 @@ export default function Login({ hostname }) {
         </div>
         <div className={loginStyles.formBodyFootnoteError}>{loginError}</div>
         <button className={loginStyles.loginButton} onClick={function(){login()}}>Log In</button>
+        <div className={loginStyles.textlink}>
+          <Link href="/password_reset/email">Forgot Password?</Link>
+        </div>
       </div>
     </div>
   )

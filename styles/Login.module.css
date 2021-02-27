@@ -122,6 +122,14 @@
   font-weight: 200;
 }
 
+.textlink {
+  margin-top: 1%;
+  color: #0070f3;
+  font-size: 14px;
+  font-weight: normal;
+  align-items: center;
+}
+
 .title {
   margin-top: 7%;
   margin-bottom: 5%;
