@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import followsStyles from '../styles/Follows.module.css'
 import userStyles from '../styles/Users.module.css'
 const axios = require('axios')
+
+const Image = React.memo(function Image({ src }) {
+  return <img className={followsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
+})
 
 export default function FollowingSuggestions(hostname, accountId, accessToken){
   const [suggestions, setSuggestions] = useState([])
@@ -88,7 +91,7 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
       {suggestions.map((suggestion, index) => {
         return (
           <div key={index.toString()} className={followsStyles.row}>
-            <img className={followsStyles.image} src={createPictureURLFromArrayBufferString(suggestion.profilePicture)}/>
+            <Image src={suggestion.profilePicture}/>
             <div className={followsStyles.userInfo}>
               <a className={followsStyles.name}>{`${suggestion.firstname} ${suggestion.lastname}`}</a>
               <a className={followsStyles.username}>{`${suggestion.username}`} </a>

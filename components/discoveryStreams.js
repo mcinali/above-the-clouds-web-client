@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 import Router from "next/router"
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import discoveryStreamsStyles from '../styles/DiscoveryStreams.module.css'
 const axios = require('axios')
+
+const Image = React.memo(function Image({ src }) {
+  return <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
+})
 
 export default function DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic) {
   const [streams, setStreams] = useState([])
@@ -136,7 +139,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
                     {stream.participants.details.map((participant, participantIndex) =>
                       <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
                         <div>
-                          <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
+                          <Image src={participant.profilePicture}/>
                         </div>
                         <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
                         <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>

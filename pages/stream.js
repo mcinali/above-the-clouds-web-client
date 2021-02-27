@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
-import Image from 'next/image'
 const uuid = require('uuid')
 import StreamInviteModal from '../components/streamInviteModal'
 import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
@@ -12,6 +11,10 @@ import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
+
+const Image = React.memo(function Image({ src }) {
+  return <img src={createPictureURLFromArrayBufferString(src)} className={streamStyles.participantImage} />
+})
 
 export async function getServerSideProps({ req, res, query }) {
   try {
@@ -82,7 +85,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
   }, [])
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -98,8 +101,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
     // const days = (parseInt(dateDiff / (24*60*60*1000))).toString().padStart(2, '0')
     const hrs = (parseInt(dateDiff / (60*60*1000)) % 24).toString().padStart(2, '0')
     const mins = (parseInt(dateDiff / (60*1000)) % (60)).toString().padStart(2, '0')
-    const secs = (parseInt(dateDiff / (1000)) % (60)).toString().padStart(2, '0')
-    const result = `${hrs} : ${mins} :  ${secs}`
+    const result = `${hrs} : ${mins}`
     return result
   }
 
@@ -343,14 +345,14 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
         <div className={streamStyles.timeContainer}>
           <div className={streamStyles.timeSubContainer}>
             <div className={streamStyles.time}>{calcElapsedTime(streamInfo.startTime)}</div>
-            <div className={streamStyles.timeLabels}>{'hr : min : sec'}</div>
+            <div className={streamStyles.timeLabels}>{'hr : min'}</div>
           </div>
         </div>
         <div className={streamStyles.participantsContainer}>
           {streamParticipants.map((participant,index) =>
             <div key={index.toString()} className={streamStyles.participantContainer}>
               <div>
-                <img className={streamStyles.participantImage} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
+                <Image src={participant.profilePicture}/>
               </div>
               <div className={streamStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
               <div className={streamStyles.participantUsername}>{`${participant.username}`}</div>

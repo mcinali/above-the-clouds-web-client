@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Router from 'next/router'
 import Invitations from '../components/invitations'
-import Image from 'next/image'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import newStreamStyles from '../styles/NewStream.module.css'
 import userStyles from '../styles/Users.module.css'
 const axios = require('axios')
+
+const Image = React.memo(function Image({ src }) {
+  return <img className={userStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
+})
 
 export default function NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic){
   const displayModal = showModal ? {'display':'block'} : {'display':'none'}
@@ -142,7 +145,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
                   return (
                     <div key={index.toString()} className={userStyles.row}>
                       <div className={userStyles.row}>
-                        <img className={userStyles.image} src={createPictureURLFromArrayBufferString(invitation.profilePicture)}/>
+                        <Image src={invitation.profilePicture}/>
                         <div className={userStyles.userInfo}>
                           <a className={userStyles.name}>{`${invitation.firstname} ${invitation.lastname}`}</a>
                           <a className={userStyles.username}>{invitation.username} </a>
