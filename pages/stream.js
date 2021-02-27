@@ -4,8 +4,9 @@ import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import Image from 'next/image'
+const uuid = require('uuid')
 import StreamInviteModal from '../components/streamInviteModal'
-import { createPictureURLFromArrayBufferString } from '../utilities'
+import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
@@ -17,8 +18,9 @@ export async function getServerSideProps({ req, res, query }) {
     // Authenticate accountId + token before serving page
     // Get accountId + token from cookies
     const cookie = new Cookies(req.headers.cookie)
-    const accountId = cookie.get('accountId')
-    const token = cookie.get('token')
+    const accountId = cookie.cookies.accountId
+    const token = cookie.cookies.token
+    const session = (Boolean(cookie.cookies.session)) ? cookie.cookies.session : null
     // Add accountId as query param + token as header
     const url = hostname + `/auth/validate?accountId=${accountId}`
     const headers = {
@@ -38,14 +40,14 @@ export async function getServerSideProps({ req, res, query }) {
     }
     const streamId = query.streamId
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname } }
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname, session: session } }
   } catch (error) {
     res.writeHead(307, { Location: '/discovery' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 
-export default function Stream({ accountId, accessToken, streamId, hostname }){
+export default function Stream({ accountId, accessToken, streamId, hostname, session }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
@@ -62,6 +64,10 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
+    if (!Boolean(session)){
+      const hrsToExpiration = 6
+      setCookie('session', uuid.v4(), hrsToExpiration)
+    }
     const url = hostname + `/account/${accountId}`
     const headers = {
       headers: {

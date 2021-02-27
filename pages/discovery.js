@@ -18,6 +18,7 @@ export async function getServerSideProps({ req, res, query }) {
     const cookie = new Cookies(req.headers.cookie)
     const accountId = cookie.get('accountId')
     const token = cookie.get('token')
+    const session = cookie.get('session')
     // Add accountId as query param + token as header
     const url = hostname + `/auth/validate?accountId=${accountId}`
     const headers = {
@@ -30,6 +31,10 @@ export async function getServerSideProps({ req, res, query }) {
     if (promise.status != 200){
       res.writeHead(307, { Location: '/landing' }).end()
       return { props: {ok: false, reason: 'Access not permitted' } }
+    }
+    if (!Boolean(session)){
+      res.writeHead(302, { Location: '/entry' }).end()
+      return { props: {ok: true } }
     }
     const newStreamModal = (Object.keys(query).length==0) ? false : Boolean(query.newStreamModal)
     // Pass in props to react function

@@ -16,14 +16,22 @@ function createPictureURLFromArrayBufferString(arrayBufferString){
   }
 }
 
-function setCookie(name, data){
+function setCookie(name, data, hrs){
   try {
     const cookie = new Cookies()
-    const age = 60 * 60 * 24 * 365
-    cookie.set(name, data, {
-      path: '/',
-      maxAge: age,
-    })
+    if (hrs) {
+      const expiresTS = new Date(new Date().getTime() + 1000*60*60*hrs)
+      cookie.set(name, data, {
+        path: '/',
+        expires: expiresTS,
+      })
+    } else {
+      const ttl = 60 * 60 * 24 * 365
+      cookie.set(name, data, {
+        path: '/',
+        maxAge: ttl,
+      })
+    }
   } catch (error) {
     throw new Error(error)
   }
