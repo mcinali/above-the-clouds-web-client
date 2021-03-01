@@ -30,7 +30,7 @@ export default function PasswordResetEmail({ hostname }) {
           Router.push(`/password_reset/confirm?email=${email}`)
         })
         .catch(error => {
-          setLoginError('Unable send password reset email')
+          setResetError('Unable send password reset email')
           console.error(error)
         })
 
@@ -47,7 +47,7 @@ export default function PasswordResetEmail({ hostname }) {
         <h1 className={loginStyles.subtitle}>Forgot your password?</h1>
         <div className={loginStyles.formBodyContainer}>
           <div className={loginStyles.formBodyTitle}>Email</div>
-          <input className={loginStyles.formBodyInput} placeholder={'Enter the email linked to your Above the Clouds account'} onChange={(event) => {setEmail(event.target.value.trim())}}></input>
+          <input className={loginStyles.formBodyInput} placeholder={'Enter the email linked to your Above the Clouds account'} value={email} onChange={(event) => {setEmail(event.target.value.toLowerCase().trim())}}></input>
         </div>
         <div className={loginStyles.formBodyFootnoteError}>{resetError}</div>
         <button className={loginStyles.loginButton} onClick={function(){sendPasswordResetEmail()}}>Reset Password</button>

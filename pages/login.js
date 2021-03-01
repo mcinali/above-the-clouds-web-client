@@ -46,7 +46,6 @@ export default function Login({ hostname }) {
     }
   }
 
-
   return (
     <div className={commonStyles.container}>
       <div className={loginStyles.main}>
@@ -55,11 +54,11 @@ export default function Login({ hostname }) {
         </h1>
         <div className={loginStyles.formBodyContainer}>
           <div className={loginStyles.formBodyTitle}>Username</div>
-          <input className={loginStyles.formBodyInput} placeholder={'username'} onChange={(event) => {setUsername(event.target.value.trim())}}></input>
+          <input className={loginStyles.formBodyInput} placeholder={'username'} value={username} onChange={(event) => {setUsername(event.target.value.toLowerCase().trim())}}></input>
         </div>
         <div className={loginStyles.formBodyContainer}>
           <div className={loginStyles.formBodyTitle}>Password</div>
-          <input className={loginStyles.formBodyInput} placeholder={'password'} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
+          <input className={loginStyles.formBodyInput} placeholder={'password'} value={password} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
         </div>
         <div className={loginStyles.formBodyFootnoteError}>{loginError}</div>
         <button className={loginStyles.loginButton} onClick={function(){login()}}>Log In</button>

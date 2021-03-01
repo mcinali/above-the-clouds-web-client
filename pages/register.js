@@ -334,12 +334,12 @@ export default function Register({ code, hostname }) {
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Username</div>
-                <input className={registrationStyles.modalFormBodyInput} value={username} onChange={(event) => {setUsername(event.target.value.trim())}}></input>
+                <input className={registrationStyles.modalFormBodyInput} value={username} onChange={(event) => {setUsername(event.target.value.toLowerCase().trim())}}></input>
                 <div className={registrationStyles.modalFormBodyFootnoteError}>{usernameError}</div>
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Email</div>
-                <input className={registrationStyles.modalFormBodyInput} value={email} onChange={(event) => {setEmail(event.target.value.trim())}}></input>
+                <input className={registrationStyles.modalFormBodyInput} value={email} onChange={(event) => {setEmail(event.target.value.toLowerCase().trim())}}></input>
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Password</div>

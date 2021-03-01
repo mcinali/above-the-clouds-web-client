@@ -142,7 +142,7 @@ export default function PasswordResetEmail({ hostname, code, token, phone }) {
         <div id='index1'>
           <div className={loginStyles.subHeading}>Enter the verification code sent to <b>{phone}</b></div>
           <div className={loginStyles.formBodyContainer}>
-            <input className={loginStyles.formBodyInput} placeholder={'Enter 6-digit code'} onChange={(event) => {setVerificationCode(event.target.value.trim())}}></input>
+            <input className={loginStyles.formBodyInput} placeholder={'Enter 6-digit code'} value={verificationCode} onChange={(event) => {setVerificationCode(event.target.value.trim())}}></input>
             <div className={loginStyles.formBodyFootnoteError}>{verificationCodeError}</div>
           </div>
           <button className={loginStyles.loginButton} onClick={function(){next()}} disabled={verificationCodeDisableButton}>Next</button>
