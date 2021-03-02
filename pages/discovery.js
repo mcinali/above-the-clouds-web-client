@@ -48,28 +48,12 @@ export async function getServerSideProps({ req, res, query }) {
 
 export default function Discovery({ accountId, accessToken, hostname, newStreamModal }) {
   const [showModal, setShowModal] = useState(newStreamModal)
-  const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})
-
-  useEffect(() => {
-    window.history.replaceState(null, '', '/discovery')
-    const url = hostname + `/account/${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setAccountInfo(res.data)
-      })
-      .catch(error => console.error(error))
-  }, [])
 
   return (
     <div className={commonStyles.container}>
       {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
-      {Header(accountInfo)}
+      {Header(hostname, accountId, accessToken)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>

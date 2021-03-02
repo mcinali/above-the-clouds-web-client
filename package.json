@@ -18,6 +18,7 @@
     "react-bootstrap": "^1.4.3",
     "react-dom": "17.0.1",
     "react-icons": "^4.1.0",
+    "socket.io-client": "^3.1.2",
     "twilio-video": "^2.8.0",
     "universal-cookie": "^4.0.4",
     "uuid": "^8.3.2"
