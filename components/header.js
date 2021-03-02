@@ -28,7 +28,13 @@ export default function Header(hostname, accountId, accessToken){
   }, [])
 
   useEffect(() => {
-    io(sockethostname, {query:`accountId=${accountId}`})
+    const socket = io(sockethostname, {query:`accountId=${accountId}`})
+    socket.on('online', (id) => {
+      console.log('Online Account Id: ', id)
+    })
+    socket.on('offline', (id) => {
+      console.log('Offline Account Id: ', id)
+    })
   }, [])
 
   return (

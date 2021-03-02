@@ -40,24 +40,12 @@ export async function getServerSideProps({ req, res, query }) {
 
 
 export default function Entry({ accountId, accessToken, hostname, session }) {
-  const [accountInfo, setAccountInfo] = useState({})
 
   useEffect(() => {
     if (!Boolean(session)){
       const hrsToExpiration = 6
       setCookie('session', uuid.v4(), hrsToExpiration)
     }
-    const url = hostname + `/account/${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setAccountInfo(res.data)
-      })
-      .catch(error => console.error(error))
   }, [])
 
   function newStream(){
@@ -78,7 +66,7 @@ export default function Entry({ accountId, accessToken, hostname, session }) {
 
   return (
     <div className={entryStyles.main} style={{backgroundImage: 'url(/images/clouds_v1.jpg)'}}>
-      {Header(accountInfo)}
+      {Header(hostname, accountId, accessToken)}
       <div>
         <div className={entryStyles.modal}>
           <div className={entryStyles.title}>Welcome to
