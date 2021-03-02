@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
 import Router, { useRouter } from "next/router"
-import Cookies from 'universal-cookie'
+import { setCookie } from '../utilities'
 import registrationStyles from '../styles/Registration.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
@@ -12,18 +11,13 @@ export async function getServerSideProps({ res, query }) {
     const url = hostname + `/invitation/check?code=${code}`
     const promise = await axios.get(url)
     if (promise.status > 299){
-      res.writeHead(302, {
-        Location: "login",
-      })
-      res.end()
+      res.writeHead(307, { Location: '/landing' }).end()
+      return { props: {ok: false, reason: 'Invalid invitation code' } }
     }
     return { props: { code: code, hostname: hostname } }
   } catch (error) {
-    console.error(error)
-    res.writeHead(302, {
-      Location: "login",
-    })
-    res.end()
+    res.writeHead(307, { Location: '/landing' }).end()
+    return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 
@@ -73,7 +67,7 @@ export default function Register({ code, hostname }) {
   useEffect(() => {
     if (password.length==0){
       setPasswordLengthColor({'color':'grey'})
-    } else if (password.length >= 8 && password.length <=20){
+    } else if (password.length >= 8){
       setPasswordLengthColor({'color':'#2E8B57'})
     } else {
       setPasswordLengthColor({'color':'#cb4154'})
@@ -99,7 +93,7 @@ export default function Register({ code, hostname }) {
   }, [password])
 
   useEffect(() => {
-    if (Boolean(firstname) && Boolean(lastname) && Boolean(username) && Boolean(email) && Boolean(password) && !Boolean(usernameError) && !passwordError){
+    if (Boolean(firstname.trim()) && Boolean(lastname.trim()) && Boolean(username) && Boolean(email) && Boolean(password) && !Boolean(usernameError) && !passwordError){
       setDisbaleAccountFormCheckButton(false)
     } else {
       setDisbaleAccountFormCheckButton(true)
@@ -131,12 +125,13 @@ export default function Register({ code, hostname }) {
     try {
       const phoneNumberCheckNumber = Number(phoneNumber)
       const phoneNumberCheckInteger = phoneNumberCheckNumber % 1
-      if (Number.isNaN(phoneNumberCheckNumber) || phoneNumberCheckInteger!=0){
+      const validInteger = (Number.isNaN(phoneNumberCheckNumber) || phoneNumberCheckInteger!=0) ? false : true
+      if (!validInteger){
         setPhoneNumberError('Enter a valid phone number')
       } else {
         setPhoneNumberError('')
       }
-      if ((phoneNumberCheckNumber >= 2010000000) && (phoneNumberCheckNumber <= 9899999999)){
+      if ((phoneNumberCheckNumber >= 2010000000) && (phoneNumberCheckNumber <= 9899999999) && validInteger){
         setDisableSendCodeButton(false)
       } else {
         setDisableSendCodeButton(true)
@@ -152,12 +147,13 @@ export default function Register({ code, hostname }) {
       const accessCodeLength = phoneAccessCode.length
       const accessCodeNumber = Number(phoneAccessCode)
       const accessCodeInteger = accessCodeNumber % 1
-      if (Number.isNaN(accessCodeNumber) || accessCodeInteger!=0){
+      const validInteger = (Number.isNaN(accessCodeNumber) || accessCodeInteger!=0) ? false : true
+      if (!validInteger){
         setPhoneAccessCodeError('Enter a valid 6-digit access code')
       } else {
         setPhoneAccessCodeError('')
       }
-      if (accessCodeLength==6){
+      if (accessCodeLength==6 && validInteger){
         setDisableRegisterButton(false)
       } else {
         setDisableRegisterButton(true)
@@ -180,8 +176,8 @@ export default function Register({ code, hostname }) {
     try {
       const url = hostname + `/preregistration/accountDetails/check?code=${code}`
       const body = {
-        firstname: firstname,
-        lastname: lastname,
+        firstname: firstname.trim(),
+        lastname: lastname.trim(),
         username: username,
         email: email,
         password: password,
@@ -271,8 +267,8 @@ export default function Register({ code, hostname }) {
             const phoneAccessToken = res.data.accessToken
             const registrationURL = hostname + `/account/register?code=${code}`
             const registrationBody = {
-              firstname: firstname,
-              lastname: lastname,
+              firstname: firstname.trim(),
+              lastname: lastname.trim(),
               username: username,
               email: email,
               password: password,
@@ -283,12 +279,9 @@ export default function Register({ code, hostname }) {
             axios.post(registrationURL, registrationBody)
               .then(res => {
                 // TO DO: save auth token & push to account setup page
-                const cookie = new Cookies()
-                cookie.set('accountId', res.data.accountId)
-                if (res.data.hasToken){
-                  cookie.set('hasToken', res.data.hasToken)
-                  cookie.set('token', res.data.accessToken)
-                }
+                setCookie('accountId', res.data.accountId)
+                setCookie('hasToken', res.data.hasToken)
+                setCookie('token', res.data.token)
                 Router.push("/account/setup")
               })
               .catch(error => {
@@ -316,7 +309,6 @@ export default function Register({ code, hostname }) {
 
   return (
     <div className={registrationStyles.main} style={{backgroundImage: 'url(/images/clouds_v1.jpg)'}}>
-      Above the Clouds
       <div className={registrationStyles.modal}>
         <div className={registrationStyles.modalHeader}>
           <div className={registrationStyles.modalHeaderNavigationButton} onClick={() => {back()}}>
@@ -333,27 +325,27 @@ export default function Register({ code, hostname }) {
               <div>
                 <div className={registrationStyles.modalFormBodyLeftContainer}>
                   <div className={registrationStyles.modalFormBodyTitle}>First name</div>
-                  <input className={registrationStyles.modalFormBodyInput} value={firstname} onChange={(event) => {setFirstname(event.target.value.trim())}}></input>
+                  <input className={registrationStyles.modalFormBodyInput} value={firstname} onChange={(event) => {setFirstname(event.target.value)}}></input>
                 </div>
                 <div className={registrationStyles.modalFormBodyRightContainer}>
                   <div className={registrationStyles.modalFormBodyTitle}>Last name</div>
-                  <input className={registrationStyles.modalFormBodyInput} value={lastname} onChange={(event) => {setLastname(event.target.value.trim())}}></input>
+                  <input className={registrationStyles.modalFormBodyInput} value={lastname} onChange={(event) => {setLastname(event.target.value)}}></input>
                 </div>
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Username</div>
-                <input className={registrationStyles.modalFormBodyInput} value={username} onChange={(event) => {setUsername(event.target.value.trim())}}></input>
+                <input className={registrationStyles.modalFormBodyInput} value={username} onChange={(event) => {setUsername(event.target.value.toLowerCase().trim())}}></input>
                 <div className={registrationStyles.modalFormBodyFootnoteError}>{usernameError}</div>
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Email</div>
-                <input className={registrationStyles.modalFormBodyInput} value={email} onChange={(event) => {setEmail(event.target.value.trim())}}></input>
+                <input className={registrationStyles.modalFormBodyInput} value={email} onChange={(event) => {setEmail(event.target.value.toLowerCase().trim())}}></input>
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Password</div>
                 <input className={registrationStyles.modalFormBodyInput} value={password} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
                 <div className={registrationStyles.modalFormBodyFootnoteTitle}>Your Password must have:</div>
-                <div className={registrationStyles.modalFormBodyFootnote} style={passwordLengthColor}> - 8 to 20 characters</div>
+                <div className={registrationStyles.modalFormBodyFootnote} style={passwordLengthColor}> - At least 8 characters</div>
                 <div className={registrationStyles.modalFormBodyFootnote} style={passwordCharactersColor}> - At least 1 of each: uppercase letter, lowercase letter, number, and special character</div>
               </div>
             </form>

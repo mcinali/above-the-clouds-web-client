@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import Image from 'next/image'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import invitationsStyles from '../styles/Invitations.module.css'
 import userStyles from '../styles/Users.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
+
+const Image = React.memo(function Image({ src }) {
+  return <img className={userStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
+})
 
 export default function Invitations(hostname, accountId, accessToken, filterList, addInvitation, removeInvitation, queuedInvitationInSearch){
   const [searchText, setSearchText] = useState('')
@@ -12,8 +15,8 @@ export default function Invitations(hostname, accountId, accessToken, filterList
 
   function fetchSuggestions(text){
     try {
+      setSearchText(text)
       const searchText = text.trim()
-      setSearchText(searchText)
       const url = hostname+`/suggestions?accountId=${accountId}&text=${searchText}`
       const headers = {
         headers: {
@@ -41,6 +44,30 @@ export default function Invitations(hostname, accountId, accessToken, filterList
       console.error(error)
     }
   }
+
+  useEffect(() => {
+    if (Object.keys(queuedInvitationInSearch).length==0){
+      document.getElementById('loader').style.display = 'none'
+    }
+  }, [queuedInvitationInSearch])
+
+  useEffect(() => {
+    if (document.getElementById('loader')){
+      document.getElementById('loader').style.display = 'block'
+    }
+    const timeOutId = setTimeout(() => {
+      fetchSuggestions(searchText)
+    }, 1000)
+    return () => {
+      clearTimeout(timeOutId)
+    }
+  }, [searchText])
+
+  useEffect(() => {
+    if (document.getElementById('loader')){
+      document.getElementById('loader').style.display = 'none'
+    }
+  }, [searchResults])
 
   function filterSuggestions(suggestions){
     try {
@@ -77,7 +104,7 @@ export default function Invitations(hostname, accountId, accessToken, filterList
     <div>
       {(Object.keys(queuedInvitationInSearch).length>0) ?
         <div className={userStyles.row}>
-          <img className={userStyles.image} src={createPictureURLFromArrayBufferString(queuedInvitationInSearch.profilePicture)}/>
+          <Image src={queuedInvitationInSearch.profilePicture}/>
           <div className={userStyles.userInfo}>
             <a className={userStyles.name}>{`${queuedInvitationInSearch.firstname} ${queuedInvitationInSearch.lastname}`}</a>
             <a className={userStyles.username}>{queuedInvitationInSearch.username} </a>
@@ -90,20 +117,23 @@ export default function Invitations(hostname, accountId, accessToken, filterList
           </div>
         </div>
         :
-        <input
-          key='searchBar'
-          value={searchText}
-          placeholder={"Search by username, full name, or email"}
-          onChange={(e) => fetchSuggestions(e.target.value)}
-          className={invitationsStyles.searchBar}
-        />
+        <div className={invitationsStyles.wrapper}>
+          <div id='loader' className={invitationsStyles.loader}></div>
+          <input
+            key='searchBar'
+            value={searchText}
+            placeholder={"Search by username, full name, or email"}
+            onChange={(e) => setSearchText(e.target.value)}
+            className={invitationsStyles.searchBar}
+          />
+        </div>
       }
       <div className={invitationsStyles.dropdown}>
         <div className={invitationsStyles.dropdownContent}>
           {searchResults.map((result, index) => {
             return (
               <button className={invitationsStyles.dropdownButton} key={index.toString()} onClick={function(){queueAccount(result)}}>
-                <img className={userStyles.image} src={createPictureURLFromArrayBufferString(result.profilePicture)}/>
+                <Image src={result.profilePicture}/>
                 <div className={userStyles.userInfo}>
                   <a className={userStyles.name}>{`${result.firstname} ${result.lastname}`}</a>
                   <a className={userStyles.username}>{result.username} </a>

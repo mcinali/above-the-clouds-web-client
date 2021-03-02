@@ -1,6 +1,10 @@
-import Image from 'next/image'
+import React from 'react'
 import commonStyles from '../styles/Common.module.css'
 import { createPictureURLFromArrayBufferString } from '../utilities'
+
+const Image = React.memo(function Image({ src }) {
+  return <img src={createPictureURLFromArrayBufferString(src)} className={commonStyles.image} />
+})
 
 export default function Header(accountInfo){
   return (
@@ -13,7 +17,7 @@ export default function Header(accountInfo){
         </div>
         <div className={commonStyles.navbarItemRight}>
           <div className={commonStyles.name}>{accountInfo.firstname}</div>
-          <img className={commonStyles.image} src={createPictureURLFromArrayBufferString(accountInfo.profilePicture)}/>
+          <Image src={accountInfo.profilePicture}/>
         </div>
       </div>
     </div>

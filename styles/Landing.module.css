@@ -6,10 +6,12 @@
 
 .main {
   height: 100%;
-  margin-top: 15%;
-  margin-bottom: 10%;
+  top: 0px;
+  bottom: 0px;
   text-align: center;
   position: relative;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   z-index: 1;
 }
 
@@ -25,6 +27,7 @@
 }
 
 .textlink {
+  margin-top: 1%;
   color: #0070f3;
   font-size: 14px;
   font-weight: normal;
@@ -33,7 +36,7 @@
 
 .title {
   margin-top: 7%;
-  margin-bottom: 0.5%;
+  margin-bottom: 5%;
   line-height: 1.15;
   font-size: 4rem;
 }

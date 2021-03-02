@@ -27,9 +27,9 @@ spec:
           value: "prod"
         livenessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 3000
         readinessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 3000

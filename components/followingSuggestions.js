@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import followsStyles from '../styles/Follows.module.css'
 import userStyles from '../styles/Users.module.css'
 const axios = require('axios')
+
+const Image = React.memo(function Image({ src }) {
+  return <img className={followsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
+})
 
 export default function FollowingSuggestions(hostname, accountId, accessToken){
   const [suggestions, setSuggestions] = useState([])
@@ -36,8 +39,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        console.log(suggestion)
-        console.log(index)
         const newSuggestions = suggestions.map((suggestion, suggestionIndex) => {
           if (index==suggestionIndex){
             suggestion.following = true
@@ -46,7 +47,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
             return suggestion
           }
         })
-        console.log(newSuggestions)
         setSuggestions(newSuggestions)
       })
       .catch(error => console.error(error))
@@ -66,8 +66,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        console.log(suggestion)
-        console.log(index)
         const newSuggestions = suggestions.map((suggestion, suggestionIndex) => {
           if (index==suggestionIndex){
             suggestion.following = false
@@ -76,7 +74,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
             return suggestion
           }
         })
-        console.log(newSuggestions)
         setSuggestions(newSuggestions)
       })
       .catch(error => console.error(error))
@@ -88,14 +85,14 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
       {suggestions.map((suggestion, index) => {
         return (
           <div key={index.toString()} className={followsStyles.row}>
-            <img className={followsStyles.image} src={createPictureURLFromArrayBufferString(suggestion.profilePicture)}/>
+            <Image src={suggestion.profilePicture}/>
             <div className={followsStyles.userInfo}>
               <a className={followsStyles.name}>{`${suggestion.firstname} ${suggestion.lastname}`}</a>
               <a className={followsStyles.username}>{`${suggestion.username}`} </a>
             </div>
             {
               (suggestion.following) ?
-              <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(suggestions, index)}}>Unfollow</button>
+              <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(suggestions, index)}}>Following</button>
               :
               <button className={followsStyles.buttonFollow} onClick={function(){follow(suggestions, index)}}>Follow</button>
             }

@@ -22,7 +22,7 @@ if [ "$command" == "build" ]; then
   docker build -t $IMAGE_NAME:$VERSION .
   echo
   # Run container locally:
-  docker run -p 3000:3000 -d $IMAGE_NAME:$VERSION
+  # docker run -p 3000:3000 -d $IMAGE_NAME:$VERSION
 fi
 
 if [ "$command" == "push" ]; then

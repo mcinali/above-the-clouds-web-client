@@ -3,22 +3,27 @@ import Link from 'next/link'
 import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
-import Image from 'next/image'
+const uuid = require('uuid')
 import StreamInviteModal from '../components/streamInviteModal'
-import { createPictureURLFromArrayBufferString } from '../utilities'
+import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname } = require('../config')
 const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
 
+const Image = React.memo(function Image({ src }) {
+  return <img src={createPictureURLFromArrayBufferString(src)} className={streamStyles.participantImage} />
+})
+
 export async function getServerSideProps({ req, res, query }) {
   try {
     // Authenticate accountId + token before serving page
     // Get accountId + token from cookies
     const cookie = new Cookies(req.headers.cookie)
-    const accountId = cookie.get('accountId')
-    const token = cookie.get('token')
+    const accountId = cookie.cookies.accountId
+    const token = cookie.cookies.token
+    const session = (Boolean(cookie.cookies.session)) ? cookie.cookies.session : null
     // Add accountId as query param + token as header
     const url = hostname + `/auth/validate?accountId=${accountId}`
     const headers = {
@@ -29,10 +34,8 @@ export async function getServerSideProps({ req, res, query }) {
     // Check for valid token
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
-      res.writeHead(302, {
-        Location: "/login",
-      })
-      res.end()
+      res.writeHead(307, { Location: '/landing' }).end()
+      return { props: {ok: false, reason: 'Access not permitted' } }
     }
     // Return streamId from query before serving page
     if (Object.keys(query).length==0){
@@ -40,23 +43,22 @@ export async function getServerSideProps({ req, res, query }) {
     }
     const streamId = query.streamId
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname } }
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname, session: session } }
   } catch (error) {
-    res.writeHead(302, {
-      Location: "/discovery",
-    });
-    res.end()
+    res.writeHead(307, { Location: '/discovery' }).end()
+    return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 
-export default function Stream({ accountId, accessToken, streamId, hostname }){
+export default function Stream({ accountId, accessToken, streamId, hostname, session }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
-
   const [room, setRoom] = useState({})
+
+  // const [room, setRoom] = useState({})
   const [mute, setMute] = useState(false)
   const [volume, setVolume] = useState(0.0)
 
@@ -65,6 +67,10 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
+    if (!Boolean(session)){
+      const hrsToExpiration = 6
+      setCookie('session', uuid.v4(), hrsToExpiration)
+    }
     const url = hostname + `/account/${accountId}`
     const headers = {
       headers: {
@@ -79,7 +85,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   }, [])
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -95,8 +101,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
     // const days = (parseInt(dateDiff / (24*60*60*1000))).toString().padStart(2, '0')
     const hrs = (parseInt(dateDiff / (60*60*1000)) % 24).toString().padStart(2, '0')
     const mins = (parseInt(dateDiff / (60*1000)) % (60)).toString().padStart(2, '0')
-    const secs = (parseInt(dateDiff / (1000)) % (60)).toString().padStart(2, '0')
-    const result = `${hrs} : ${mins} :  ${secs}`
+    const result = `${hrs} : ${mins}`
     return result
   }
 
@@ -117,8 +122,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
            setIsActive(true)
            if (res.data){
              const streamParticipantData = res.data
-             const cookie = new Cookies()
-             cookie.set('streamParticipantId', streamParticipantData.streamParticipantId)
+             window.sessionStorage.setItem('streamParticipantId', streamParticipantData.streamParticipantId)
              createLocalTracks({
                audio: true,
                video: false
@@ -129,8 +133,11 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
                })
              }).then(room => {
                console.log(`Connected to Room: ${room.name}`)
-               const player = document.getElementById('audio-controller')
                setRoom(room)
+               window.sessionStorage.setItem('twilioRoomSID', room.sid)
+               window.sessionStorage.setItem('twilioParticipantSID', room.localParticipant.sid)
+               const player = document.getElementById('audio-controller')
+               // setRoom(room)
                // Attach new Participant's Media to a <div> element.
                room.on('participantConnected', participant => {
                  const streamURL = hostname + `/stream/${streamId}?accountId=${accountId}`
@@ -209,6 +216,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
       const action = window.confirm('Are you sure you want to leave?')
       if (action){
         leaveStream()
+        Router.push('/discovery')
       }
     } catch (error) {
       console.error(error)
@@ -220,12 +228,15 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
   function leaveStream(){
     try {
       const url = hostname + `/stream/leave`
-      const cookie = new Cookies()
-      const streamParticipantId = cookie.get('streamParticipantId')
+      const streamParticipantId = window.sessionStorage.getItem('streamParticipantId')
+      const twilioRoomSID = window.sessionStorage.getItem('twilioRoomSID')
+      const twilioParticipantSID = window.sessionStorage.getItem('twilioParticipantSID')
       const body = {
         accountId: accountId,
         streamId: streamId,
         streamParticipantId: streamParticipantId,
+        twilioRoomSID: twilioRoomSID,
+        twilioParticipantSID: twilioParticipantSID,
       }
       const headers = {
         headers: {
@@ -234,10 +245,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
       }
       axios.post(url, body, headers)
            .then(res => {
-             if (Object.keys(room).length>0){
-               room.disconnect()
-             }
-             Router.push('/discovery')
+             console.log(`User ${twilioParticipantSID} left room ${twilioRoomSID}`)
            })
            .catch(error => {
              console.error(error)
@@ -276,9 +284,9 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreamParticipants = streamParticipants
+        const newStreamParticipants = [...streamParticipants]
         newStreamParticipants[index].following = true
-        setSuggestions(newStreamParticipants)
+        setStreamParticipants(newStreamParticipants)
       })
       .catch(error => console.error(error))
   }
@@ -296,37 +304,36 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreamParticipants = streamParticipants
+        const newStreamParticipants = [...streamParticipants]
         newStreamParticipants[index].following = false
-        setSuggestions(newStreamParticipants)
+        setStreamParticipants(newStreamParticipants)
       })
       .catch(error => console.error(error))
   }
 
+  useEffect(() => {
+    console.log(streamParticipants)
+  }, [streamParticipants])
+
   // Alert user before exiting page
   useEffect(() => {
+    const active = window.sessionStorage.getItem('active')
     if (isActive){
-      window.addEventListener('popstate', leaveStreamSilently)
-      window.addEventListener('onbeforeunload', affirmLeaveStream)
-      window.addEventListener('unload', leaveStreamSilently)
+      window.addEventListener("beforeunload", leaveStreamInBackground)
+      window.addEventListener("popstate", leaveStreamInBackground)
       return () => {
-        window.removeEventListener('popstate', leaveStreamSilently)
-        window.removeEventListener('onbeforeunload', affirmLeaveStream)
-        window.removeEventListener('unload', leaveStreamSilently)
+        window.removeEventListener("beforeunload", leaveStreamInBackground)
+        window.removeEventListener("popstate", leaveStreamInBackground)
       }
     }
   }, [isActive])
 
-  const leaveStreamSilently = (event) => {
+  const leaveStreamInBackground = (event) => {
+    event.preventDefault()
     leaveStream()
+    return event.returnValue = ''
   }
 
-  const affirmLeaveStream = () => {
-    event.preventDefault()
-    event.returnValue = ''
-    confirm('You are exiting the stream')
-    leaveStream()
-  }
 
   return (
     <div className={commonStyles.container}>
@@ -342,14 +349,14 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
         <div className={streamStyles.timeContainer}>
           <div className={streamStyles.timeSubContainer}>
             <div className={streamStyles.time}>{calcElapsedTime(streamInfo.startTime)}</div>
-            <div className={streamStyles.timeLabels}>{'hr : min : sec'}</div>
+            <div className={streamStyles.timeLabels}>{'hr : min'}</div>
           </div>
         </div>
         <div className={streamStyles.participantsContainer}>
           {streamParticipants.map((participant,index) =>
             <div key={index.toString()} className={streamStyles.participantContainer}>
               <div>
-                <img className={streamStyles.participantImage} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
+                <Image src={participant.profilePicture}/>
               </div>
               <div className={streamStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
               <div className={streamStyles.participantUsername}>{`${participant.username}`}</div>
@@ -358,7 +365,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname }){
                 <div></div>
                 :
                 (participant.following) ?
-                <button className={streamStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Unfollow</button>
+                <button className={streamStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Following</button>
                 :
                 <button className={streamStyles.buttonFollow} onClick={function(){follow(participant, index)}}>Follow</button>
               }

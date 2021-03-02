@@ -63,6 +63,31 @@
   border-radius: 50%;
 }
 
+.loader {
+  position: fixed;
+  right: 11%;
+  margin: 1% auto;
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 20px;
+  height: 20px;
+  -webkit-animation: spin 0.5s linear infinite; /* Safari */
+  animation: spin 0.5s linear infinite;
+  z-index: 7;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .removeInviteeButton {
   margin: 10px auto;
   display: block;
@@ -125,4 +150,10 @@
   font-size: 16px;
   border-radius: 16px;
   padding-left: 16px;
+}
+
+.wrapper {
+  display: inline-block;
+  width: 100%;
+  margin: 0 auto;
 }

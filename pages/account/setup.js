@@ -25,18 +25,14 @@ export async function getServerSideProps({ req, res, query }) {
     // Check for valid token
     const promise = await axios.get(url, headers)
     if (promise.status != 200){
-      res.writeHead(302, {
-        Location: "/login",
-      })
-      res.end()
+      res.writeHead(307, { Location: '/landing' }).end()
+      return { props: {ok: false, reason: 'Access not permitted' } }
     }
     // Pass in props to react function
     return { props: { accountId: accountId, accessToken: token, hostname: hostname } }
   } catch (error) {
-    res.writeHead(302, {
-      Location: "/discovery",
-    });
-    res.end()
+    res.writeHead(307, { Location: '/landing' }).end()
+    return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 
@@ -143,9 +139,6 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
             <button className={accountSetupStyles.modalNextButton} disabled={disableNextButton} onClick={saveProfilePic}>
               Next
             </button>
-            <div className={accountSetupStyles.modalSkipButton} onClick={skip}>
-              Skip
-            </div>
           </div>
         </div>
         <div id="index2">

@@ -1,0 +1,143 @@
+.description {
+  margin-top: 5%;
+  line-height: 1.5;
+  font-size: 18px;
+  margin-bottom:5%;
+}
+
+.formBodyContainer {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.formBodyFootnote {
+    text-align: left;
+    font-size: 12px;
+    color: grey;
+}
+
+.formBodyFootnoteError {
+    margin-left: 75px;
+    text-align: left;
+    width: 100%;
+    font-size: 12px;
+    color: #cb4154;
+    position: relative;
+    overflow: auto;
+    text-align: left;
+}
+
+.formBodyFootnoteTitle {
+    text-align: left;
+    font-size: 12px;
+    color: grey;
+    font-weight: 600;
+}
+
+.formBodyInput {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 10px;
+  border: 1px solid #eaeaea;
+  font-size: 16px;
+  border-radius: 4px;
+  padding-left: 10px;
+  color: #383838;
+}
+
+.formBodyTitle {
+  width: 100%;
+  display: flex;
+  align-self: flex-start;
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #383838;
+}
+
+.loginButton {
+  margin-top: 2%;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 3%;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+}
+
+.loginButton:disabled {
+  opacity: 60%;
+  cursor: default;
+}
+
+.loginButton:hover {
+  opacity: 80%;
+  cursor: pointer;
+}
+
+.loginButtonInverse {
+  margin-top: 2%;
+  background-color: white;
+  color: #0070f3;
+  border: solid 1px #0070f3;
+  border-radius: 8px;
+  padding: 15px 3%;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+}
+
+.loginButtonInverse:hover {
+  background-color: #F5F5F5;
+  cursor: pointer;
+}
+
+.main {
+  height: 100%;
+  top: 0px;
+  bottom: 0px;
+  text-align: center;
+  position: relative;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.subtitle {
+  margin-top: 7%;
+  margin-bottom: 5%;
+  font-size: 42px;
+  font-weight: 400;
+}
+
+.subHeading {
+  margin-top: 7%;
+  margin-bottom: 5%;
+  font-size: 36px;
+  font-weight: 200;
+}
+
+.textlink {
+  margin-top: 1%;
+  color: #0070f3;
+  font-size: 14px;
+  font-weight: normal;
+  align-items: center;
+}
+
+.title {
+  margin-top: 7%;
+  margin-bottom: 5%;
+  line-height: 1.15;
+  font-size: 4rem;
+}
+
+.title a {
+  color: #0070f3;
+  text-decoration: none;
+}

@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 import Router from "next/router"
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import discoveryStreamsStyles from '../styles/DiscoveryStreams.module.css'
 const axios = require('axios')
+
+const Image = React.memo(function Image({ src }) {
+  return <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
+})
 
 export default function DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic) {
   const [streams, setStreams] = useState([])
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
-    const timerId = setInterval(() => tick(), 1000)
+    const timerId = setInterval(() => tick(), 60000)
     return function cleanup() {
       clearInterval(timerId)
     }
@@ -26,8 +29,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     // const days = (parseInt(dateDiff / (24*60*60*1000))).toString().padStart(2, '0')
     const hrs = (parseInt(dateDiff / (60*60*1000)) % 24).toString().padStart(2, '0')
     const mins = (parseInt(dateDiff / (60*1000)) % (60)).toString().padStart(2, '0')
-    const secs = (parseInt(dateDiff / (1000)) % (60)).toString().padStart(2, '0')
-    const result = `${hrs} : ${mins} :  ${secs}`
+    const result = `${hrs} : ${mins}`
     return result
   }
 
@@ -85,7 +87,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreams = streams
+        const newStreams = [...streams]
         newStreams[streamIndex].participants.details[participantIndex].following = true
         setStreams(newStreams)
     })
@@ -105,7 +107,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreams = streams
+        const newStreams = [...streams]
         newStreams[streamIndex].participants.details[participantIndex].following = false
         setStreams(newStreams)
       })
@@ -130,14 +132,14 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
                   <div className={discoveryStreamsStyles.timeContainer}>
                     <div className={discoveryStreamsStyles.timeSubContainer}>
                       <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
-                      <div className={discoveryStreamsStyles.timeLabels}>{'hr : min : sec'}</div>
+                      <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
                     </div>
                   </div>
                   <div className={discoveryStreamsStyles.participantsContainer}>
                     {stream.participants.details.map((participant, participantIndex) =>
                       <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
                         <div>
-                          <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(participant.profilePicture)}/>
+                          <Image src={participant.profilePicture}/>
                         </div>
                         <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
                         <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
@@ -146,7 +148,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
                           <div></div>
                           :
                           (participant.following) ?
-                          <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Unfollow</button>
+                          <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
                           :
                           <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
                         }
