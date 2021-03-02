@@ -284,9 +284,9 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreamParticipants = streamParticipants
+        const newStreamParticipants = [...streamParticipants]
         newStreamParticipants[index].following = true
-        setSuggestions(newStreamParticipants)
+        setStreamParticipants(newStreamParticipants)
       })
       .catch(error => console.error(error))
   }
@@ -304,12 +304,16 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreamParticipants = streamParticipants
+        const newStreamParticipants = [...streamParticipants]
         newStreamParticipants[index].following = false
-        setSuggestions(newStreamParticipants)
+        setStreamParticipants(newStreamParticipants)
       })
       .catch(error => console.error(error))
   }
+
+  useEffect(() => {
+    console.log(streamParticipants)
+  }, [streamParticipants])
 
   // Alert user before exiting page
   useEffect(() => {
@@ -361,7 +365,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
                 <div></div>
                 :
                 (participant.following) ?
-                <button className={streamStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Unfollow</button>
+                <button className={streamStyles.buttonUnfollow} onClick={function(){unfollow(participant, index)}}>Following</button>
                 :
                 <button className={streamStyles.buttonFollow} onClick={function(){follow(participant, index)}}>Follow</button>
               }

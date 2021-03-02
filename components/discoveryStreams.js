@@ -87,7 +87,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreams = streams
+        const newStreams = [...streams]
         newStreams[streamIndex].participants.details[participantIndex].following = true
         setStreams(newStreams)
     })
@@ -107,7 +107,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     }
     axios.post(url, body, headers)
       .then(res => {
-        const newStreams = streams
+        const newStreams = [...streams]
         newStreams[streamIndex].participants.details[participantIndex].following = false
         setStreams(newStreams)
       })
@@ -148,7 +148,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
                           <div></div>
                           :
                           (participant.following) ?
-                          <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Unfollow</button>
+                          <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
                           :
                           <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
                         }

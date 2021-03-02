@@ -39,8 +39,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        console.log(suggestion)
-        console.log(index)
         const newSuggestions = suggestions.map((suggestion, suggestionIndex) => {
           if (index==suggestionIndex){
             suggestion.following = true
@@ -49,7 +47,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
             return suggestion
           }
         })
-        console.log(newSuggestions)
         setSuggestions(newSuggestions)
       })
       .catch(error => console.error(error))
@@ -69,8 +66,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
     }
     axios.post(url, body, headers)
       .then(res => {
-        console.log(suggestion)
-        console.log(index)
         const newSuggestions = suggestions.map((suggestion, suggestionIndex) => {
           if (index==suggestionIndex){
             suggestion.following = false
@@ -79,7 +74,6 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
             return suggestion
           }
         })
-        console.log(newSuggestions)
         setSuggestions(newSuggestions)
       })
       .catch(error => console.error(error))
@@ -98,7 +92,7 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
             </div>
             {
               (suggestion.following) ?
-              <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(suggestions, index)}}>Unfollow</button>
+              <button className={followsStyles.buttonUnfollow} onClick={function(){unfollow(suggestions, index)}}>Following</button>
               :
               <button className={followsStyles.buttonFollow} onClick={function(){follow(suggestions, index)}}>Follow</button>
             }
