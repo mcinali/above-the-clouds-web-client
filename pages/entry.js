@@ -39,7 +39,7 @@ export async function getServerSideProps({ req, res, query }) {
 }
 
 
-export default function Entry({ accountId, accessToken, hostname, session }) {
+export default function Entry({ hostname, accountId, accessToken, session }) {
 
   useEffect(() => {
     if (!Boolean(session)){
