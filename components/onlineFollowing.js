@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react'
 import followsStyles from '../styles/Follows.module.css'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 import { io } from "socket.io-client"
-const { sockethostname } = require('../config')
 const axios = require('axios')
 
 const Image = React.memo(function Image({ src }) {
   return <img src={createPictureURLFromArrayBufferString(src)} className={followsStyles.image} />
 })
 
-export default function OnlineFollowing(hostname, accountId, accessToken){
+export default function OnlineFollowing(hostname, sockethostname, accountId, accessToken){
   const [onlineFollowing, setOnlineFollowing] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    console.log(hostname)
+    console.log(sockethostname)
     const url = hostname + `/follows/online_following?accountId=${accountId}`
     const headers = {
       headers: {
