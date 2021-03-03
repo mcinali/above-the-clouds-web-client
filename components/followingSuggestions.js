@@ -80,7 +80,7 @@ export default function FollowingSuggestions(hostname, accountId, accessToken){
   }
 
   return (
-    <div>
+    <div className={followsStyles.container}>
       <div className={followsStyles.title}>Suggested Accounts:</div>
       {suggestions.map((suggestion, index) => {
         return (

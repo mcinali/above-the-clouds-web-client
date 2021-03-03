@@ -62,8 +62,6 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
   const [mute, setMute] = useState(false)
   const [volume, setVolume] = useState(0.0)
 
-  const [accountInfo, setAccountInfo] = useState({})
-
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
@@ -71,17 +69,6 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
       const hrsToExpiration = 6
       setCookie('session', uuid.v4(), hrsToExpiration)
     }
-    const url = hostname + `/account/${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setAccountInfo(res.data)
-      })
-      .catch(error => console.error(error))
   }, [])
 
   useEffect(() => {
@@ -338,7 +325,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
   return (
     <div className={commonStyles.container}>
       {StreamInviteModal(hostname, accountId, accessToken, streamId, showModal, setShowModal)}
-      {Header(accountInfo)}
+      {Header(hostname, accountId, accessToken)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
           <a>{(streamInfo.inviteOnly) ? 'Invite-Only' : ''}</a>

@@ -7,8 +7,9 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import NewStreamModal from '../components/newStreamModal'
 import FollowingSuggestions from '../components/followingSuggestions'
+import OnlineFollowing from '../components/onlineFollowing'
 import DiscoveryStreams from '../components/discoveryStreams'
-const { hostname } = require('../config')
+const { hostname, sockethostname } = require('../config')
 const axios = require('axios')
 
 export async function getServerSideProps({ req, res, query }) {
@@ -38,7 +39,7 @@ export async function getServerSideProps({ req, res, query }) {
     }
     const newStreamModal = (Object.keys(query).length==0) ? false : Boolean(query.newStreamModal)
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, hostname: hostname, newStreamModal: newStreamModal } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname, sockethostname: sockethostname, newStreamModal: newStreamModal } }
   } catch (error) {
     res.writeHead(307, { Location: '/landing' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
@@ -46,34 +47,23 @@ export async function getServerSideProps({ req, res, query }) {
 }
 
 
-export default function Discovery({ accountId, accessToken, hostname, newStreamModal }) {
+export default function Discovery({ accountId, accessToken, hostname, sockethostname, newStreamModal }) {
   const [showModal, setShowModal] = useState(newStreamModal)
-  const [accountInfo, setAccountInfo] = useState({})
   const [forkedTopic, setForkedTopic] = useState({})
 
   useEffect(() => {
     window.history.replaceState(null, '', '/discovery')
-    const url = hostname + `/account/${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setAccountInfo(res.data)
-      })
-      .catch(error => console.error(error))
   }, [])
 
   return (
     <div className={commonStyles.container}>
       {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
-      {Header(accountInfo)}
+      {Header(hostname, accountId, accessToken)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
             {FollowingSuggestions(hostname, accountId, accessToken)}
+            {OnlineFollowing(hostname, sockethostname, accountId, accessToken)}
           </div>
         </div>
         <div className={discoveryStyles.panelRight}>
