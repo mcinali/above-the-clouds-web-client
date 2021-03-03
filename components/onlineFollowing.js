@@ -32,7 +32,12 @@ export default function OnlineFollowing(hostname, accountId, accessToken){
   useEffect(() => {
     if (!isLoading){
       console.log('Online Following: ', onlineFollowing)
-      const socket = io(sockethostname, {query:`accountId=${accountId}`})
+      const socket = io(sockethostname, {
+        auth: {
+          accountId: accountId,
+          token: accessToken,
+        }
+      })
       socket.on('online', (info) => {
         console.log('Online Account Id: ', info)
         const alreadyOnline = onlineFollowing.filter(account => account.accountId == info.accountId)
