@@ -7,6 +7,7 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import NewStreamModal from '../components/newStreamModal'
 import FollowingSuggestions from '../components/followingSuggestions'
+import OnlineFollowing from '../components/onlineFollowing'
 import DiscoveryStreams from '../components/discoveryStreams'
 const { hostname } = require('../config')
 const axios = require('axios')
@@ -50,6 +51,10 @@ export default function Discovery({ accountId, accessToken, hostname, newStreamM
   const [showModal, setShowModal] = useState(newStreamModal)
   const [forkedTopic, setForkedTopic] = useState({})
 
+  useEffect(() => {
+    window.history.replaceState(null, '', '/discovery')
+  }, [])
+
   return (
     <div className={commonStyles.container}>
       {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
@@ -58,6 +63,7 @@ export default function Discovery({ accountId, accessToken, hostname, newStreamM
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
             {FollowingSuggestions(hostname, accountId, accessToken)}
+            {OnlineFollowing(hostname, accountId, accessToken)}
           </div>
         </div>
         <div className={discoveryStyles.panelRight}>

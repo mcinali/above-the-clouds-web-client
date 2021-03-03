@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import commonStyles from '../styles/Common.module.css'
 import { createPictureURLFromArrayBufferString } from '../utilities'
-import { io } from "socket.io-client"
-const { sockethostname } = require('../config')
 const axios = require('axios')
 
 const Image = React.memo(function Image({ src }) {
@@ -13,7 +11,6 @@ export default function Header(hostname, accountId, accessToken){
   const [accountInfo, setAccountInfo] = useState({})
 
   useEffect(() => {
-    window.history.replaceState(null, '', '/discovery')
     const url = hostname + `/account/${accountId}`
     const headers = {
       headers: {
@@ -25,16 +22,6 @@ export default function Header(hostname, accountId, accessToken){
         setAccountInfo(res.data)
       })
       .catch(error => console.error(error))
-  }, [])
-
-  useEffect(() => {
-    const socket = io(sockethostname, {query:`accountId=${accountId}`})
-    socket.on('online', (id) => {
-      console.log('Online Account Id: ', id)
-    })
-    socket.on('offline', (id) => {
-      console.log('Offline Account Id: ', id)
-    })
   }, [])
 
   return (
