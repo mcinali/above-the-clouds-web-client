@@ -8,9 +8,10 @@ const Image = React.memo(function Image({ src }) {
   return <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic) {
+export default function DiscoveryStreams(hostname, accountId, accessToken, socket) {
   const [streams, setStreams] = useState([])
   const [date, setDate] = useState(new Date())
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const timerId = setInterval(() => tick(), 60000)
@@ -43,6 +44,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     axios.get(url, headers)
          .then(res => {
            setStreams(res.data)
+           setIsLoading(false)
          })
          .catch(error => {
            console.error(error)
@@ -50,25 +52,34 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
     return
   }, [])
 
+  useEffect(() => {
+    console.log('MADE IT HERE!')
+    console.log(socket)
+    console.log(isLoading)
+    if(Boolean(socket) && !isLoading){
+      console.log('AND HERE!')
+      socket.on('create_stream', (streamInfo) => {
+        console.log('New Stream Info: ', streamInfo)
+        const newStreams = [streamInfo].concat([...streams])
+        setStreams(newStreams)
+      })
+      // socket.on('join_stream', (streamInfo) => {
+      //   const newStreams = [streamInfo].concat([...streams])
+      //   setStreams(newStreams)
+      // })
+      // socket.on('leave_stream', (streamInfo) => {
+      //   const newStreams = [streamInfo].concat([...streams])
+      //   setStreams(newStreams)
+      // })
+    }
+  }, [isLoading, streams, socket])
+
   function joinStream(streamInfo){
     try {
       Router.push(
         {pathname: "/stream",
         query: {streamId: streamInfo.streamId}
       })
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  function createStreamFromTopic(stream){
-    try {
-      const topicInfo = {
-        topicId: stream.topicId,
-        topicText: stream.topic,
-      }
-      setForkedTopic(topicInfo)
-      setShowModal(true)
     } catch (error) {
       console.error(error)
     }
@@ -120,58 +131,43 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, setSh
         <div id="cardContainer">
           {streams.map((stream, streamIndex) =>
             <div key={streamIndex.toString()}>
-              {(stream.streamId)
-                ?
-                <div className={discoveryStreamsStyles.card}>
-                  <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
-                    <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
+              <div className={discoveryStreamsStyles.card}>
+                <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
+                  <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
+                </div>
+                <div className={discoveryStreamsStyles.topicContainer}>
+                  <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
+                </div>
+                <div className={discoveryStreamsStyles.timeContainer}>
+                  <div className={discoveryStreamsStyles.timeSubContainer}>
+                    <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
+                    <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
                   </div>
-                  <div className={discoveryStreamsStyles.topicContainer}>
-                    <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
-                  </div>
-                  <div className={discoveryStreamsStyles.timeContainer}>
-                    <div className={discoveryStreamsStyles.timeSubContainer}>
-                      <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
-                      <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
-                    </div>
-                  </div>
-                  <div className={discoveryStreamsStyles.participantsContainer}>
-                    {stream.participants.details.map((participant, participantIndex) =>
-                      <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
-                        <div>
-                          <Image src={participant.profilePicture}/>
-                        </div>
-                        <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
-                        <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
-                        {
-                          (participant.following==null) ?
-                          <div></div>
-                          :
-                          (participant.following) ?
-                          <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
-                          :
-                          <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
-                        }
+                </div>
+                <div className={discoveryStreamsStyles.participantsContainer}>
+                  {stream.participants.details.map((participant, participantIndex) =>
+                    <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
+                      <div>
+                        <Image src={participant.profilePicture}/>
                       </div>
-                    )}
-                  </div>
-                  <div className={discoveryStreamsStyles.cardButtonContainer}>
-                    <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
-                  </div>
+                      <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
+                      <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
+                      {
+                        (participant.following==null) ?
+                        <div></div>
+                        :
+                        (participant.following) ?
+                        <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
+                        :
+                        <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
+                      }
+                    </div>
+                  )}
                 </div>
-                :
-                <div className={discoveryStreamsStyles.cardTopic}>
-                  <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
-                    <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{''}</div>
-                  </div>
-                  <div className={discoveryStreamsStyles.topicContainer}>
-                    <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
-                  </div>
-                  <div className={discoveryStreamsStyles.cardButtonContainer}>
-                    <button className={discoveryStreamsStyles.cardButton} onClick={function(){createStreamFromTopic(stream)}}>Create Stream</button>
-                  </div>
+                <div className={discoveryStreamsStyles.cardButtonContainer}>
+                  <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
                 </div>
-              }
+              </div>
             </div>
           )}
         </div>

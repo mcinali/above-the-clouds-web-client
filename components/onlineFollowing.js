@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import followsStyles from '../styles/Follows.module.css'
 import { createPictureURLFromArrayBufferString } from '../utilities'
-import { io } from "socket.io-client"
 const axios = require('axios')
 
 const Image = React.memo(function Image({ src }) {
   return <img src={createPictureURLFromArrayBufferString(src)} className={followsStyles.image} />
 })
 
-export default function OnlineFollowing(hostname, sockethostname, accountId, accessToken){
+export default function OnlineFollowing(hostname, socket, accountId, accessToken){
   const [onlineFollowing, setOnlineFollowing] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    console.log(hostname)
-    console.log(sockethostname)
     const url = hostname + `/follows/online_following?accountId=${accountId}`
     const headers = {
       headers: {
@@ -31,14 +28,7 @@ export default function OnlineFollowing(hostname, sockethostname, accountId, acc
   }, [])
 
   useEffect(() => {
-    if (!isLoading){
-      console.log('Online Following: ', onlineFollowing)
-      const socket = io(sockethostname, {
-        auth: {
-          accountId: accountId,
-          token: accessToken,
-        }
-      })
+    if (Boolean(socket) && !isLoading){
       socket.on('online', (info) => {
         console.log('Online Account Id: ', info)
         const alreadyOnline = onlineFollowing.filter(account => account.accountId == info.accountId)
@@ -56,8 +46,11 @@ export default function OnlineFollowing(hostname, sockethostname, accountId, acc
         console.log(stillOnline)
         setOnlineFollowing(stillOnline)
       })
+      socket.on('hello', (hello) => {
+        console.log(hello)
+      })
     }
-  }, [onlineFollowing, isLoading])
+  }, [isLoading, socket, onlineFollowing])
 
   return (
     <div className={followsStyles.container}>
