@@ -58,19 +58,58 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
     console.log(isLoading)
     if(Boolean(socket) && !isLoading){
       console.log('AND HERE!')
-      socket.on('create_stream', (streamInfo) => {
-        console.log('New Stream Info: ', streamInfo)
-        const newStreams = [streamInfo].concat([...streams])
-        setStreams(newStreams)
+      // socket.on('create_stream', (streamInfo) => {
+      //   console.log('New Stream Info: ', streamInfo)
+      //   const streamExists = streams.filter(stream => stream.streamId==streamInfo.streamId)
+      //   if (streamExists.length==0){
+      //     const newStreams = [streamInfo].concat([...streams])
+      //     setStreams(newStreams)
+      //   }
+      // })
+      socket.on('join_stream', (streamInfo) => {
+        console.log('New Stream Participants Info: ', streamInfo)
+        console.log('Streams: ', streams)
+        const streamsFltrd = streams.filter(stream => stream.streamId == streamInfo.streamId)
+        if (streamsFltrd.length==0){
+          const newStreams = [streamInfo].concat([...streams])
+          console.log('Streams: ', streams)
+          console.log('New streams: ', newStreams)
+          setStreams(newStreams)
+        } else {
+          const newStreams = streams.map(stream => {
+            if (stream.streamId==streamInfo.streamId){
+              return streamInfo
+            } else {
+              return stream
+            }
+          })
+          console.log('Streams: ', streams)
+          console.log('New streams: ', newStreams)
+          setStreams(newStreams)
+        }
       })
-      // socket.on('join_stream', (streamInfo) => {
-      //   const newStreams = [streamInfo].concat([...streams])
-      //   setStreams(newStreams)
-      // })
-      // socket.on('leave_stream', (streamInfo) => {
-      //   const newStreams = [streamInfo].concat([...streams])
-      //   setStreams(newStreams)
-      // })
+      socket.on('leave_stream', (streamLeaveInfo) => {
+        console.log('Streams: ', streams)
+        console.log('Stream Leave Info: ', streamLeaveInfo)
+        const newStreams = streams.map(stream => {
+          if (stream.streamId==streamLeaveInfo.streamId){
+            if (stream.participants && stream.participants.details){
+              const participantsFltrd = stream.participants.details.filter(participant => participant.accountId!=streamLeaveInfo.accountId)
+              if (participantsFltrd.length>0){
+                stream['participants']['details'] = participantsFltrd
+                return stream
+              } else {
+                return null
+              }
+            }
+          } else {
+            return stream
+          }
+        })
+        const newStreamsFltrd = newStreams.filter(stream => stream!=null)
+        console.log('New Streams: ', newStreamsFltrd)
+        setStreams(newStreamsFltrd)
+      })
     }
   }, [isLoading, streams, socket])
 
