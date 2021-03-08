@@ -28,8 +28,8 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
     const start = new Date(startTime)
     const dateDiff = date - start
     // const days = (parseInt(dateDiff / (24*60*60*1000))).toString().padStart(2, '0')
-    const hrs = (parseInt(dateDiff / (60*60*1000)) % 24).toString().padStart(2, '0')
-    const mins = (parseInt(dateDiff / (60*1000)) % (60)).toString().padStart(2, '0')
+    const hrs = (Math.max(0, parseInt(dateDiff / (60*60*1000)) % 24)).toString().padStart(2, '0')
+    const mins = (Math.max(0, parseInt(dateDiff / (60*1000)) % (60)).toString()).padStart(2, '0')
     const result = `${hrs} : ${mins}`
     return result
   }
@@ -53,27 +53,12 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
   }, [])
 
   useEffect(() => {
-    console.log('MADE IT HERE!')
     console.log(socket)
-    console.log(isLoading)
     if(Boolean(socket) && !isLoading){
-      console.log('AND HERE!')
-      // socket.on('create_stream', (streamInfo) => {
-      //   console.log('New Stream Info: ', streamInfo)
-      //   const streamExists = streams.filter(stream => stream.streamId==streamInfo.streamId)
-      //   if (streamExists.length==0){
-      //     const newStreams = [streamInfo].concat([...streams])
-      //     setStreams(newStreams)
-      //   }
-      // })
       socket.on('join_stream', (streamInfo) => {
-        console.log('New Stream Participants Info: ', streamInfo)
-        console.log('Streams: ', streams)
         const streamsFltrd = streams.filter(stream => stream.streamId == streamInfo.streamId)
         if (streamsFltrd.length==0){
           const newStreams = [streamInfo].concat([...streams])
-          console.log('Streams: ', streams)
-          console.log('New streams: ', newStreams)
           setStreams(newStreams)
         } else {
           const newStreams = streams.map(stream => {
@@ -83,14 +68,10 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
               return stream
             }
           })
-          console.log('Streams: ', streams)
-          console.log('New streams: ', newStreams)
           setStreams(newStreams)
         }
       })
       socket.on('leave_stream', (streamLeaveInfo) => {
-        console.log('Streams: ', streams)
-        console.log('Stream Leave Info: ', streamLeaveInfo)
         const newStreams = streams.map(stream => {
           if (stream.streamId==streamLeaveInfo.streamId){
             if (stream.participants && stream.participants.details){
@@ -107,7 +88,6 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
           }
         })
         const newStreamsFltrd = newStreams.filter(stream => stream!=null)
-        console.log('New Streams: ', newStreamsFltrd)
         setStreams(newStreamsFltrd)
       })
     }

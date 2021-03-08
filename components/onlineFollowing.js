@@ -20,7 +20,6 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
     }
     axios.get(url, headers)
       .then(res => {
-        console.log('Initial Online Following: ', res.data)
         setOnlineFollowing(res.data)
         setIsLoading(false)
       })
@@ -30,24 +29,15 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
   useEffect(() => {
     if (Boolean(socket) && !isLoading){
       socket.on('online', (info) => {
-        console.log('Online Account Id: ', info)
         const alreadyOnline = onlineFollowing.filter(account => account.accountId == info.accountId)
         if (!Boolean(alreadyOnline[0])){
-          console.log(onlineFollowing)
           const onlineAccounts = [...onlineFollowing].concat([info])
-          console.log(onlineAccounts)
           setOnlineFollowing(onlineAccounts)
         }
       })
       socket.on('offline', (info) => {
-        console.log('Offline Account Id: ', info)
-        console.log(onlineFollowing)
         const stillOnline = onlineFollowing.filter(account => account.accountId != info.accountId)
-        console.log(stillOnline)
         setOnlineFollowing(stillOnline)
-      })
-      socket.on('hello', (hello) => {
-        console.log(hello)
       })
     }
   }, [isLoading, socket, onlineFollowing])
