@@ -10,7 +10,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={userStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal){
+export default function NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket){
   const displayModal = showModal ? {'display':'block'} : {'display':'none'}
   const [topicText, setTopicText] = useState('')
   const [inviteOnly, setInviteOnly] = useState(false)
@@ -50,6 +50,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
                axios.post(streamURL, streamBody, headers)
                     .then(res => {
                       if (res.data && res.data.streamId){
+                        socket.disconnect()
                         Router.push(
                           {pathname:'/stream',
                           query: {streamId: res.data.streamId}

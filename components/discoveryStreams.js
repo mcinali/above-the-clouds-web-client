@@ -11,7 +11,7 @@ const Image = React.memo(function Image({ src }) {
 export default function DiscoveryStreams(hostname, accountId, accessToken, socket) {
   const [streams, setStreams] = useState([])
   const [date, setDate] = useState(new Date())
-  const [isLoading, setIsLoading] = useState(true)
+  const [socketExists, setSocketExists] = useState(false)
 
   useEffect(() => {
     const timerId = setInterval(() => tick(), 60000)
@@ -44,7 +44,6 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
     axios.get(url, headers)
          .then(res => {
            setStreams(res.data)
-           setIsLoading(false)
          })
          .catch(error => {
            console.error(error)
@@ -53,11 +52,11 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
   }, [])
 
   useEffect(() => {
-    console.log(socket)
-    if(Boolean(socket) && !isLoading){
+    if(Boolean(socket) && !socketExists){
       socket.on('join_stream', (streamInfo) => {
         const streamsFltrd = streams.filter(stream => stream.streamId == streamInfo.streamId)
         if (streamsFltrd.length==0){
+          //  Set streams
           const newStreams = [streamInfo].concat([...streams])
           setStreams(newStreams)
         } else {
@@ -90,11 +89,13 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
         const newStreamsFltrd = newStreams.filter(stream => stream!=null)
         setStreams(newStreamsFltrd)
       })
+      setSocketExists(true)
     }
-  }, [isLoading, streams, socket])
+  }, [socketExists, streams, socket])
 
   function joinStream(streamInfo){
     try {
+      socket.disconnect()
       Router.push(
         {pathname: "/stream",
         query: {streamId: streamInfo.streamId}

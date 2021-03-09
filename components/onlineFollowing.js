@@ -9,7 +9,7 @@ const Image = React.memo(function Image({ src }) {
 
 export default function OnlineFollowing(hostname, socket, accountId, accessToken){
   const [onlineFollowing, setOnlineFollowing] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [socketExists, setSocketExists] = useState(false)
 
   useEffect(() => {
     const url = hostname + `/follows/online_following?accountId=${accountId}`
@@ -21,13 +21,12 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
     axios.get(url, headers)
       .then(res => {
         setOnlineFollowing(res.data)
-        setIsLoading(false)
       })
       .catch(error => console.error(error))
   }, [])
 
   useEffect(() => {
-    if (Boolean(socket) && !isLoading){
+    if (Boolean(socket) && !socketExists){
       socket.on('online', (info) => {
         const alreadyOnline = onlineFollowing.filter(account => account.accountId == info.accountId)
         if (!Boolean(alreadyOnline[0])){
@@ -39,8 +38,9 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
         const stillOnline = onlineFollowing.filter(account => account.accountId != info.accountId)
         setOnlineFollowing(stillOnline)
       })
+      setSocketExists(true)
     }
-  }, [isLoading, socket, onlineFollowing])
+  }, [socketExists, socket, onlineFollowing])
 
   return (
     <div className={followsStyles.container}>

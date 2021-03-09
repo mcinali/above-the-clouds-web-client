@@ -59,15 +59,20 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
       auth: {
         accountId: accountId,
         token: accessToken,
-      }
+      },
+      transports: ['websocket'],
+      withCredentials: true,
     })
-    console.log(socketConnection)
     setSocket(socketConnection)
+  }, [])
+
+  useEffect(() => {
+    Notification.requestPermission()
   }, [])
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal)}
+      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
       {Header(hostname, accountId, accessToken)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
