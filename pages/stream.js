@@ -76,6 +76,12 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
       withCredentials: true,
     })
     setSocket(socketConnection)
+    socketConnection.on('notification', (message) => {
+      new Notification('Above the Clouds', {
+        body: message,
+        requireInteraction: true
+      })
+    })
   }, [])
 
 
