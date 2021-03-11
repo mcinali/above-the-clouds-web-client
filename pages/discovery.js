@@ -66,10 +66,6 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
     setSocket(socketConnection)
   }, [])
 
-  useEffect(() => {
-    Notification.requestPermission()
-  }, [])
-
   return (
     <div className={commonStyles.container}>
       {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
