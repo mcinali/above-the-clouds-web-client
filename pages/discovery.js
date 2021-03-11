@@ -10,6 +10,7 @@ import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
 import DiscoveryStreams from '../components/discoveryStreams'
 const { hostname, sockethostname } = require('../config')
+import { io } from "socket.io-client"
 const axios = require('axios')
 
 export async function getServerSideProps({ req, res, query }) {
@@ -49,28 +50,38 @@ export async function getServerSideProps({ req, res, query }) {
 
 export default function Discovery({ accountId, accessToken, hostname, sockethostname, newStreamModal }) {
   const [showModal, setShowModal] = useState(newStreamModal)
-  const [forkedTopic, setForkedTopic] = useState({})
+  const [isLoading, setIsLoading] = useState(true)
+  const [socket, setSocket] = useState(null)
 
   useEffect(() => {
     window.history.replaceState(null, '', '/discovery')
+    const socketConnection = io(sockethostname, {
+      auth: {
+        accountId: accountId,
+        token: accessToken,
+      },
+      transports: ['websocket'],
+      withCredentials: true,
+    })
+    setSocket(socketConnection)
   }, [])
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic)}
+      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
       {Header(hostname, accountId, accessToken)}
       <div className={commonStyles.bodyContainer}>
         <div className={discoveryStyles.panelLeft}>
           <div className={discoveryStyles.panelLeftMainContainer}>
             {FollowingSuggestions(hostname, accountId, accessToken)}
-            {OnlineFollowing(hostname, sockethostname, accountId, accessToken)}
+            {OnlineFollowing(hostname, socket, accountId, accessToken)}
           </div>
         </div>
         <div className={discoveryStyles.panelRight}>
           <div className={discoveryStyles.newStreamContainer}>
             <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
           </div>
-          {DiscoveryStreams(hostname, accountId, accessToken, setShowModal, setForkedTopic)}
+          {DiscoveryStreams(hostname, accountId, accessToken, socket)}
         </div>
       </div>
     </div>

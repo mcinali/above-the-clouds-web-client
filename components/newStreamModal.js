@@ -10,19 +10,13 @@ const Image = React.memo(function Image({ src }) {
   return <img className={userStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, forkedTopic, setForkedTopic){
+export default function NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket){
   const displayModal = showModal ? {'display':'block'} : {'display':'none'}
   const [topicText, setTopicText] = useState('')
   const [inviteOnly, setInviteOnly] = useState(false)
   const [capacity, setCapacity] = useState(5)
   const [invitations, setInvitations] = useState([])
   const [disableCreateStream, setDisableCreateStream] = useState(true)
-
-  useEffect(() => {
-    if ((Object.keys(forkedTopic).length>0)){
-      setTopicText(forkedTopic.topicText)
-    }
-  }, [forkedTopic])
 
   useEffect(() => {
     setDisableCreateStream(!Boolean(topicText))
@@ -44,48 +38,33 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
           'token': accessToken,
         }
       }
-      if (Object.keys(forkedTopic).length==0){
-        const topicURL = hostname + `/topic`
-        const topicBody = {
-          accountId: accountId,
-          topic: topicText,
-        }
-        axios.post(topicURL, topicBody, headers)
-             .then(res => {
-               if (res.data){
-                 streamBody['topicId'] = res.data.topicId
-                 axios.post(streamURL, streamBody, headers)
-                      .then(res => {
-                        if (res.data && res.data.streamId){
-                          Router.push(
-                            {pathname:'/stream',
-                            query: {streamId: res.data.streamId}
-                          })
-                        }
-                      })
-                      .catch(error => {
-                        console.error(error)
-                      })
-               }
-             })
-             .catch(error => {
-                console.error(error)
-             })
-      } else {
-        streamBody['topicId'] = forkedTopic.topicId
-        axios.post(streamURL, streamBody, headers)
-             .then(res => {
-               if (res.data){
-                 Router.push(
-                   {pathname:'/stream',
-                   query: {streamId: res.data.streamId}
-                 })
-               }
-             })
-             .catch(error => {
-               console.error(error)
-             })
+      const topicURL = hostname + `/topic`
+      const topicBody = {
+        accountId: accountId,
+        topic: topicText,
       }
+      axios.post(topicURL, topicBody, headers)
+           .then(res => {
+             if (res.data){
+               streamBody['topicId'] = res.data.topicId
+               axios.post(streamURL, streamBody, headers)
+                    .then(res => {
+                      if (res.data && res.data.streamId){
+                        socket.disconnect()
+                        Router.push(
+                          {pathname:'/stream',
+                          query: {streamId: res.data.streamId}
+                        })
+                      }
+                    })
+                    .catch(error => {
+                      console.error(error)
+                    })
+             }
+           })
+           .catch(error => {
+              console.error(error)
+           })
     } catch (error) {
       console.error(error)
     }
@@ -95,7 +74,6 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
     setTopicText('')
     setInviteOnly(false)
     setInvitations([])
-    setForkedTopic({})
     setShowModal(false)
   }
 
@@ -125,13 +103,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
                   <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
                   <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
                 </div>
-                {(Object.keys(forkedTopic).length==0)
-                  ?
-                    <textarea area maxLength='64' cols='32' rows='2' value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></textarea>
-                  :
-                    <div className={newStreamStyles.textFormFixed}>{topicText}</div>
-                }
-
+                <textarea area maxLength='64' cols='32' rows='2' value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></textarea>
               </form>
             </div>
             <div className={newStreamStyles.invitationsContainer}>

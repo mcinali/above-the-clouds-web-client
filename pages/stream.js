@@ -8,7 +8,8 @@ import StreamInviteModal from '../components/streamInviteModal'
 import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
-const { hostname } = require('../config')
+const { hostname, sockethostname } = require('../config')
+import { io } from "socket.io-client"
 const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
 
@@ -43,14 +44,14 @@ export async function getServerSideProps({ req, res, query }) {
     }
     const streamId = query.streamId
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname, session: session } }
+    return { props: { accountId: accountId, accessToken: token, streamId: streamId, hostname: hostname, sockethostname: sockethostname, session: session } }
   } catch (error) {
     res.writeHead(307, { Location: '/discovery' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
   }
 }
 
-export default function Stream({ accountId, accessToken, streamId, hostname, session }){
+export default function Stream({ accountId, accessToken, streamId, hostname, sockethostname, session }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
@@ -63,6 +64,20 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
   const [volume, setVolume] = useState(0.0)
 
   const [date, setDate] = useState(new Date())
+  const [socket, setSocket] = useState(null)
+
+  useEffect(() => {
+    const socketConnection = io(sockethostname, {
+      auth: {
+        accountId: accountId,
+        token: accessToken,
+      },
+      transports: ['websocket'],
+      withCredentials: true,
+    })
+    setSocket(socketConnection)
+  }, [])
+
 
   useEffect(() => {
     if (!Boolean(session)){
@@ -214,6 +229,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, ses
   // Leave stream
   function leaveStream(){
     try {
+      socket.disconnect()
       const url = hostname + `/stream/leave`
       const streamParticipantId = window.sessionStorage.getItem('streamParticipantId')
       const twilioRoomSID = window.sessionStorage.getItem('twilioRoomSID')
