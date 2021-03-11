@@ -9,6 +9,8 @@ const Image = React.memo(function Image({ src }) {
 
 export default function OnlineFollowing(hostname, socket, accountId, accessToken){
   const [onlineFollowing, setOnlineFollowing] = useState([])
+  const [onlineAccountInfo, setOnlineAccountInfo] = useState(null)
+  const [offlineAccountInfo, setOfflineAccountInfo] = useState(null)
   const [socketExists, setSocketExists] = useState(false)
 
   useEffect(() => {
@@ -28,19 +30,33 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
   useEffect(() => {
     if (Boolean(socket) && !socketExists){
       socket.on('online', (info) => {
-        const alreadyOnline = onlineFollowing.filter(account => account.accountId == info.accountId)
-        if (!Boolean(alreadyOnline[0])){
-          const onlineAccounts = [...onlineFollowing].concat([info])
-          setOnlineFollowing(onlineAccounts)
-        }
+        setOnlineAccountInfo(info)
       })
       socket.on('offline', (info) => {
-        const stillOnline = onlineFollowing.filter(account => account.accountId != info.accountId)
-        setOnlineFollowing(stillOnline)
+        setOfflineAccountInfo(info)
       })
       setSocketExists(true)
     }
-  }, [socketExists, socket, onlineFollowing])
+  }, [socketExists, socket])
+
+  useEffect(() => {
+    if (Boolean(onlineAccountInfo)){
+      const alreadyOnline = onlineFollowing.filter(account => account.accountId == onlineAccountInfo.accountId)
+      if (!Boolean(alreadyOnline[0])){
+        const onlineAccounts = [...onlineFollowing].concat([onlineAccountInfo])
+        setOnlineFollowing(onlineAccounts)
+        setOnlineAccountInfo(null)
+      }
+    }
+  }, [onlineFollowing, onlineAccountInfo])
+
+  useEffect(() => {
+    if (Boolean(offlineAccountInfo)){
+      const stillOnline = onlineFollowing.filter(account => account.accountId != offlineAccountInfo.accountId)
+      setOnlineFollowing(stillOnline)
+      setOfflineAccountInfo(null)
+    }
+  }, [onlineFollowing, offlineAccountInfo])
 
   return (
     <div className={followsStyles.container}>
