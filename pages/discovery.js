@@ -64,6 +64,12 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
       withCredentials: true,
     })
     setSocket(socketConnection)
+    socketConnection.on('notification', (message) => {
+      new Notification('Above the Clouds', {
+        body: message,
+        requireInteraction: true
+      })
+    })
   }, [])
 
   return (
