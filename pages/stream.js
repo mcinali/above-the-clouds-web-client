@@ -55,7 +55,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
 
-  const [streamInfo, setStreamInfo] = useState({}) 
+  const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
   const [room, setRoom] = useState({})
 
@@ -67,6 +67,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
+    document.title = 'Above the Clouds'
     const socketConnection = io(sockethostname, {
       auth: {
         accountId: accountId,
@@ -201,6 +202,8 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
                   .then(res => {
                     if (res.data) {
                       setStreamInfo(res.data.info)
+                      // TO DO: Set document.title based to topic
+                      // document.title = res.data.info.topic
                       setStreamParticipants(res.data.participants)
                     }
                   })

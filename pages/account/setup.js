@@ -44,6 +44,10 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
   const [disableNextButton, setDisableNextButton] = useState(true)
   const [suggestions, setSuggestions] = useState([])
 
+  useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
+
   const upload = () => {
     document.getElementById('file-upload').click()
   }

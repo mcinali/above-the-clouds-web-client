@@ -55,6 +55,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
+    document.title = 'Above the Clouds'
     window.history.replaceState(null, '', '/discovery')
     const socketConnection = io(sockethostname, {
       auth: {

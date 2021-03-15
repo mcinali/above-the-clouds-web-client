@@ -40,8 +40,9 @@ export async function getServerSideProps({ req, res, query }) {
 
 
 export default function Entry({ hostname, accountId, accessToken, session }) {
-
+  
   useEffect(() => {
+    document.title = 'Above the Clouds'
     if (!Boolean(session)){
       const hrsToExpiration = 6
       setCookie('session', uuid.v4(), hrsToExpiration)

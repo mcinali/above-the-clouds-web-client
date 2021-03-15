@@ -1,8 +1,13 @@
 import Link from 'next/link'
 import loginStyles from '../../styles/Login.module.css'
 import commonStyles from '../../styles/Common.module.css'
+import { useEffect } from 'react'
 
 export default function PasswordResetEmailConfirm({ email }) {
+
+  useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
 
   return (
     <div className={commonStyles.container}>

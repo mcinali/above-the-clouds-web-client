@@ -17,6 +17,10 @@ export async function getServerSideProps({ res, query }) {
 
 export default function PasswordResetEmailConfirm({ email }) {
 
+  useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
+
   return (
     <div className={commonStyles.container}>
       <div className={loginStyles.main}>
