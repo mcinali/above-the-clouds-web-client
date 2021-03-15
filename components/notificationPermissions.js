@@ -47,7 +47,10 @@ export default function NotificationPermissions(){
       <div className={notificationPermissionsStyles.content}>
         <div className={notificationPermissionsStyles.content}>
           <button className={notificationPermissionsStyles.button} onClick={function(){askNotificationPermission()}}>Enable Notifications</button>
-          <div className={notificationPermissionsStyles.text}>This will only enable desktop notifications for https://www.abovethecloudsapp.com</div>
+          <div className={notificationPermissionsStyles.textContainer}>
+            <div className={notificationPermissionsStyles.text}>This will only enable desktop notifications for https://www.abovethecloudsapp.com</div>
+            <div className={notificationPermissionsStyles.text}>(make sure notifications are enabled for your browser in System Preferences/Control Panel)</div>
+          </div>
         </div>
       </div>
     </div>

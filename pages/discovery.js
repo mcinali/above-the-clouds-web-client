@@ -11,7 +11,7 @@ import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
 import DiscoveryStreams from '../components/discoveryStreams'
 const { hostname, sockethostname } = require('../config')
-import { io } from "socket.io-client"
+import { io } from 'socket.io-client'
 const axios = require('axios')
 
 export async function getServerSideProps({ req, res, query }) {
@@ -68,7 +68,8 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
     socketConnection.on('notification', (message) => {
       new Notification('Above the Clouds', {
         body: message,
-        requireInteraction: true
+        requireInteraction: true,
+        silent: true,
       })
     })
   }, [])
@@ -95,7 +96,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
             {DiscoveryStreams(hostname, accountId, accessToken, socket)}
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   )
 }
