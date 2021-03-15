@@ -9,7 +9,7 @@ import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
 const { hostname, sockethostname } = require('../config')
-import { io } from "socket.io-client"
+import { io } from 'socket.io-client'
 const axios = require('axios')
 const { connect, createLocalTracks } = require('twilio-video')
 
@@ -67,6 +67,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
+    document.title = 'Above the Clouds'
     const socketConnection = io(sockethostname, {
       auth: {
         accountId: accountId,
@@ -76,6 +77,13 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
       withCredentials: true,
     })
     setSocket(socketConnection)
+    socketConnection.on('notification', (message) => {
+      new Notification('Above the Clouds', {
+        body: message,
+        requireInteraction: true,
+        silent: true,
+      })
+    })
   }, [])
 
 
@@ -194,6 +202,8 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
                   .then(res => {
                     if (res.data) {
                       setStreamInfo(res.data.info)
+                      // TO DO: Set document.title based to topic
+                      // document.title = res.data.info.topic
                       setStreamParticipants(res.data.participants)
                     }
                   })
@@ -322,11 +332,11 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   useEffect(() => {
     const active = window.sessionStorage.getItem('active')
     if (isActive){
-      window.addEventListener("beforeunload", leaveStreamInBackground)
-      window.addEventListener("popstate", leaveStreamInBackground)
+      window.addEventListener('beforeunload', leaveStreamInBackground)
+      window.addEventListener('popstate', leaveStreamInBackground)
       return () => {
-        window.removeEventListener("beforeunload", leaveStreamInBackground)
-        window.removeEventListener("popstate", leaveStreamInBackground)
+        window.removeEventListener('beforeunload', leaveStreamInBackground)
+        window.removeEventListener('popstate', leaveStreamInBackground)
       }
     }
   }, [isActive])

@@ -19,6 +19,10 @@ export default function PasswordResetEmail({ hostname }) {
   const [email, setEmail] = useState('')
   const [resetError, setResetError] = useState('')
 
+  useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
+
   function sendPasswordResetEmail(){
     try {
       const url = hostname + `/auth/password_reset/email`

@@ -39,7 +39,9 @@ export default function PasswordResetEmail({ hostname, code, token, phone }) {
   const [disabledResetPasswordButton, setDisabledResetPasswordButton] = useState(true)
   const [passwordError, setPasswordError] = useState('')
 
-
+  useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
 
   function updatePassword(){
     try {

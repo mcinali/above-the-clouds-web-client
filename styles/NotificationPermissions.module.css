@@ -1,0 +1,51 @@
+.button {
+  margin: 10px 5px;
+  display: flex;
+  text-align: center;
+  background-color: white;
+  color: #1f1137;
+  font-size: 14px;
+  font-weight: 400;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 10px 10px;
+  height: 30px;
+  line-height: 5px;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.container {
+  position: static;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height:50px;
+  background: #3e236e;
+  z-index: 2;
+}
+
+.textContainer {
+  height: 100%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.text {
+  color: white;
+  font-size: 12px;
+  margin-left: 5px;
+}

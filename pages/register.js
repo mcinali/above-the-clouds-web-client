@@ -56,6 +56,10 @@ export default function Register({ code, hostname }) {
   const [phoneAccessCodeError, setPhoneAccessCodeError] = useState('')
 
   useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
+
+  useEffect(() => {
     const regex = new RegExp('^[a-zA-Z0-9]*$')
     if ((username.length > 0) && (!regex.test(username))){
       setUsernameError('username can only consists of letters and numbers')

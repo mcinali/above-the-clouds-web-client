@@ -21,6 +21,10 @@ export default function Login({ hostname }) {
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
 
+  useEffect(() => {
+    document.title = 'Above the Clouds'
+  }, [])
+
   function login(){
     try {
       const url = hostname + `/auth/login`

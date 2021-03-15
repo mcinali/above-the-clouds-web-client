@@ -10,6 +10,8 @@ const Image = React.memo(function Image({ src }) {
 
 export default function DiscoveryStreams(hostname, accountId, accessToken, socket) {
   const [streams, setStreams] = useState([])
+  const [joinedStreamInfo, setJoinedStreamInfo] = useState(null)
+  const [leftStreamInfo, setLeftStreamInfo] = useState(null)
   const [date, setDate] = useState(new Date())
   const [socketExists, setSocketExists] = useState(false)
 
@@ -54,44 +56,58 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
   useEffect(() => {
     if(Boolean(socket) && !socketExists){
       socket.on('join_stream', (streamInfo) => {
-        const streamsFltrd = streams.filter(stream => stream.streamId == streamInfo.streamId)
-        if (streamsFltrd.length==0){
-          //  Set streams
-          const newStreams = [streamInfo].concat([...streams])
-          setStreams(newStreams)
-        } else {
-          const newStreams = streams.map(stream => {
-            if (stream.streamId==streamInfo.streamId){
-              return streamInfo
-            } else {
-              return stream
-            }
-          })
-          setStreams(newStreams)
-        }
+        setJoinedStreamInfo(streamInfo)
       })
       socket.on('leave_stream', (streamLeaveInfo) => {
-        const newStreams = streams.map(stream => {
-          if (stream.streamId==streamLeaveInfo.streamId){
-            if (stream.participants && stream.participants.details){
-              const participantsFltrd = stream.participants.details.filter(participant => participant.accountId!=streamLeaveInfo.accountId)
-              if (participantsFltrd.length>0){
-                stream['participants']['details'] = participantsFltrd
-                return stream
-              } else {
-                return null
-              }
-            }
-          } else {
-            return stream
-          }
-        })
-        const newStreamsFltrd = newStreams.filter(stream => stream!=null)
-        setStreams(newStreamsFltrd)
+        setLeftStreamInfo(streamLeaveInfo)
       })
       setSocketExists(true)
     }
   }, [socketExists, streams, socket])
+
+  useEffect(() => {
+    if (Boolean(joinedStreamInfo)){
+      const streamsFltrd = streams.filter(stream => stream.streamId == joinedStreamInfo.streamId)
+      if (streamsFltrd.length==0){
+        //  Set streams
+        const newStreams = [joinedStreamInfo].concat([...streams])
+        setStreams(newStreams)
+      } else {
+        const newStreams = streams.map(stream => {
+          if (stream.streamId==joinedStreamInfo.streamId){
+            return joinedStreamInfo
+          } else {
+            return stream
+          }
+        })
+        setStreams(newStreams)
+      }
+      setJoinedStreamInfo(null)
+    }
+  }, [joinedStreamInfo, streams])
+
+  useEffect(() => {
+    if (Boolean(leftStreamInfo)){
+      const newStreams = streams.map(stream => {
+        if (stream.streamId==leftStreamInfo.streamId){
+          if (stream.participants && stream.participants.details){
+            const participantsFltrd = stream.participants.details.filter(participant => participant.accountId!=leftStreamInfo.accountId)
+            if (participantsFltrd.length>0){
+              stream['participants']['details'] = participantsFltrd
+              return stream
+            } else {
+              return null
+            }
+          }
+        } else {
+          return stream
+        }
+      })
+      const newStreamsFltrd = newStreams.filter(stream => stream!=null)
+      setStreams(newStreamsFltrd)
+      setLeftStreamInfo(null)
+    }
+  }, [leftStreamInfo, streams])
 
   function joinStream(streamInfo){
     try {
