@@ -29,9 +29,11 @@ export default function Header(hostname, accountId, accessToken){
       <div className={commonStyles.navBarContent}>
         <div className={commonStyles.navbarItemLeft}>
         </div>
-        <div className={commonStyles.navbarItemCenter}>
-          <button className={commonStyles.inviteButton}>Invite to App</button>
-        </div>
+        {/*
+          <div className={commonStyles.navbarItemCenter}>
+            <button className={commonStyles.inviteButton}>Invite to App</button>
+          </div>
+          */}
         <div className={commonStyles.navbarItemRight}>
           <div className={commonStyles.name}>{accountInfo.firstname}</div>
           <Image src={accountInfo.profilePicture}/>

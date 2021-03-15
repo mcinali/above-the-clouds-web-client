@@ -5,6 +5,7 @@ import commonStyles from '../styles/Common.module.css'
 import discoveryStyles from '../styles/Discovery.module.css'
 import Cookies from 'universal-cookie'
 import Header from '../components/header'
+import NotificationPermissions from '../components/notificationPermissions'
 import NewStreamModal from '../components/newStreamModal'
 import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
@@ -75,21 +76,26 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   return (
     <div className={commonStyles.container}>
       {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
-      {Header(hostname, accountId, accessToken)}
-      <div className={commonStyles.bodyContainer}>
-        <div className={discoveryStyles.panelLeft}>
-          <div className={discoveryStyles.panelLeftMainContainer}>
-            {FollowingSuggestions(hostname, accountId, accessToken)}
-            {OnlineFollowing(hostname, socket, accountId, accessToken)}
-          </div>
-        </div>
-        <div className={discoveryStyles.panelRight}>
-          <div className={discoveryStyles.newStreamContainer}>
-            <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
-          </div>
-          {DiscoveryStreams(hostname, accountId, accessToken, socket)}
-        </div>
+      <div>
+        {NotificationPermissions()}
       </div>
+      <div>
+        {Header(hostname, accountId, accessToken)}
+        <div className={commonStyles.bodyContainer}>
+          <div className={discoveryStyles.panelLeft}>
+            <div className={discoveryStyles.panelLeftMainContainer}>
+              {FollowingSuggestions(hostname, accountId, accessToken)}
+              {OnlineFollowing(hostname, socket, accountId, accessToken)}
+            </div>
+          </div>
+          <div className={discoveryStyles.panelRight}>
+            <div className={discoveryStyles.newStreamContainer}>
+              <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
+            </div>
+            {DiscoveryStreams(hostname, accountId, accessToken, socket)}
+          </div>
+        </div>
+      </div>  
     </div>
   )
 }
