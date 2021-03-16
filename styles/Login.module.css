@@ -58,6 +58,12 @@
   color: #383838;
 }
 
+.formShowHidePassword {
+  text-align: right;
+  cursor: pointer;
+  color: #0070f3;
+}
+
 .loginButton {
   margin-top: 2%;
   background-color: #0070f3;
