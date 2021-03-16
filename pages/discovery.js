@@ -21,7 +21,6 @@ export async function getServerSideProps({ req, res, query }) {
     const cookie = new Cookies(req.headers.cookie)
     const accountId = cookie.get('accountId')
     const token = cookie.get('token')
-    const session = cookie.get('session')
     // Add accountId as query param + token as header
     const url = hostname + `/auth/validate?accountId=${accountId}`
     const headers = {
@@ -35,13 +34,8 @@ export async function getServerSideProps({ req, res, query }) {
       res.writeHead(307, { Location: '/landing' }).end()
       return { props: {ok: false, reason: 'Access not permitted' } }
     }
-    if (!Boolean(session)){
-      res.writeHead(302, { Location: '/entry' }).end()
-      return { props: {ok: true } }
-    }
-    const newStreamModal = (Object.keys(query).length==0) ? false : Boolean(query.newStreamModal)
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, hostname: hostname, sockethostname: sockethostname, newStreamModal: newStreamModal } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname, sockethostname: sockethostname } }
   } catch (error) {
     res.writeHead(307, { Location: '/landing' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
@@ -49,8 +43,8 @@ export async function getServerSideProps({ req, res, query }) {
 }
 
 
-export default function Discovery({ accountId, accessToken, hostname, sockethostname, newStreamModal }) {
-  const [showModal, setShowModal] = useState(newStreamModal)
+export default function Discovery({ accountId, accessToken, hostname, sockethostname }) {
+  const [showModal, setShowModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [socket, setSocket] = useState(null)
 
@@ -78,9 +72,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   return (
     <div className={commonStyles.container}>
       {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
-      <div>
-        {NotificationPermissions()}
-      </div>
+      {NotificationPermissions()}
       <div>
         {Header(hostname, accountId, accessToken)}
         <div className={commonStyles.bodyContainer}>
