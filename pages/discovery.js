@@ -68,6 +68,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
     axios.get(url, headers)
          .then(res => {
            setStreams(res.data)
+           setIsLoadingDiscovery(false)
          })
          .catch(error => {
            console.error(error)
@@ -85,6 +86,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
     axios.get(url, headers)
       .then(res => {
         setSuggestions(res.data.suggestions)
+        setIsLoadingFollowSuggestions(false)
       })
       .catch(error => console.error(error))
   }, [])
@@ -99,9 +101,20 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
     axios.get(url, headers)
       .then(res => {
         setOnlineFollowing(res.data)
+        setIsLoadingOnlineFollowing(false)
       })
       .catch(error => console.error(error))
   }, [])
+
+  useEffect(() => {
+    if (!(isLoadingDiscovery || isLoadingFollowSuggestions || isLoadingOnlineFollowing)){
+      if (streams.length>0){
+        console.log('No menu')
+      } else {
+        console.log('Menu')
+      }
+    }
+  }, [isLoadingDiscovery, isLoadingFollowSuggestions, isLoadingOnlineFollowing])
 
   useEffect(() => {
     document.title = 'Above the Clouds'
