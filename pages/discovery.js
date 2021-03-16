@@ -45,8 +45,63 @@ export async function getServerSideProps({ req, res, query }) {
 
 export default function Discovery({ accountId, accessToken, hostname, sockethostname }) {
   const [showModal, setShowModal] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+
+  const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
+  const [streams, setStreams] = useState([])
+
+  const [isLoadingFollowSuggestions, setIsLoadingFollowSuggestions] = useState(true)
+  const [suggestions, setSuggestions] = useState([])
+
+  const [isLoadingOnlineFollowing, setIsLoadingOnlineFollowing] = useState(true)
+  const [onlineFollowing, setOnlineFollowing] = useState([])
+
+  const [showMenu, setShowMenu] = useState(false)
   const [socket, setSocket] = useState(null)
+
+  useEffect(() => {
+    const url = hostname+`/discovery?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+         .then(res => {
+           setStreams(res.data)
+         })
+         .catch(error => {
+           console.error(error)
+         })
+    return
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/follows/suggestions?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setSuggestions(res.data.suggestions)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/follows/online_following?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setOnlineFollowing(res.data)
+      })
+      .catch(error => console.error(error))
+  }, [])
 
   useEffect(() => {
     document.title = 'Above the Clouds'
@@ -78,15 +133,15 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
         <div className={commonStyles.bodyContainer}>
           <div className={discoveryStyles.panelLeft}>
             <div className={discoveryStyles.panelLeftMainContainer}>
-              {FollowingSuggestions(hostname, accountId, accessToken)}
-              {OnlineFollowing(hostname, socket, accountId, accessToken)}
+              {FollowingSuggestions(hostname, accountId, accessToken, suggestions, setSuggestions)}
+              {OnlineFollowing(hostname, socket, accountId, accessToken, onlineFollowing, setOnlineFollowing)}
             </div>
           </div>
           <div className={discoveryStyles.panelRight}>
             <div className={discoveryStyles.newStreamContainer}>
               <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
             </div>
-            {DiscoveryStreams(hostname, accountId, accessToken, socket)}
+            {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams)}
           </div>
         </div>
       </div>

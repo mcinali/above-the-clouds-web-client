@@ -8,8 +8,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function DiscoveryStreams(hostname, accountId, accessToken, socket) {
-  const [streams, setStreams] = useState([])
+export default function DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams) {
   const [joinedStreamInfo, setJoinedStreamInfo] = useState(null)
   const [leftStreamInfo, setLeftStreamInfo] = useState(null)
   const [date, setDate] = useState(new Date())
@@ -35,23 +34,6 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
     const result = `${hrs} : ${mins}`
     return result
   }
-
-  useEffect(() => {
-    const url = hostname+`/discovery?accountId=${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-         .then(res => {
-           setStreams(res.data)
-         })
-         .catch(error => {
-           console.error(error)
-         })
-    return
-  }, [])
 
   useEffect(() => {
     if(Boolean(socket) && !socketExists){
