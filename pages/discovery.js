@@ -44,7 +44,7 @@ export async function getServerSideProps({ req, res, query }) {
 
 
 export default function Discovery({ accountId, accessToken, hostname, sockethostname }) {
-  const [showModal, setShowModal] = useState(false)
+  const [showNewStreamModal, setNewStreamShowModal] = useState(false)
 
   const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
   const [streams, setStreams] = useState([])
@@ -139,7 +139,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
+      {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
       {NotificationPermissions()}
       <div>
         {Header(hostname, accountId, accessToken)}
@@ -152,7 +152,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
           </div>
           <div className={discoveryStyles.panelRight}>
             <div className={discoveryStyles.newStreamContainer}>
-              <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
+              <button className={discoveryStyles.newStreamButton} onClick={function(){setNewStreamShowModal(true)}}>New Stream+</button>
             </div>
             {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams)}
           </div>
