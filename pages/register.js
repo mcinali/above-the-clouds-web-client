@@ -42,6 +42,7 @@ export default function Register({ code, hostname }) {
   const [passwordError, setPasswordError] = useState('')
   const [passwordLengthColor, setPasswordLengthColor] = useState({'color':'grey'})
   const [passwordCharactersColor, setPasswordCharactersColor] = useState({'color':'grey'})
+  const [showPassword, setShowPassword] = useState(false)
 
   const [accountCheckError, setAccountCheckError] = useState('')
 
@@ -347,7 +348,8 @@ export default function Register({ code, hostname }) {
               </div>
               <div className={registrationStyles.modalFormBodyContainer}>
                 <div className={registrationStyles.modalFormBodyTitle}>Password</div>
-                <input className={registrationStyles.modalFormBodyInput} value={password} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
+                <input className={registrationStyles.modalFormBodyInput} value={password} type={showPassword ? 'text' : 'password'} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
+                <div className={registrationStyles.modalFormShowHidePassword} onClick={() => setShowPassword(prevType => !prevType)}>{showPassword ? 'hide password' : 'show password'}</div>
                 <div className={registrationStyles.modalFormBodyFootnoteTitle}>Your Password must have:</div>
                 <div className={registrationStyles.modalFormBodyFootnote} style={passwordLengthColor}> - At least 8 characters</div>
                 <div className={registrationStyles.modalFormBodyFootnote} style={passwordCharactersColor}> - At least 1 of each: uppercase letter, lowercase letter, number, and special character</div>

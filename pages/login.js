@@ -20,6 +20,7 @@ export default function Login({ hostname }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     document.title = 'Above the Clouds'
@@ -62,7 +63,8 @@ export default function Login({ hostname }) {
         </div>
         <div className={loginStyles.formBodyContainer}>
           <div className={loginStyles.formBodyTitle}>Password</div>
-          <input className={loginStyles.formBodyInput} placeholder={'password'} value={password} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
+          <input className={loginStyles.formBodyInput} placeholder={'password'} value={password} type={showPassword ? 'text' : 'password'} onChange={(event) => {setPassword(event.target.value.trim())}}></input>
+          <div className={loginStyles.formShowHidePassword} onClick={() => setShowPassword(prevType => !prevType)}>{showPassword ? 'hide password' : 'show password'}</div>
         </div>
         <div className={loginStyles.formBodyFootnoteError}>{loginError}</div>
         <button className={loginStyles.loginButton} onClick={function(){login()}}>Log In</button>
