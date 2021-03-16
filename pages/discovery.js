@@ -7,6 +7,7 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import NotificationPermissions from '../components/notificationPermissions'
 import NewStreamModal from '../components/newStreamModal'
+import MenuGuide from '../components/menuGuide'
 import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
 import DiscoveryStreams from '../components/discoveryStreams'
@@ -109,9 +110,9 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   useEffect(() => {
     if (!(isLoadingDiscovery || isLoadingFollowSuggestions || isLoadingOnlineFollowing)){
       if (streams.length>0){
-        console.log('No menu')
+        setShowMenu(false)
       } else {
-        console.log('Menu')
+        setShowMenu(true)
       }
     }
   }, [isLoadingDiscovery, isLoadingFollowSuggestions, isLoadingOnlineFollowing])
@@ -139,6 +140,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
   return (
     <div className={commonStyles.container}>
+      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal)}
       {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
       {NotificationPermissions()}
       <div>
