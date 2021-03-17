@@ -28,11 +28,11 @@ spec:
             configMapKeyRef:
               name: web-client
               key: env
-        - name: WEB_URL
+        - name: BACKEND_WEB_URL
           valueFrom:
             configMapKeyRef:
               name: web-client
-              key: web_url
+              key: backend_web_url
         livenessProbe:
           httpGet:
             path: /health

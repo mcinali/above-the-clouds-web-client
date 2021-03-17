@@ -4,4 +4,4 @@ metadata:
   name: web-client
 data:
   env: prod
-  web_url: https://www.abovethecloudsapp.com
+  backend_web_url: https://www.api.abovethecloudsapp.com
