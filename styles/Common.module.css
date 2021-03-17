@@ -25,6 +25,12 @@
   z-index: 1;
 }
 
+.iconsContainer {
+  margin-left: 25px;
+  display: flex;
+  flex-direction: row;
+}
+
 .image {
   border-radius: 50%;
   height: 30px;
@@ -32,6 +38,41 @@
 }
 
 .image:hover {
+  cursor: pointer;
+}
+
+.imageContainer {
+  height: 25px;
+  width: 25px;
+  margin-left: 20px;
+}
+
+.imageContainer .imageContainerText {
+  visibility: hidden;
+  background-color: black;
+  opacity: 80%;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  width: 120px;
+  padding: 5px 15px;
+  font-size: 14px;
+  position:absolute;
+  display:block;
+  top: 105%;
+  margin-left: -30%;
+}
+
+.imageContainer:hover .imageContainerText {
+  visibility: visible;
+}
+
+.imageSquare {
+  height: 25px;
+  width: 25px;
+}
+
+.imageSquare:hover {
   cursor: pointer;
 }
 
