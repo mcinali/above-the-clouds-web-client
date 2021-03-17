@@ -1,0 +1,51 @@
+.buttonBig {
+  display: flex;
+  text-align: center;
+  background-color: #800080;
+  color: white;
+  font-size: 16px;
+  font-weight: 400;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 20px 40px;
+  line-height: 5px;
+}
+
+.buttonBig:hover {
+  cursor: pointer;
+  opacity: 80%;
+}
+
+.description1 {
+  width: 100%;
+  margin: 5% auto;
+  height: 50px;
+  padding: 0 50px;
+  font-size: 14px;
+  display: flex;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.description2 {
+  width: 100%;
+  margin: 5% auto;
+  height: 50px;
+  padding: 0 50px;
+  font-size: 16px;
+  display: flex;
+  text-align: left;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.enableNotificationsButtonContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 50px 0;
+}

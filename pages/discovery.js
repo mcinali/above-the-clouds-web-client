@@ -7,6 +7,7 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import NotificationPermissions from '../components/notificationPermissions'
 import NewStreamModal from '../components/newStreamModal'
+import NotificationsModal from '../components/notificationsModal'
 import MenuGuide from '../components/menuGuide'
 import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
@@ -45,7 +46,10 @@ export async function getServerSideProps({ req, res, query }) {
 
 
 export default function Discovery({ accountId, accessToken, hostname, sockethostname }) {
+  const [showMenu, setShowMenu] = useState(false)
   const [showNewStreamModal, setNewStreamShowModal] = useState(false)
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false)
+  const [handlePermission, setHandlePermission] = useState(true)
 
   const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
   const [streams, setStreams] = useState([])
@@ -56,7 +60,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   const [isLoadingOnlineFollowing, setIsLoadingOnlineFollowing] = useState(true)
   const [onlineFollowing, setOnlineFollowing] = useState([])
 
-  const [showMenu, setShowMenu] = useState(false)
+
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
@@ -140,9 +144,10 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
   return (
     <div className={commonStyles.container}>
-      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal)}
+      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal)}
       {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
-      {NotificationPermissions()}
+      {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
+      {NotificationPermissions(handlePermission, setHandlePermission)}
       <div>
         {Header(hostname, accountId, accessToken)}
         <div className={commonStyles.bodyContainer}>

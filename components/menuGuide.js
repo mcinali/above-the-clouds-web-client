@@ -7,7 +7,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={menuGuideStyles.image} src={src}/>
 })
 
-export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal) {
+export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, setShowNotificationsModal) {
   const [displayMenuGuide, setDisplayMenuGuide] = useState({'display':'none'})
 
   useEffect(() => {
@@ -27,8 +27,9 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal) 
     }
   }
 
-  function discovery(){
+  function notifications(){
     try {
+      setShowNotificationsModal(true)
       setShowMenu(false)
     } catch (error) {
       console.error(error)
@@ -59,7 +60,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal) 
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
           </button>
-          <button className={menuGuideStyles.card} onClick={function(){discovery()}}>
+          <button className={menuGuideStyles.card} onClick={function(){notifications()}}>
             <Image src={'/images/notifications.png'}/>
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Hang out</a></div>

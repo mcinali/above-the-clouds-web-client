@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import notificationPermissionsStyles from '../styles/NotificationPermissions.module.css'
 
-export default function NotificationPermissions(){
-  const [handlePermission, setHandlePermission] = useState(true)
+export default function NotificationPermissions(handlePermission, setHandlePermission){
 
   useEffect(() => {
     if (handlePermission){
