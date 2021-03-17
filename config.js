@@ -1,17 +1,15 @@
 // Establish runtime environment
-const env = process.env.RUNTIME_ENV
+const env = process.env.ENV
 // Create local URLs for APIs/sockets
 const localhostURL = 'http://localhost'
-const port = '8080'
-const socketPort = '8000'
-const localhost = localhostURL + ':' + port
-const localsockethost = localhostURL + ':' + socketPort
-// Create GCP URLs for APIs/sockets
-const gcphost = 'https://api.abovethecloudsapp.com'
+
+const localhost = localhostURL + ':8080'
+const localsockethost = localhostURL + ':8000'
+
 // Set hostname based on runtime environment
-const hostname = (env=='prod') ? gcphost : localhost
+const hostname = (env=='prod' || env=='staging') ? process.env.WEB_URL : localhost
 // Set socket hostname based on runtime environment
-const sockethostname = (env=='prod') ? gcphost : localsockethost
+const sockethostname = (env=='prod' || env=='staging') ? process.env.WEB_URL : localsockethost
 
 module.exports = {
   hostname,

@@ -17,14 +17,22 @@ spec:
         tier: web
     spec:
       containers:
-      - image: gcr.io/above-the-clouds-app/frontend:1.0.0
+      - image: gcr.io/above-the-clouds-app/frontend:1.0.1
         imagePullPolicy: Always
         name: frontend
         ports:
         - containerPort: 3000
         env:
-        - name: RUNTIME_ENV
-          value: "prod"
+        - name: ENV
+          valueFrom:
+            configMapKeyRef:
+              name: web-client
+              key: env
+        - name: WEB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: web-client
+              key: web_url
         livenessProbe:
           httpGet:
             path: /health

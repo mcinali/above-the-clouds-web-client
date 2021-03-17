@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-client
+data:
+  env: prod
+  web_url: https://www.abovethecloudsapp.com
