@@ -4,4 +4,4 @@ metadata:
   name: web-client
 data:
   env: staging
-  backend_web_url: https://www.staging.api.abovethecloudsapp.com
+  backend_web_url: https://staging.api.abovethecloudsapp.com
