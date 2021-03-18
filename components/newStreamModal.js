@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Router from 'next/router'
 import Invitations from '../components/invitations'
 import { createPictureURLFromArrayBufferString } from '../utilities'
+import modalStyles from '../styles/Modal.module.css'
 import newStreamStyles from '../styles/NewStream.module.css'
 import userStyles from '../styles/Users.module.css'
 const axios = require('axios')
@@ -89,12 +90,9 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
 
   return (
     <div>
-      <div className={newStreamStyles.background} style={displayModal}></div>
-      <div className={newStreamStyles.modal} style={displayModal}>
+      <div className={modalStyles.background} style={displayModal}></div>
+      <div className={modalStyles.modal} style={displayModal}>
         <div className={newStreamStyles.modalContainer}>
-          <div className={newStreamStyles.exitButtonContainer}>
-            <button className={newStreamStyles.exitButton} onClick={function(){closeModal()}}>x</button>
-          </div>
           <div className={newStreamStyles.bodyContainer}>
             <div className={newStreamStyles.formContainer}>
               <form>
@@ -138,6 +136,9 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
               <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Stream</button>
             </div>
           </div>
+        </div>
+        <div className={modalStyles.closeButtonContainer}>
+          <button className={modalStyles.closeButton} onClick={function(){closeModal()}}>close</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Router from 'next/router'
+import modalStyles from '../styles/Modal.module.css'
 import menuGuideStyles from '../styles/MenuGuide.module.css'
 import { createPictureURLFromArrayBufferString } from '../utilities'
 
@@ -54,11 +55,19 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
     }
   }
 
+  function closeModal(){
+    try {
+      setShowMenu(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div>
-      <div className={menuGuideStyles.background} style={displayMenuGuide}></div>
-      <div className={menuGuideStyles.modal} style={displayMenuGuide}>
-        <div className={menuGuideStyles.title}>
+      <div className={modalStyles.background} style={displayMenuGuide}></div>
+      <div className={modalStyles.modal} style={displayMenuGuide}>
+        <div className={modalStyles.title}>
           Looks like there's <a>no activity</a> at the moment.
         </div>
         <div className={menuGuideStyles.cardContainer}>
@@ -100,6 +109,9 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
           </button>
+        </div>
+        <div className={modalStyles.closeButtonContainer}>
+          <button className={modalStyles.closeButton} onClick={function(){closeModal()}}>close</button>
         </div>
       </div>
     </div>

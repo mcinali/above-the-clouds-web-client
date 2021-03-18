@@ -7,7 +7,7 @@ const Image = React.memo(function Image({ src }) {
   return <img src={createPictureURLFromArrayBufferString(src)} className={commonStyles.image} />
 })
 
-export default function Header(hostname, accountId, accessToken, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal){
+export default function Header(hostname, accountId, accessToken, inStream, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal){
   const [accountInfo, setAccountInfo] = useState({})
 
   useEffect(() => {
@@ -29,10 +29,14 @@ export default function Header(hostname, accountId, accessToken, setShowMenu, se
       <div className={commonStyles.navBarContent}>
         <div className={commonStyles.navbarItemLeft}>
           <div className={commonStyles.iconsContainer}>
-          <div className={commonStyles.imageContainer}>
-              <img src={'/images/menu.png'} className={commonStyles.imageSquare} onClick={function(){setShowMenu(true)}}/>
-              <span className={commonStyles.imageContainerText}>Guide</span>
-          </div>
+            {(inStream) ?
+              <div></div>
+              :
+              <div className={commonStyles.imageContainer}>
+                  <img src={'/images/menu.png'} className={commonStyles.imageSquare} onClick={function(){setShowMenu(true)}}/>
+                  <span className={commonStyles.imageContainerText}>Guide</span>
+              </div>
+            }
             <div className={commonStyles.imageContainer}>
                 <img src={'/images/schedule.png'} className={commonStyles.imageSquare} onClick={function(){setShowScheduleModal(true)}}/>
                 <span className={commonStyles.imageContainerText}>Schedule</span>

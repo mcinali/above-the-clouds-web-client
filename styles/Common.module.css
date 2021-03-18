@@ -60,7 +60,7 @@
   position:absolute;
   display:block;
   top: 105%;
-  margin-left: -30%;
+  left: 50%;
 }
 
 .imageContainer:hover .imageContainerText {

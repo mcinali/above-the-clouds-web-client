@@ -5,6 +5,9 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 const uuid = require('uuid')
 import StreamInviteModal from '../components/streamInviteModal'
+import NotificationsModal from '../components/notificationsModal'
+import BroadcastModal from '../components/broadcastModal'
+import ScheduleModal from '../components/scheduleModal'
 import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
@@ -54,6 +57,11 @@ export async function getServerSideProps({ req, res, query }) {
 export default function Stream({ accountId, accessToken, streamId, hostname, sockethostname, session }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [showNewStreamModal, setNewStreamShowModal] = useState(false)
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false)
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [handlePermission, setHandlePermission] = useState(true)
 
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
@@ -351,7 +359,10 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   return (
     <div className={commonStyles.container}>
       {StreamInviteModal(hostname, accountId, accessToken, streamId, showModal, setShowModal)}
-      {Header(hostname, accountId, accessToken)}
+      {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
+      {BroadcastModal(hostname, accountId, accessToken, showBroadcastModal, setShowBroadcastModal)}
+      {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal)}
+      {Header(hostname, accountId, accessToken, true, null, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
           <a>{(streamInfo.inviteOnly) ? 'Invite-Only' : ''}</a>

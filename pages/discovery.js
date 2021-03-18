@@ -155,7 +155,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
       {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal)}
       {NotificationPermissions(handlePermission, setHandlePermission)}
       <div>
-        {Header(hostname, accountId, accessToken, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
+        {Header(hostname, accountId, accessToken, true, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
         <div className={commonStyles.bodyContainer}>
           <div className={discoveryStyles.panelLeft}>
             <div className={discoveryStyles.panelLeftMainContainer}>
