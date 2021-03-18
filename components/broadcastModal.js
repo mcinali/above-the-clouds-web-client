@@ -25,6 +25,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
   const [ready, setReady] = useState(true)
   const [selectAll, setSelectAll] = useState(false)
   const [disableBroadcastButton, setDisableBroadcastButton] = useState(true)
+  const [index, setIndex] = useState(1)
 
   useEffect(() => {
     if (showBroadcastModal){
@@ -57,7 +58,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
   }, [showBroadcastModal])
 
   useEffect(() => {
-    if (!(fetchingFollowers || fetchingRecentOnlineBroadcasts) && !ready){
+    if (!(fetchingFollowers || fetchingRecentOnlineBroadcasts) && !ready && index==1){
       console.log('Followers: ', followers)
       console.log('Recent Broadcasts: ', recentOnlineBroadcasts)
       const recentBroadcastAccountIds = recentOnlineBroadcasts.map(recentOnlineBroadcast => recentOnlineBroadcast.broadcastAccountId)
@@ -79,7 +80,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
       setSelectAll(true)
       setReady(true)
     }
-  }, [fetchingFollowers, fetchingRecentOnlineBroadcasts, followers, recentOnlineBroadcasts, ready])
+  }, [fetchingFollowers, fetchingRecentOnlineBroadcasts, followers, recentOnlineBroadcasts, ready, index])
 
   useEffect(() => {
     const potentialBroadcastsFltrd = potentialBroadcasts.filter(potentialBroadcast => potentialBroadcast.selected)
@@ -94,6 +95,8 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
     if (document.getElementById('online-broadcast-loader')){
       if (ready){
         document.getElementById('online-broadcast-loader').style.display = 'none'
+      } else {
+        document.getElementById('online-broadcast-loader').style.display = 'block'
       }
     }
   }, [ready])
@@ -142,9 +145,11 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
           'token': accessToken,
         }
       }
+      setReady(false)
+      setIndex(2)
       axios.post(url, body, headers)
         .then(res => {
-          // TBD
+          setReady(true)
         })
         .catch(err => console.error(err))
     } catch (error) {
@@ -172,41 +177,61 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
     <div>
       <div className={modalStyles.background} style={displayBroadcastModal}></div>
       <div className={modalStyles.modal} style={displayBroadcastModal}>
-        <div>
-          <div className={modalStyles.title}>
-            <a>Let people know</a> you're hanging out
-          </div>
-          <div className={modalStyles.subtitle}>
-            You can only notify someone once every 24hrs
-          </div>
-        </div>
-        <div className={broadcastStyles.container}>
-          <div className={broadcastStyles.selectionContainer}>
-            <div className={broadcastStyles.checkboxContainer}>
-              <input className={broadcastStyles.checkbox} type='checkbox' checked={selectAll} onChange={(e) => clickSelectAll()}/>
-              <div className={broadcastStyles.checkboxLabel}>Select All</div>
+        <div style={(index==1) ? {'display':'block'} : {'display':'none'}}>
+          <div>
+            <div className={modalStyles.title}>
+              <a>Let people know</a> you're hanging out
             </div>
-            <div className={broadcastStyles.rowContainer}>
-              <div id='online-broadcast-loader' className={broadcastStyles.loaderContainer}>
-                <div className={commonStyles.loader}></div>
+            <div className={modalStyles.subtitle}>
+              You can only notify someone once every 24hrs
+            </div>
+          </div>
+          <div className={broadcastStyles.container}>
+            <div className={broadcastStyles.selectionContainer}>
+              <div className={broadcastStyles.checkboxContainer}>
+                <input className={broadcastStyles.checkbox} type='checkbox' checked={selectAll} onChange={(e) => clickSelectAll()}/>
+                <div className={broadcastStyles.checkboxLabel}>Select All</div>
               </div>
-              {potentialBroadcasts.map((potentialBroadcast, index) => {
-                return (
-                  <div key={index.toString()} className={userStyles.row} style={(potentialBroadcast.enabled) ? {'color':'black'} : {'color':'grey'}}>
-                    <input className={broadcastStyles.checkbox} style={(potentialBroadcast.enabled) ? {'display':'block'} : {'display':'none'}} type='checkbox' checked={potentialBroadcast.selected} onChange={(e) => changeSelection(index)}/>
-                    <Image src={potentialBroadcast.profilePicture}/>
-                    <div className={userStyles.userInfo}>
-                      <a className={userStyles.name}>{`${potentialBroadcast.firstname} ${potentialBroadcast.lastname}`}</a>
-                      <a className={userStyles.username}>{`${potentialBroadcast.username}`} </a>
+              <div className={broadcastStyles.rowContainer}>
+                <div id='online-broadcast-loader' className={broadcastStyles.loaderContainer}>
+                  <div className={commonStyles.loader}></div>
+                </div>
+                {potentialBroadcasts.map((potentialBroadcast, index) => {
+                  return (
+                    <div key={index.toString()} className={userStyles.row} style={(potentialBroadcast.enabled) ? {'color':'black'} : {'color':'grey'}}>
+                      <input className={broadcastStyles.checkbox} style={(potentialBroadcast.enabled) ? {'display':'block'} : {'display':'none'}} type='checkbox' checked={potentialBroadcast.selected} onChange={(e) => changeSelection(index)}/>
+                      <div style={(potentialBroadcast.enabled) ? {'opacity':'100%'} : {'opacity':'50%'}}>
+                        <Image src={potentialBroadcast.profilePicture}/>
+                      </div>
+                      <div className={userStyles.userInfo}>
+                        <a className={userStyles.name}>{`${potentialBroadcast.firstname} ${potentialBroadcast.lastname}`}</a>
+                        <a className={userStyles.username}>{`${potentialBroadcast.username}`} </a>
+                      </div>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
           </div>
+          <div style={(index==1) ? {'display':'block'} : {'display':'none'}}>
+            <button className={broadcastStyles.broadcastButton} disabled={disableBroadcastButton} onClick={function(){broadcast()}}>Broadcast</button>
+          </div>
         </div>
-        <div>
-          <button className={broadcastStyles.broadcastButton} disabled={disableBroadcastButton} onClick={function(){broadcast()}}>Broadcast</button>
+        <div className={broadcastStyles.successContainer} style={(index==2) ? {'display':'block'} : {'display':'none'}}>
+          {(ready) ?
+            <div>
+              <div className={modalStyles.title}>
+                <a>You let people know!</a>
+              </div>
+              <div className={modalStyles.subtitle}>
+                Hang out until they join you.
+              </div>
+            </div>
+            :
+            <div className={broadcastStyles.successLoaderContainer}>
+              <div className={commonStyles.loader}></div>
+            </div>
+          }
         </div>
         <div className={modalStyles.closeButtonContainer}>
           <button className={modalStyles.closeButton} onClick={function(){closeModal()}}>close</button>
