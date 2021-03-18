@@ -20,9 +20,11 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
   const [recentOnlineBroadcasts, setRecentOnlineBroadcasts] = useState([])
   const [fetchingRecentOnlineBroadcasts, setFetchingRecentOnlineBroadcasts] = useState(false)
 
-  const [ready, setReady] = useState(true)
+  const [potentialBroadcasts, setPotentialBrodcasts] = useState([])
 
+  const [ready, setReady] = useState(true)
   const [selectAll, setSelectAll] = useState(false)
+  const [disableBroadcastButton, setDisableBroadcastButton] = useState(true)
 
   useEffect(() => {
     if (showBroadcastModal){
@@ -39,11 +41,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
       setFetchingFollowers(true)
       axios.get(url1, headers)
         .then(res => {
-          const followersSelected = res.data.map(follower => {
-            follower['selected'] = true
-            return follower
-          })
-          setFollowers(followersSelected)
+          setFollowers(res.data)
           setFetchingFollowers(false)
         })
         .catch(err => new Error(err))
@@ -60,10 +58,37 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
 
   useEffect(() => {
     if (!(fetchingFollowers || fetchingRecentOnlineBroadcasts) && !ready){
+      console.log('Followers: ', followers)
+      console.log('Recent Broadcasts: ', recentOnlineBroadcasts)
+      const recentBroadcastAccountIds = recentOnlineBroadcasts.map(recentOnlineBroadcast => recentOnlineBroadcast.broadcastAccountId)
+      console.log(recentBroadcastAccountIds)
+      const potentialBroadcastsFrmtd = followers.map(follower => {
+        if (recentBroadcastAccountIds.includes(follower.accountId)){
+          console.log('FAILURE')
+          follower['selected'] = false
+          follower['enabled'] = false
+        } else {
+          console.log('SUCCESS')
+          follower['selected'] = true
+          follower['enabled'] = true
+        }
+        console.log(follower)
+        return follower
+      })
+      setPotentialBrodcasts(potentialBroadcastsFrmtd)
       setSelectAll(true)
       setReady(true)
     }
-  }, [fetchingFollowers, fetchingRecentOnlineBroadcasts, followers, ready])
+  }, [fetchingFollowers, fetchingRecentOnlineBroadcasts, followers, recentOnlineBroadcasts, ready])
+
+  useEffect(() => {
+    const potentialBroadcastsFltrd = potentialBroadcasts.filter(potentialBroadcast => potentialBroadcast.selected)
+    if (potentialBroadcastsFltrd.length==0){
+      setDisableBroadcastButton(true)
+    } else {
+      setDisableBroadcastButton(false)
+    }
+  }, [potentialBroadcasts])
 
   useEffect(() => {
     if (document.getElementById('online-broadcast-loader')){
@@ -75,16 +100,15 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
 
   function changeSelection(index){
     try {
-      const newFollowers = followers.map((follower,arrayIndex) => {
+      const newPotentialBroadcasts = potentialBroadcasts.map((potentialBroadcast,arrayIndex) => {
         if (arrayIndex==index){
-          follower['selected'] = !follower['selected']
-          return follower
+          potentialBroadcast['selected'] = !potentialBroadcast['selected'] && potentialBroadcast.enabled
+          return potentialBroadcast
         } else {
-          return follower
+          return potentialBroadcast
         }
       })
-      console.log(newFollowers)
-      setFollowers(newFollowers)
+      setPotentialBrodcasts(newPotentialBroadcasts)
       setSelectAll(false)
     } catch (error) {
       console.error(error)
@@ -93,11 +117,11 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
 
   function clickSelectAll(){
     try {
-      const newFollowers = followers.map(follower => {
-        follower['selected'] = !selectAll
-        return follower
+      const newPotentialBroadcasts = potentialBroadcasts.map(potentialBroadcast => {
+        potentialBroadcast['selected'] = !selectAll && potentialBroadcast.enabled
+        return potentialBroadcast
       })
-      setFollowers(newFollowers)
+      setPotentialBrodcasts(newPotentialBroadcasts)
       setSelectAll(!selectAll)
     } catch (error) {
       console.error(error)
@@ -106,7 +130,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
 
   function broadcast(){
     try {
-      const recipients = followers.filter(follower => follower.selected)
+      const recipients = potentialBroadcasts.filter(potentialBroadcast => potentialBroadcast.selected)
       const recipientAccountIds = recipients.map(recipient => recipient.accountId)
       const url = hostname + `/broadcast/online`
       const body = {
@@ -166,14 +190,14 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
               <div id='online-broadcast-loader' className={broadcastStyles.loaderContainer}>
                 <div className={commonStyles.loader}></div>
               </div>
-              {followers.map((follower, index) => {
+              {potentialBroadcasts.map((potentialBroadcast, index) => {
                 return (
-                  <div key={index.toString()} className={userStyles.row}>
-                    <input className={broadcastStyles.checkbox} type='checkbox' checked={follower.selected} onChange={(e) => changeSelection(index)}/>
-                    <Image src={follower.profilePicture}/>
+                  <div key={index.toString()} className={userStyles.row} style={(potentialBroadcast.enabled) ? {'color':'black'} : {'color':'grey'}}>
+                    <input className={broadcastStyles.checkbox} style={(potentialBroadcast.enabled) ? {'display':'block'} : {'display':'none'}} type='checkbox' checked={potentialBroadcast.selected} onChange={(e) => changeSelection(index)}/>
+                    <Image src={potentialBroadcast.profilePicture}/>
                     <div className={userStyles.userInfo}>
-                      <a className={userStyles.name}>{`${follower.firstname} ${follower.lastname}`}</a>
-                      <a className={userStyles.username}>{`${follower.username}`} </a>
+                      <a className={userStyles.name}>{`${potentialBroadcast.firstname} ${potentialBroadcast.lastname}`}</a>
+                      <a className={userStyles.username}>{`${potentialBroadcast.username}`} </a>
                     </div>
                   </div>
                 )
@@ -182,7 +206,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
           </div>
         </div>
         <div>
-          <button className={broadcastStyles.broadcastButton} onClick={function(){broadcast()}}>Broadcast</button>
+          <button className={broadcastStyles.broadcastButton} disabled={disableBroadcastButton} onClick={function(){broadcast()}}>Broadcast</button>
         </div>
         <div className={modalStyles.closeButtonContainer}>
           <button className={modalStyles.closeButton} onClick={function(){closeModal()}}>close</button>
