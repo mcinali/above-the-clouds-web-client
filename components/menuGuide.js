@@ -7,7 +7,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={menuGuideStyles.image} src={src}/>
 })
 
-export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, setShowNotificationsModal) {
+export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, setShowNotificationsModal, setShowBroadcastModal) {
   const [displayMenuGuide, setDisplayMenuGuide] = useState({'display':'none'})
 
   useEffect(() => {
@@ -38,7 +38,8 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
 
   function broadcast(){
     try {
-      // TO DO: broadcast
+      setShowBroadcastModal(true)
+      setShowMenu(false)
     } catch (error) {
       console.error(error)
     }
@@ -56,7 +57,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             <Image src={'/images/new_stream.png'}/>
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}> <a>Start</a> a stream</div>
-              <div className={menuGuideStyles.cardDescription}>Start a conversation, invite friends, and hang out until people join you.</div>
+              <div className={menuGuideStyles.cardDescription}>Start an audio chat, invite friends, and hang out until people join you.</div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
           </button>
@@ -65,7 +66,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Hang out</a></div>
               <div className={menuGuideStyles.cardDescription}>
-                Leave us on in the background. Enable notifications to get updates when things happen.
+                Just keep this tab open. Enabling desktop notifications will help keep you in the know.
               </div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
@@ -75,7 +76,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Let people know</a> you're online</div>
               <div className={menuGuideStyles.cardDescription}>
-                Let people know you'll be hanging out for a while. Leave us on in the background.
+                Let people know you're online. Just keep the tab open and hang out in the meantime.
               </div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>

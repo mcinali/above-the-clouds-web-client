@@ -8,6 +8,7 @@ import Header from '../components/header'
 import NotificationPermissions from '../components/notificationPermissions'
 import NewStreamModal from '../components/newStreamModal'
 import NotificationsModal from '../components/notificationsModal'
+import BroadcastModal from '../components/broadcastModal'
 import MenuGuide from '../components/menuGuide'
 import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
@@ -49,6 +50,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   const [showMenu, setShowMenu] = useState(false)
   const [showNewStreamModal, setNewStreamShowModal] = useState(false)
   const [showNotificationsModal, setShowNotificationsModal] = useState(false)
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false)
   const [handlePermission, setHandlePermission] = useState(true)
 
   const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
@@ -144,9 +146,10 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
   return (
     <div className={commonStyles.container}>
-      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal)}
+      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal, setShowBroadcastModal)}
       {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
       {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
+      {BroadcastModal(hostname, accountId, accessToken, showBroadcastModal, setShowBroadcastModal)}
       {NotificationPermissions(handlePermission, setHandlePermission)}
       <div>
         {Header(hostname, accountId, accessToken)}
