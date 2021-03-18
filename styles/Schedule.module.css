@@ -1,0 +1,53 @@
+.container {
+  margin: 5% 10%;
+  padding: 1%;
+  display: flex;
+  flex-direction: column;
+}
+
+.day {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.notificationButton {
+  margin-top: 5px;
+  margin-right: auto;
+  background-color: white;
+  color: #0070f3;
+  font-size: 16px;
+  border: 1px solid #0070f3;
+  border-radius: 20px;
+  padding: 0px 10px;
+  height: 20px;
+}
+
+.notificationButton:hover{
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
+.scheduleContainer {
+  display: flex;
+  height: 80px;
+  width: 80%;
+  flex-direction: column;
+  margin-top: 5%;
+}
+
+.scheduledStreamInterest {
+  font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  left: 0;
+}
+
+.scheduledStreamOrganizer {
+  font-size: 14px;
+}
+
+.scheduledStreamTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 5px;
+}
