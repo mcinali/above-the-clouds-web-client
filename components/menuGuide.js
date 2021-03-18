@@ -7,7 +7,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={menuGuideStyles.image} src={src}/>
 })
 
-export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, setShowNotificationsModal, setShowBroadcastModal) {
+export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal) {
   const [displayMenuGuide, setDisplayMenuGuide] = useState({'display':'none'})
 
   useEffect(() => {
@@ -39,6 +39,15 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
   function broadcast(){
     try {
       setShowBroadcastModal(true)
+      setShowMenu(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function schedule(){
+    try {
+      setShowScheduleModal(true)
       setShowMenu(false)
     } catch (error) {
       console.error(error)
@@ -81,7 +90,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
           </button>
-          <button className={menuGuideStyles.card} onClick={function(){discovery()}}>
+          <button className={menuGuideStyles.card} onClick={function(){schedule()}}>
             <Image src={'/images/schedule.png'}/>
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Come back</a> later</div>

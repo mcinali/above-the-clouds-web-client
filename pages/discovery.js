@@ -9,6 +9,7 @@ import NotificationPermissions from '../components/notificationPermissions'
 import NewStreamModal from '../components/newStreamModal'
 import NotificationsModal from '../components/notificationsModal'
 import BroadcastModal from '../components/broadcastModal'
+import ScheduleModal from '../components/scheduleModal'
 import MenuGuide from '../components/menuGuide'
 import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
@@ -51,6 +52,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   const [showNewStreamModal, setNewStreamShowModal] = useState(false)
   const [showNotificationsModal, setShowNotificationsModal] = useState(false)
   const [showBroadcastModal, setShowBroadcastModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [handlePermission, setHandlePermission] = useState(true)
 
   const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
@@ -146,13 +148,14 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
   return (
     <div className={commonStyles.container}>
-      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal, setShowBroadcastModal)}
+      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
       {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
       {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
       {BroadcastModal(hostname, accountId, accessToken, showBroadcastModal, setShowBroadcastModal)}
+      {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal)}
       {NotificationPermissions(handlePermission, setHandlePermission)}
       <div>
-        {Header(hostname, accountId, accessToken)}
+        {Header(hostname, accountId, accessToken, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
         <div className={commonStyles.bodyContainer}>
           <div className={discoveryStyles.panelLeft}>
             <div className={discoveryStyles.panelLeftMainContainer}>
