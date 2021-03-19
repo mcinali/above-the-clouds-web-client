@@ -4,6 +4,7 @@ import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import FollowingSuggestions from '../../components/followingSuggestions'
 import accountSetupStyles from '../../styles/AccountSetup.module.css'
+import modalStyles from '../../styles/Modal.module.css'
 import followsStyles from '../../styles/Follows.module.css'
 const { hostname } = require('../../config')
 const axios = require('axios')
@@ -46,6 +47,20 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
 
   useEffect(() => {
     document.title = 'Above the Clouds'
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/follows/suggestions?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setSuggestions(res.data.suggestions)
+      })
+      .catch(error => console.error(error))
   }, [])
 
   const upload = () => {
@@ -109,9 +124,15 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
     if (index==1){
       document.getElementById("index1").style.display = "block"
       document.getElementById("index2").style.display = "none"
-    } else {
+      document.getElementById("index3").style.display = "none"
+    } else if (index==2) {
       document.getElementById("index1").style.display = "none"
       document.getElementById("index2").style.display = "block"
+      document.getElementById("index3").style.display = "none"
+    } else {
+      document.getElementById("index1").style.display = "none"
+      document.getElementById("index2").style.display = "none"
+      document.getElementById("index3").style.display = "block"
     }
   }, [index])
 
@@ -119,6 +140,38 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
     <div className={accountSetupStyles.main}>
       <div className={accountSetupStyles.modal}>
         <div id="index1">
+          <div className={modalStyles.title}>
+            Welcome to <a>Above the Clouds!</a>
+          </div>
+          <div className={modalStyles.subtitle}>
+            Hang out with your friends through social audio
+          </div>
+          <div className={accountSetupStyles.container}>
+            <ul>
+              <div className={accountSetupStyles.detailsContainer}>
+                <img className={accountSetupStyles.icon} src={'/images/audio.jpg'}/>
+                <div className={accountSetupStyles.details}>Audio-only chat rooms</div>
+              </div>
+              <div className={accountSetupStyles.detailsContainer}>
+                <img className={accountSetupStyles.icon} src={'/images/four.png'}/>
+                <div className={accountSetupStyles.details}>Max 4 people to a room</div>
+              </div>
+              <div className={accountSetupStyles.detailsContainer}>
+                <img className={accountSetupStyles.icon} src={'/images/network.jpg'}/>
+                <div className={accountSetupStyles.details}>Discover what your network is talking about</div>
+              </div>
+            </ul>
+          </div>
+          <div className={accountSetupStyles.footerContainer}>
+            <div className={accountSetupStyles.modalSkipButton} onClick={function(){skip()}}>Next</div>
+          </div>
+        </div>
+        <div id="index2">
+          <div className={accountSetupStyles.modalHeader}>
+            <div className={accountSetupStyles.modalHeaderNavigationButton} onClick={back}>
+              {"< back"}
+            </div>
+          </div>
           <div className={accountSetupStyles.modalTitle}>
             Welcome <b>{}</b>!
           </div>
@@ -145,7 +198,7 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
             </button>
           </div>
         </div>
-        <div id="index2">
+        <div id="index3">
           <div className={accountSetupStyles.modalHeader}>
             <div className={accountSetupStyles.modalHeaderNavigationButton} onClick={back}>
               {"< back"}
@@ -158,7 +211,7 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
             Discover conversations involving people you follow and people they follow.
           </div>
           <div className={accountSetupStyles.modalFollowSuggestionsContainer}>
-            {FollowingSuggestions(hostname, accountId, accessToken)}
+            {FollowingSuggestions(hostname, accountId, accessToken, suggestions, setSuggestions)}
           </div>
           <div className={accountSetupStyles.modalDoneButtonContainer}>
             <button className={accountSetupStyles.modalDoneButton} onClick={done}>Done</button>

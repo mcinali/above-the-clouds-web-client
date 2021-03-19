@@ -283,7 +283,6 @@ export default function Register({ code, hostname }) {
             }
             axios.post(registrationURL, registrationBody)
               .then(res => {
-                // TO DO: save auth token & push to account setup page
                 setCookie('accountId', res.data.accountId)
                 setCookie('hasToken', res.data.hasToken)
                 setCookie('token', res.data.token)
