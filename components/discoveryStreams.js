@@ -156,7 +156,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
                   Looks like there are no audio rooms to discover at the moment :(
                   <br></br>
                   <br></br>
-                  Here you can discover audio rooms you were invited to +  public audio rooms created by your following.
+                  Check here for audio rooms you were invited to +  public audio rooms created by your following.
                 </div>
               }
             </div>
