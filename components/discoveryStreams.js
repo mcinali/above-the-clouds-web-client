@@ -8,7 +8,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams) {
+export default function DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams, streamIsLoading) {
   const [joinedStreamInfo, setJoinedStreamInfo] = useState(null)
   const [leftStreamInfo, setLeftStreamInfo] = useState(null)
   const [date, setDate] = useState(new Date())
@@ -149,10 +149,16 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
         <div id="cardContainer">
           {(streams.length==0) ?
             <div className={discoveryStreamsStyles.noStreamsContainer}>
-              Looks like there are no audio rooms to discover at the moment :(
-              <br></br>
-              <br></br> 
-              Here you can discover audio rooms you were invited to +  public audio rooms created by your following.
+              {(streamIsLoading) ?
+                <div></div>
+                :
+                <div>
+                  Looks like there are no audio rooms to discover at the moment :(
+                  <br></br>
+                  <br></br>
+                  Here you can discover audio rooms you were invited to +  public audio rooms created by your following.
+                </div>
+              }
             </div>
             :
             <div>

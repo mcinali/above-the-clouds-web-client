@@ -167,7 +167,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
             <div className={discoveryStyles.newStreamContainer}>
               <button className={discoveryStyles.newStreamButton} onClick={function(){setNewStreamShowModal(true)}}>Create Audio Room+</button>
             </div>
-            {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams)}
+            {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams, isLoadingDiscovery)}
           </div>
         </div>
       </div>
