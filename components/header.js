@@ -31,7 +31,7 @@ export default function Header(hostname, accountId, accessToken, setShowMenu, se
           <div className={commonStyles.iconsContainer}>
             <div className={commonStyles.imageContainer}>
                 <img src={'/images/menu.png'} className={commonStyles.imageSquare} onClick={function(){setShowMenu(true)}}/>
-                <span className={commonStyles.imageContainerText}>Guide</span>
+                <span className={commonStyles.imageContainerText}>Menu</span>
             </div>
           </div>
         </div>

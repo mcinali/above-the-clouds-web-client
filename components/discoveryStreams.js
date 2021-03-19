@@ -147,47 +147,58 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
     <div>
       <div id="cardList" className={discoveryStreamsStyles.cardList}>
         <div id="cardContainer">
-          {streams.map((stream, streamIndex) =>
-            <div key={streamIndex.toString()}>
-              <div className={discoveryStreamsStyles.card}>
-                <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
-                  <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
-                </div>
-                <div className={discoveryStreamsStyles.topicContainer}>
-                  <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
-                </div>
-                <div className={discoveryStreamsStyles.timeContainer}>
-                  <div className={discoveryStreamsStyles.timeSubContainer}>
-                    <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
-                    <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
+          {(streams.length==0) ?
+            <div className={discoveryStreamsStyles.noStreamsContainer}>
+              Looks like there are no audio rooms to discover at the moment :(
+              <br></br>
+              <br></br> 
+              Here you can discover audio rooms you were invited to +  public audio rooms created by your following.
+            </div>
+            :
+            <div>
+              {streams.map((stream, streamIndex) =>
+                <div key={streamIndex.toString()}>
+                  <div className={discoveryStreamsStyles.card}>
+                    <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
+                      <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
+                    </div>
+                    <div className={discoveryStreamsStyles.topicContainer}>
+                      <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
+                    </div>
+                    <div className={discoveryStreamsStyles.timeContainer}>
+                      <div className={discoveryStreamsStyles.timeSubContainer}>
+                        <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
+                        <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
+                      </div>
+                    </div>
+                    <div className={discoveryStreamsStyles.participantsContainer}>
+                      {stream.participants.details.map((participant, participantIndex) =>
+                        <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
+                          <div>
+                            <Image src={participant.profilePicture}/>
+                          </div>
+                          <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
+                          <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
+                          {
+                            (participant.following==null) ?
+                            <div></div>
+                            :
+                            (participant.following) ?
+                            <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
+                            :
+                            <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
+                          }
+                        </div>
+                      )}
+                    </div>
+                    <div className={discoveryStreamsStyles.cardButtonContainer}>
+                      <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
+                    </div>
                   </div>
                 </div>
-                <div className={discoveryStreamsStyles.participantsContainer}>
-                  {stream.participants.details.map((participant, participantIndex) =>
-                    <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
-                      <div>
-                        <Image src={participant.profilePicture}/>
-                      </div>
-                      <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
-                      <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
-                      {
-                        (participant.following==null) ?
-                        <div></div>
-                        :
-                        (participant.following) ?
-                        <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
-                        :
-                        <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
-                      }
-                    </div>
-                  )}
-                </div>
-                <div className={discoveryStreamsStyles.cardButtonContainer}>
-                  <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
-                </div>
-              </div>
+              )}
             </div>
-          )}
+          }
         </div>
       </div>
     </div>
