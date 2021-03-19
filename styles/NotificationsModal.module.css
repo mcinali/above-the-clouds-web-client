@@ -16,12 +16,9 @@
   opacity: 80%;
 }
 
-.description1 {
+.descriptionContainer {
   width: 100%;
-  margin: 5% auto;
-  height: 50px;
-  padding: 0 50px;
-  font-size: 14px;
+  margin: 10% auto;
   display: flex;
   text-align: left;
   justify-content: center;
@@ -29,17 +26,23 @@
   flex-direction: column;
 }
 
+.description1 {
+  font-size: 20px;
+}
+
+.description1 a {
+  color: #800080;
+  text-decoration: none;
+}
+
 .description2 {
-  width: 100%;
-  margin: 5% auto;
-  height: 50px;
-  padding: 0 50px;
-  font-size: 16px;
-  display: flex;
-  text-align: left;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  font-size: 18px;
+  margin: 5% 0;
+}
+
+.description2 a {
+  color: #800080;
+  text-decoration: none;
 }
 
 .enableNotificationsButtonContainer {

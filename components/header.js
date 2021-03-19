@@ -33,18 +33,6 @@ export default function Header(hostname, accountId, accessToken, setShowMenu, se
                 <img src={'/images/menu.png'} className={commonStyles.imageSquare} onClick={function(){setShowMenu(true)}}/>
                 <span className={commonStyles.imageContainerText}>Guide</span>
             </div>
-            <div className={commonStyles.imageContainer}>
-                <img src={'/images/schedule.png'} className={commonStyles.imageSquare} onClick={function(){setShowScheduleModal(true)}}/>
-                <span className={commonStyles.imageContainerText}>Schedule</span>
-            </div>
-            <div className={commonStyles.imageContainer}>
-                <img src={'/images/broadcast.png'} className={commonStyles.imageSquare} onClick={function(){setShowBroadcastModal(true)}}/>
-                <span className={commonStyles.imageContainerText}>Broadcast</span>
-            </div>
-            <div className={commonStyles.imageContainer}>
-                <img src={'/images/notifications.png'} className={commonStyles.imageSquare} onClick={function(){setShowNotificationsModal(true)}}/>
-                <span className={commonStyles.imageContainerText}>Notifications</span>
-            </div>
           </div>
         </div>
         {/*

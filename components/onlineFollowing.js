@@ -45,7 +45,7 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
 
   return (
     <div className={followsStyles.container}>
-      <div className={followsStyles.title}>Your Online Accounts Following:</div>
+      <div className={followsStyles.title}>Following Online:</div>
       {onlineFollowing.map((following, index) => {
         return (
           <div key={index.toString()} className={followsStyles.row}>

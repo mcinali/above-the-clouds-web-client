@@ -74,8 +74,8 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
           <button className={menuGuideStyles.card} onClick={function(){newStream()}}>
             <Image src={'/images/new_stream.png'}/>
             <div className={menuGuideStyles.cardText}>
-              <div className={menuGuideStyles.cardTitle}> <a>Start</a> a stream</div>
-              <div className={menuGuideStyles.cardDescription}>Start an audio chat, invite friends, and hang out until people join you.</div>
+              <div className={menuGuideStyles.cardTitle}> <a>Create</a> an audio room</div>
+              <div className={menuGuideStyles.cardDescription}>Pick a topic. Start an audio chat. Let your followers pop in or invite people in your network.</div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
           </button>
@@ -84,7 +84,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Hang out</a></div>
               <div className={menuGuideStyles.cardDescription}>
-                Just keep this tab open. Enabling desktop notifications will help keep you in the know.
+                Enable desktop notifications for the best experience. We'll keep you updated as things happen.
               </div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
@@ -94,7 +94,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Let people know</a> you're online</div>
               <div className={menuGuideStyles.cardDescription}>
-                Let people know you're online. Just keep the tab open and hang out in the meantime.
+                See who wants to hang out now. We'll help notify your followers that you're online.
               </div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>
@@ -104,7 +104,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
             <div className={menuGuideStyles.cardText}>
               <div className={menuGuideStyles.cardTitle}><a>Come back</a> later</div>
               <div className={menuGuideStyles.cardDescription}>
-                We'll help you find a good time to return.
+                Let us help you find a good time to return.
               </div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>

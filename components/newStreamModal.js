@@ -96,7 +96,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
           <div className={newStreamStyles.bodyContainer}>
             <div className={newStreamStyles.formContainer}>
               <form>
-                <div className={newStreamStyles.header}>Stream Topic: </div>
+                <div className={newStreamStyles.header}>Room Topic: </div>
                 <div className={newStreamStyles.checkboxContainer}>
                   <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
                   <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
@@ -105,7 +105,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
               </form>
             </div>
             <div className={newStreamStyles.invitationsContainer}>
-              <div className={newStreamStyles.header}>Invite Participants:</div>
+              <div className={newStreamStyles.header}>Invite People in Your Network:</div>
               {Invitations(hostname, accountId, accessToken, invitations, queueStreamInvitation, discardInvitation, {})}
             </div>
             <div className={newStreamStyles.inviteesContainer}>
@@ -133,7 +133,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
               </div>
             </div>
             <div className={newStreamStyles.createStreamButtonContainer}>
-              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Stream</button>
+              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Audio Room</button>
             </div>
           </div>
         </div>

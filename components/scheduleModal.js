@@ -55,7 +55,7 @@ export default function ScheduleModal(hostname, accountId, accessToken, showModa
       <div className={modalStyles.background} style={displayModal}></div>
       <div className={modalStyles.modal} style={displayModal}>
         <div className={discoveryStyles.newStreamContainer}>
-          <button className={discoveryStyles.newStreamButton} onClick={function(){scheduleStream()}}>Schedule Stream+</button>
+          <button className={discoveryStyles.newStreamButton}>Schedule Audio Chat+</button>
         </div>
         <div className={scheduleStyles.container}>
           <div className={scheduleStyles.day}>Friday, March 19th</div>

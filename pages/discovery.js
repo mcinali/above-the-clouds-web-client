@@ -94,7 +94,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
     }
     axios.get(url, headers)
       .then(res => {
-        setSuggestions(res.data.suggestions)
+        setSuggestions(res.data.suggestions.splice(0,5))
         setIsLoadingFollowSuggestions(false)
       })
       .catch(error => console.error(error))
@@ -165,7 +165,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
           </div>
           <div className={discoveryStyles.panelRight}>
             <div className={discoveryStyles.newStreamContainer}>
-              <button className={discoveryStyles.newStreamButton} onClick={function(){setNewStreamShowModal(true)}}>New Stream+</button>
+              <button className={discoveryStyles.newStreamButton} onClick={function(){setNewStreamShowModal(true)}}>Create Audio Room+</button>
             </div>
             {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams)}
           </div>

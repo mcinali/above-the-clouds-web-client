@@ -85,10 +85,12 @@ export default function NotificationsModal(showNotificationsModal, setShowNotifi
             <div className={notificationsModalStyles.enableNotificationsButtonContainer}>
               <button className={notificationsModalStyles.buttonBig} onClick={function(){askNotificationPermission()}}>Enable Notifications</button>
             </div>
-            <div className={notificationsModalStyles.description1}>
+            <div className={notificationsModalStyles.descriptionContainer}>
+              <div className={notificationsModalStyles.description1}>You will only receive notifications when:</div>
               <ul>
-                <li>Desktop notifications will only be enabled for <b>https://www.abovethecloudsapp.com</b></li>
-                <li>You will only receive notifications when: someone you follow comes online, someone you follow creates a stream, or you are invited to a stream</li>
+                <li className={notificationsModalStyles.description2}>Someone you follow <a>comes online</a></li>
+                <li className={notificationsModalStyles.description2}>Someone you follow <a>creates an audio room</a></li>
+                <li className={notificationsModalStyles.description2}>Someone <a>invites you </a>to an audio room</li>
               </ul>
             </div>
           </div>
@@ -100,12 +102,12 @@ export default function NotificationsModal(showNotificationsModal, setShowNotifi
             <br></br>
             <br></br>
             <br></br>
-            <div className={notificationsModalStyles.description2}>
-              <div><b>Mac Users:</b></div>
-              <div>Make sure notifications are enabled for your browser in System Preferences</div>
+            <div className={notificationsModalStyles.descriptionContainer}>
+              <div className={notificationsModalStyles.description1}><b>Mac Users:</b></div>
+              <div className={notificationsModalStyles.description1}>Make sure notifications are enabled for your browser in <a>System Preferences</a></div>
               <br></br>
-              <div><b>Windows Users: </b></div>
-              <div>Make sure notifications are enabled for your browser in Control Panel</div>
+              <div className={notificationsModalStyles.description1}><b>Windows Users: </b></div>
+              <div className={notificationsModalStyles.description1}>Make sure notifications are enabled for your browser in <a>Control Panel</a></div>
             </div>
           </div>
         }

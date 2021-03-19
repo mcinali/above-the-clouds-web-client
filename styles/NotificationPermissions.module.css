@@ -4,7 +4,7 @@
   text-align: center;
   background-color: white;
   color: #1f1137;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   border: 2px solid white;
   border-radius: 10px;
@@ -46,6 +46,6 @@
 
 .text {
   color: white;
-  font-size: 12px;
+  font-size: 14px;
   margin-left: 5px;
 }
