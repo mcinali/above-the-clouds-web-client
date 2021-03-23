@@ -4,13 +4,13 @@
   background-color: #0070f3;
   color: white;
   border: 1px solid #0070f3;
-  font-size: 20px;
+  font-size: 16px;
   border-radius: 20px;
-  padding: 0px 15px;
+  padding: 0px 24px;
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 50px;
+  height: 40px;
 }
 
 .newStreamButton:hover {

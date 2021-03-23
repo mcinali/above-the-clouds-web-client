@@ -66,6 +66,8 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [handlePermission, setHandlePermission] = useState(true)
 
+  const [accountInfo, setAccountInfo] = useState({})
+
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
   const [room, setRoom] = useState({})
@@ -103,6 +105,20 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
       const hrsToExpiration = 6
       setCookie('session', uuid.v4(), hrsToExpiration)
     }
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
   }, [])
 
   useEffect(() => {
@@ -367,7 +383,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
       {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
       {BroadcastModal(hostname, accountId, accessToken, showBroadcastModal, setShowBroadcastModal)}
       {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal, setNewStreamShowModal)}
-      {Header(hostname, accountId, accessToken, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
+      {Header(accountInfo, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
           <a>{(streamInfo.inviteOnly) ? 'Invite-Only' : ''}</a>

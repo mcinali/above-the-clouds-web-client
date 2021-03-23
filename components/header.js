@@ -1,28 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import commonStyles from '../styles/Common.module.css'
 import { createPictureURLFromArrayBufferString } from '../utilities'
-const axios = require('axios')
 
 const Image = React.memo(function Image({ src }) {
   return <img src={createPictureURLFromArrayBufferString(src)} className={commonStyles.image} />
 })
 
-export default function Header(hostname, accountId, accessToken, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal){
-  const [accountInfo, setAccountInfo] = useState({})
-
-  useEffect(() => {
-    const url = hostname + `/account/${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setAccountInfo(res.data)
-      })
-      .catch(error => console.error(error))
-  }, [])
+export default function Header(accountInfo, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal){
 
   return (
     <div className={commonStyles.navbar}>

@@ -55,6 +55,8 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
   const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [handlePermission, setHandlePermission] = useState(true)
 
+  const [accountInfo, setAccountInfo] = useState({})
+
   const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
   const [streams, setStreams] = useState([])
 
@@ -66,6 +68,20 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
 
   const [socket, setSocket] = useState(null)
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
+  }, [])
 
   useEffect(() => {
     const url = hostname+`/discovery?accountId=${accountId}`
@@ -155,7 +171,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
       {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal, setNewStreamShowModal)}
       {NotificationPermissions(handlePermission, setHandlePermission)}
       <div>
-        {Header(hostname, accountId, accessToken, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
+        {Header(accountInfo, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
         <div className={commonStyles.bodyContainer}>
           <div className={discoveryStyles.panelLeft}>
             <div className={discoveryStyles.panelLeftMainContainer}>
@@ -167,7 +183,7 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
             <div className={discoveryStyles.newStreamContainer}>
               <button className={discoveryStyles.newStreamButton} onClick={function(){setNewStreamShowModal(true)}}>Create Audio Room+</button>
             </div>
-            {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams, isLoadingDiscovery)}
+            {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams, isLoadingDiscovery, accountInfo)}
           </div>
         </div>
       </div>

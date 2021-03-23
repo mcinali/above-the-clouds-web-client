@@ -74,7 +74,7 @@ export default function MenuGuide(showMenu, setShowMenu, setShowNewStreamModal, 
           <button className={menuGuideStyles.card} onClick={function(){newStream()}}>
             <Image src={'/images/new_stream.png'}/>
             <div className={menuGuideStyles.cardText}>
-              <div className={menuGuideStyles.cardTitle}> <a>Create</a> an audio room</div>
+              <div className={menuGuideStyles.cardTitle}> <a>Create</a> audio room</div>
               <div className={menuGuideStyles.cardDescription}>Pick a topic. Start an audio chat. Let your followers pop in or invite people to join.</div>
             </div>
             <div className={menuGuideStyles.arrow}>{'>'}</div>

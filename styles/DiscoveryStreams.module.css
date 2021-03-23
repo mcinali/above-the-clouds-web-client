@@ -34,6 +34,20 @@
   background-color: #F5F5F5;
 }
 
+.card {
+  width: 750px;
+  height: 450px;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 50px;
+  padding-left: 25px;
+  padding-right: 25px;
+  shadow: '20px 20px 20px 20px black';
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  position: relative;
+}
+
 .cardButton {
   margin: 10px auto;
   display: block;
@@ -42,7 +56,7 @@
   font-size: 18px;
   border: 1px solid #0070f3;
   border-radius: 10px;
-  padding: 10px 64px;
+  padding: 10px 24px;
   text-align: center;
   height: 40px;
 }
@@ -68,18 +82,17 @@
   align-items: center;
 }
 
-.card {
-  width: 750px;
-  height: 500px;
-  margin-top: 10px;
-  padding-top: 10px;
-  padding-bottom: 50px;
-  padding-left: 25px;
-  padding-right: 25px;
-  shadow: '20px 20px 20px 20px black';
-  border: 1px solid #eaeaea;
+.cardButtonGrey {
+  margin: 10px auto;
+  display: block;
+  background-color: white;
+  color: grey;
+  font-size: 18px;
+  border: 1px solid grey;
   border-radius: 10px;
-  position: relative;
+  padding: 10px 24px;
+  text-align: center;
+  height: 40px;
 }
 
 .cardTopic {
@@ -96,12 +109,68 @@
   position: relative;
 }
 
+.detailsContainer {
+  margin: 20px 0px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.detailsText {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-left: 1px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
 .image {
   left: 0;
   height:90px;
   width: 90px;
   border-radius: 50%;
   margin-bottom: 5px;
+}
+
+.imageMini {
+  height: 50px;
+  width: 50px;
+  margin: 0 5px;
+  border-radius: 50%;
+}
+
+.imageMiniContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 50px;
+  width: 50px;
+  margin: 15px 5px;
+}
+
+.imageMiniContainer:hover{
+  cursor: pointer;
+}
+
+.imageMiniContainer .hoverText {
+  visibility: hidden;
+  background-color: black;
+  opacity: 80%;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  width: 120px;
+  padding: 5px 15px;
+  font-size: 14px;
+
+}
+
+.imageMiniContainer:hover .hoverText {
+  visibility: visible;
+  cursor: pointer;
 }
 
 .noStreamsContainer {
@@ -138,6 +207,27 @@
 .participantUsername {
   margin-bottom: 10px;
   font-size: 12px;
+}
+
+.reminderAccountsContainer {
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reminderSetText {
+  margin: 10px auto;
+  display: block;
+  background-color: white;
+  color: grey;
+  font-size: 18px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  padding: 10px 24px;
+  text-align: center;
+  height: 40px;
 }
 
 .speakerAccessibilityContainer {
