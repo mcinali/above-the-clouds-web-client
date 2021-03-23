@@ -213,7 +213,7 @@ export default function BroadcastModal(hostname, accountId, accessToken, showBro
               </div>
             </div>
           </div>
-          <div style={(index==1) ? {'display':'block'} : {'display':'none'}}>
+          <div>
             <button className={broadcastStyles.broadcastButton} disabled={disableBroadcastButton} onClick={function(){broadcast()}}>Broadcast</button>
           </div>
         </div>

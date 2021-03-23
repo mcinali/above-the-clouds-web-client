@@ -423,7 +423,7 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
           </button>
           <audio id='audio-controller'></audio>
           <button className={streamStyles.inviteButton} onClick={function(){setShowModal(true)}}>Invite</button>
-          <button className={streamStyles.leaveStreamButton} onClick={function(){confirmLeaveStream()}}>Leave</button>
+          <button className={streamStyles.leaveStreamButton} onClick={function(){confirmLeaveStream()}}>Leave Room</button>
         </div>
       </div>
     </div>
