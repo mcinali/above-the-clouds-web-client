@@ -95,6 +95,11 @@
   height: 40px;
 }
 
+.cardButtonGrey:hover {
+  cursor: pointer;
+  background-color: #F5F5F5;
+}
+
 .cardTopic {
   width: 750px;
   height: 300px;

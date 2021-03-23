@@ -165,7 +165,44 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
           const newStreams = streams.map(oldStream => {
             if (oldStream.streamId==stream.streamId){
               const newStream = oldStream
+              accountInfo['streamReminderId'] = res.data.id
               newStream['reminders'] = oldStream['reminders'].concat([accountInfo])
+              return newStream
+            } else {
+              return oldStream
+            }
+          })
+          setStreams(newStreams)
+        })
+        .catch(error => console.error(error))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function deactivateStreamReminder(stream){
+    try {
+      const streamReminder = stream.reminders.filter(reminder => reminder.accountId == accountId)[0]
+      const url = hostname + `/stream/reminder/deactivate`
+      const body = {
+        streamReminderId: streamReminder.streamReminderId,
+        accountId: streamReminder.accountId,
+      }
+      const headers = {
+        headers: {
+          'token': accessToken,
+        }
+      }
+      axios.post(url, body, headers)
+        .then(res => {
+          console.log(res)
+          // Alter card state
+          const streamReminderInfo = res.data
+          console.log(streamReminderInfo)
+          const newStreams = streams.map(oldStream => {
+            if (oldStream.streamId==streamReminderInfo.streamId){
+              const newStream = oldStream
+              newStream['reminders'] = oldStream['reminders'].filter(reminder => reminder.streamReminderId != streamReminderInfo.id)
               return newStream
             } else {
               return oldStream
@@ -298,7 +335,7 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
                       </div>
                       <div className={discoveryStreamsStyles.cardButtonContainer}>
                         {(accountReminder(stream)) ?
-                          <button className={discoveryStreamsStyles.cardButtonGrey}>Interested </button>
+                          <button className={discoveryStreamsStyles.cardButtonGrey} onClick={function(){deactivateStreamReminder(stream)}}>Interested </button>
                           :
                           <button className={discoveryStreamsStyles.cardButton} onClick={function(){setStreamReminder(stream)}}>Notify Me</button>
                         }
