@@ -5,6 +5,11 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 const uuid = require('uuid')
 import StreamInviteModal from '../components/streamInviteModal'
+import NewStreamModal from '../components/newStreamModal'
+import NotificationsModal from '../components/notificationsModal'
+import BroadcastModal from '../components/broadcastModal'
+import ScheduleModal from '../components/scheduleModal'
+import MenuGuide from '../components/menuGuide'
 import { createPictureURLFromArrayBufferString, setCookie } from '../utilities'
 import commonStyles from '../styles/Common.module.css'
 import streamStyles from '../styles/Stream.module.css'
@@ -54,6 +59,14 @@ export async function getServerSideProps({ req, res, query }) {
 export default function Stream({ accountId, accessToken, streamId, hostname, sockethostname, session }){
   const [isActive, setIsActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
+  const [showNewStreamModal, setNewStreamShowModal] = useState(false)
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false)
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [handlePermission, setHandlePermission] = useState(true)
+
+  const [accountInfo, setAccountInfo] = useState({})
 
   const [streamInfo, setStreamInfo] = useState({})
   const [streamParticipants, setStreamParticipants] = useState([])
@@ -92,6 +105,20 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
       const hrsToExpiration = 6
       setCookie('session', uuid.v4(), hrsToExpiration)
     }
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
   }, [])
 
   useEffect(() => {
@@ -351,7 +378,12 @@ export default function Stream({ accountId, accessToken, streamId, hostname, soc
   return (
     <div className={commonStyles.container}>
       {StreamInviteModal(hostname, accountId, accessToken, streamId, showModal, setShowModal)}
-      {Header(hostname, accountId, accessToken)}
+      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
+      {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
+      {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
+      {BroadcastModal(hostname, accountId, accessToken, showBroadcastModal, setShowBroadcastModal)}
+      {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal, setNewStreamShowModal)}
+      {Header(accountInfo, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
       <div className={commonStyles.bodyContainer}>
         <div className={streamStyles.speakerAccessibilityContainer}>
           <a>{(streamInfo.inviteOnly) ? 'Invite-Only' : ''}</a>

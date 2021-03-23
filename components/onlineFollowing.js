@@ -7,25 +7,10 @@ const Image = React.memo(function Image({ src }) {
   return <img src={createPictureURLFromArrayBufferString(src)} className={followsStyles.image} />
 })
 
-export default function OnlineFollowing(hostname, socket, accountId, accessToken){
-  const [onlineFollowing, setOnlineFollowing] = useState([])
+export default function OnlineFollowing(hostname, socket, accountId, accessToken, onlineFollowing, setOnlineFollowing){
   const [onlineAccountInfo, setOnlineAccountInfo] = useState(null)
   const [offlineAccountInfo, setOfflineAccountInfo] = useState(null)
   const [socketExists, setSocketExists] = useState(false)
-
-  useEffect(() => {
-    const url = hostname + `/follows/online_following?accountId=${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setOnlineFollowing(res.data)
-      })
-      .catch(error => console.error(error))
-  }, [])
 
   useEffect(() => {
     if (Boolean(socket) && !socketExists){
@@ -60,7 +45,7 @@ export default function OnlineFollowing(hostname, socket, accountId, accessToken
 
   return (
     <div className={followsStyles.container}>
-      <div className={followsStyles.title}>Your Online Accounts Following:</div>
+      <div className={followsStyles.title}>Following Online:</div>
       {onlineFollowing.map((following, index) => {
         return (
           <div key={index.toString()} className={followsStyles.row}>

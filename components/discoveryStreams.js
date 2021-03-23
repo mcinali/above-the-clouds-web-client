@@ -8,8 +8,11 @@ const Image = React.memo(function Image({ src }) {
   return <img className={discoveryStreamsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function DiscoveryStreams(hostname, accountId, accessToken, socket) {
-  const [streams, setStreams] = useState([])
+const ImageMini = React.memo(function Image({ src }) {
+  return <img className={discoveryStreamsStyles.imageMini} src={createPictureURLFromArrayBufferString(src)}/>
+})
+
+export default function DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams, streamIsLoading, accountInfo) {
   const [joinedStreamInfo, setJoinedStreamInfo] = useState(null)
   const [leftStreamInfo, setLeftStreamInfo] = useState(null)
   const [date, setDate] = useState(new Date())
@@ -35,23 +38,6 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
     const result = `${hrs} : ${mins}`
     return result
   }
-
-  useEffect(() => {
-    const url = hostname+`/discovery?accountId=${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-         .then(res => {
-           setStreams(res.data)
-         })
-         .catch(error => {
-           console.error(error)
-         })
-    return
-  }, [])
 
   useEffect(() => {
     if(Boolean(socket) && !socketExists){
@@ -161,51 +147,206 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
       .catch(error => console.error(error))
   }
 
+  function setStreamReminder(stream){
+    try {
+      const url = hostname + `/stream/reminder`
+      const body = {
+        accountId: accountId,
+        streamId: stream.streamId,
+      }
+      const headers = {
+        headers: {
+          'token': accessToken,
+        }
+      }
+      axios.post(url, body, headers)
+        .then(res => {
+          // Alter card state
+          const newStreams = streams.map(oldStream => {
+            if (oldStream.streamId==stream.streamId){
+              const newStream = oldStream
+              accountInfo['streamReminderId'] = res.data.id
+              newStream['reminders'] = oldStream['reminders'].concat([accountInfo])
+              return newStream
+            } else {
+              return oldStream
+            }
+          })
+          setStreams(newStreams)
+        })
+        .catch(error => console.error(error))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function deactivateStreamReminder(stream){
+    try {
+      const streamReminder = stream.reminders.filter(reminder => reminder.accountId == accountId)[0]
+      const url = hostname + `/stream/reminder/deactivate`
+      const body = {
+        streamReminderId: streamReminder.streamReminderId,
+        accountId: streamReminder.accountId,
+      }
+      const headers = {
+        headers: {
+          'token': accessToken,
+        }
+      }
+      axios.post(url, body, headers)
+        .then(res => {
+          console.log(res)
+          // Alter card state
+          const streamReminderInfo = res.data
+          console.log(streamReminderInfo)
+          const newStreams = streams.map(oldStream => {
+            if (oldStream.streamId==streamReminderInfo.streamId){
+              const newStream = oldStream
+              newStream['reminders'] = oldStream['reminders'].filter(reminder => reminder.streamReminderId != streamReminderInfo.id)
+              return newStream
+            } else {
+              return oldStream
+            }
+          })
+          setStreams(newStreams)
+        })
+        .catch(error => console.error(error))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function formatOrganizer(creatorInfo){
+    try {
+      const { accountId, firstname, lastname, username } = creatorInfo
+      return `${firstname} ${lastname} (${username})`
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function formatScheuledDate(dateStr){
+    try {
+      const date = new Date(dateStr)
+      const dayOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'}
+      const timeOptions = { hour: '2-digit', minute: 'numeric' }
+      const time = `${date.toLocaleString('en-US', dayOptions)}  at ${date.toLocaleString('en-US', timeOptions)}`
+      return time
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function accountReminder(stream){
+    try {
+      const scheduledStreamReminders = stream.reminders
+      const scheduledStreamReminderAccountIds = scheduledStreamReminders.map(account => parseInt(account.accountId))
+      const boolean = scheduledStreamReminderAccountIds.includes(parseInt(accountId))
+      return boolean
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div>
       <div id="cardList" className={discoveryStreamsStyles.cardList}>
         <div id="cardContainer">
-          {streams.map((stream, streamIndex) =>
-            <div key={streamIndex.toString()}>
-              <div className={discoveryStreamsStyles.card}>
-                <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
-                  <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
+          {(streams.length==0) ?
+            <div className={discoveryStreamsStyles.noStreamsContainer}>
+              {(streamIsLoading) ?
+                <div></div>
+                :
+                <div>
+                  Looks like there are no audio rooms to discover at the moment :(
+                  <br></br>
+                  <br></br>
+                  Check here for audio rooms you were invited to +  public audio rooms created by your following.
                 </div>
-                <div className={discoveryStreamsStyles.topicContainer}>
-                  <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
-                </div>
-                <div className={discoveryStreamsStyles.timeContainer}>
-                  <div className={discoveryStreamsStyles.timeSubContainer}>
-                    <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
-                    <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
-                  </div>
-                </div>
-                <div className={discoveryStreamsStyles.participantsContainer}>
-                  {stream.participants.details.map((participant, participantIndex) =>
-                    <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
-                      <div>
-                        <Image src={participant.profilePicture}/>
-                      </div>
-                      <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
-                      <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
-                      {
-                        (participant.following==null) ?
-                        <div></div>
-                        :
-                        (participant.following) ?
-                        <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
-                        :
-                        <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
-                      }
-                    </div>
-                  )}
-                </div>
-                <div className={discoveryStreamsStyles.cardButtonContainer}>
-                  <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join</button>
-                </div>
-              </div>
+              }
             </div>
-          )}
+            :
+            <div>
+              {streams.map((stream, streamIndex) =>
+                <div key={streamIndex.toString()}>
+                  {(new Date(stream.startTime).getTime() < new Date().getTime()) ?
+                    <div className={discoveryStreamsStyles.card}>
+                      <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
+                        <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
+                      </div>
+                      <div className={discoveryStreamsStyles.topicContainer}>
+                        <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
+                      </div>
+                      <div className={discoveryStreamsStyles.timeContainer}>
+                        <div className={discoveryStreamsStyles.timeSubContainer}>
+                          <div className={discoveryStreamsStyles.time}>{calcElapsedTime(stream.startTime)}</div>
+                          <div className={discoveryStreamsStyles.timeLabels}>{'hr : min'}</div>
+                        </div>
+                      </div>
+                      <div className={discoveryStreamsStyles.participantsContainer}>
+                        {stream.participants.details.map((participant, participantIndex) =>
+                          <div key={participantIndex.toString()} className={discoveryStreamsStyles.participantContainer}>
+                            <div>
+                              <Image src={participant.profilePicture}/>
+                            </div>
+                            <div className={discoveryStreamsStyles.participantName}>{`${participant.firstname} ${participant.lastname}`}</div>
+                            <div className={discoveryStreamsStyles.participantUsername}>{`${participant.username}`}</div>
+                            {
+                              (participant.following==null) ?
+                              <div></div>
+                              :
+                              (participant.following) ?
+                              <button className={discoveryStreamsStyles.buttonUnfollow} onClick={function(){unfollow(participant, streamIndex, participantIndex)}}>Following</button>
+                              :
+                              <button className={discoveryStreamsStyles.buttonFollow} onClick={function(){follow(participant, streamIndex, participantIndex)}}>Follow</button>
+                            }
+                          </div>
+                        )}
+                      </div>
+                      <div className={discoveryStreamsStyles.cardButtonContainer}>
+                        <button className={discoveryStreamsStyles.cardButton} onClick={function(){joinStream(stream)}}>Join Room</button>
+                      </div>
+                    </div>
+                    :
+                    <div className={discoveryStreamsStyles.card}>
+                      <div className={discoveryStreamsStyles.speakerAccessibilityContainer}>
+                        <div className={discoveryStreamsStyles.speakerAccessibilitySubContainer}>{(stream.inviteOnly) ? 'Invite-Only' : ''}</div>
+                      </div>
+                      <div className={discoveryStreamsStyles.topicContainer}>
+                        <a className={discoveryStreamsStyles.topicText}>{stream.topic}</a>
+                      </div>
+                      <div className={discoveryStreamsStyles.detailsContainer}>
+                        <div className={discoveryStreamsStyles.detailsText}> <b>Starts:</b><span>&#160;</span> {formatScheuledDate(stream.startTime)} </div>
+                        <div className={discoveryStreamsStyles.detailsText}> <b>Organizer:</b><span>&#160;</span>
+                          <div>{formatOrganizer(stream.creator)}</div>
+                          <ImageMini src={stream.creator.profilePicture}/>
+                        </div>
+                        <div className={discoveryStreamsStyles.detailsText}> <b>Interested:</b> {} </div>
+                        <div className={discoveryStreamsStyles.reminderAccountsContainer}>
+                          {stream.reminders.map((reminderAccount, index) => {
+                            return (
+                              <div key={index.toString()} className={discoveryStreamsStyles.imageMiniContainer}>
+                                <ImageMini src={reminderAccount.profilePicture}/>
+                                <span className={discoveryStreamsStyles.hoverText}>{`${reminderAccount.firstname} ${reminderAccount.lastname}`}</span>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                      <div className={discoveryStreamsStyles.cardButtonContainer}>
+                        {(accountReminder(stream)) ?
+                          <button className={discoveryStreamsStyles.cardButtonGrey} onClick={function(){deactivateStreamReminder(stream)}}>Interested </button>
+                          :
+                          <button className={discoveryStreamsStyles.cardButton} onClick={function(){setStreamReminder(stream)}}>Notify Me</button>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                </div>
+              )}
+            </div>
+          }
         </div>
       </div>
     </div>

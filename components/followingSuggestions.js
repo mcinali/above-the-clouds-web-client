@@ -8,22 +8,7 @@ const Image = React.memo(function Image({ src }) {
   return <img className={followsStyles.image} src={createPictureURLFromArrayBufferString(src)}/>
 })
 
-export default function FollowingSuggestions(hostname, accountId, accessToken){
-  const [suggestions, setSuggestions] = useState([])
-
-  useEffect(() => {
-    const url = hostname + `/follows/suggestions?accountId=${accountId}`
-    const headers = {
-      headers: {
-        'token': accessToken,
-      }
-    }
-    axios.get(url, headers)
-      .then(res => {
-        setSuggestions(res.data.suggestions)
-      })
-      .catch(error => console.error(error))
-  }, [])
+export default function FollowingSuggestions(hostname, accountId, accessToken, suggestions, setSuggestions){
 
   function follow(suggestions, index){
     const suggestion = suggestions[index]

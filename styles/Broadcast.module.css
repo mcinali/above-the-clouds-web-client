@@ -1,0 +1,83 @@
+.broadcastButton {
+  margin: 0px auto;
+  display: block;
+  background-color: #0070f3;
+  color:  white;
+  border: 1px solid #0070f3;
+  font-size: 16px;
+  border-radius: 16px;
+  padding: 0px 32px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 40px;
+}
+
+.broadcastButton:hover {
+  cursor: pointer;
+}
+
+.broadcastButton:disabled {
+  opacity: 50%;
+  cursor: default;
+}
+
+.checkbox {
+  float: left;
+  margin-right: 10px;
+}
+
+.checkboxContainer {
+  float: left;
+  width: 100px;
+  display: flex;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+}
+
+.container {
+  margin: 15px 0;
+  width: 100%;
+  height: 320px;
+  display: flex;
+  justify-content: center;
+}
+
+.loaderContainer {
+  height: 100%;
+  width: 100%;
+  padding: 40% 50%;
+}
+
+.rowContainer {
+  margin-top: 10%;
+  width: 100%;
+  height: 280px;
+  justify-content: center;
+  overflow: scroll;
+}
+
+.selectionContainer {
+  width: 50%;
+  height: 100%;
+}
+
+.successContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 25%;
+}
+
+.successLoaderContainer {
+  height: 100%;
+  width: 100%;
+  padding: 10% 50%;
+}

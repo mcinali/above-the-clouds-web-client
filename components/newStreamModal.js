@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Router from 'next/router'
 import Invitations from '../components/invitations'
 import { createPictureURLFromArrayBufferString } from '../utilities'
+import modalStyles from '../styles/Modal.module.css'
 import newStreamStyles from '../styles/NewStream.module.css'
 import userStyles from '../styles/Users.module.css'
 const axios = require('axios')
@@ -89,16 +90,13 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
 
   return (
     <div>
-      <div className={newStreamStyles.background} style={displayModal}></div>
-      <div className={newStreamStyles.modal} style={displayModal}>
+      <div className={modalStyles.background} style={displayModal}></div>
+      <div className={modalStyles.modal} style={displayModal}>
         <div className={newStreamStyles.modalContainer}>
-          <div className={newStreamStyles.exitButtonContainer}>
-            <button className={newStreamStyles.exitButton} onClick={function(){closeModal()}}>x</button>
-          </div>
           <div className={newStreamStyles.bodyContainer}>
             <div className={newStreamStyles.formContainer}>
               <form>
-                <div className={newStreamStyles.header}>Stream Topic: </div>
+                <div className={newStreamStyles.header}>Room Topic: </div>
                 <div className={newStreamStyles.checkboxContainer}>
                   <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
                   <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
@@ -107,7 +105,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
               </form>
             </div>
             <div className={newStreamStyles.invitationsContainer}>
-              <div className={newStreamStyles.header}>Invite Participants:</div>
+              <div className={newStreamStyles.header}>Invite People in Your Network:</div>
               {Invitations(hostname, accountId, accessToken, invitations, queueStreamInvitation, discardInvitation, {})}
             </div>
             <div className={newStreamStyles.inviteesContainer}>
@@ -135,9 +133,12 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
               </div>
             </div>
             <div className={newStreamStyles.createStreamButtonContainer}>
-              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Stream</button>
+              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Audio Room</button>
             </div>
           </div>
+        </div>
+        <div className={modalStyles.closeButtonContainer}>
+          <button className={modalStyles.closeButton} onClick={function(){closeModal()}}>close</button>
         </div>
       </div>
     </div>

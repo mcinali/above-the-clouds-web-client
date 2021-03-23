@@ -7,6 +7,10 @@ import Cookies from 'universal-cookie'
 import Header from '../components/header'
 import NotificationPermissions from '../components/notificationPermissions'
 import NewStreamModal from '../components/newStreamModal'
+import NotificationsModal from '../components/notificationsModal'
+import BroadcastModal from '../components/broadcastModal'
+import ScheduleModal from '../components/scheduleModal'
+import MenuGuide from '../components/menuGuide'
 import FollowingSuggestions from '../components/followingSuggestions'
 import OnlineFollowing from '../components/onlineFollowing'
 import DiscoveryStreams from '../components/discoveryStreams'
@@ -21,7 +25,6 @@ export async function getServerSideProps({ req, res, query }) {
     const cookie = new Cookies(req.headers.cookie)
     const accountId = cookie.get('accountId')
     const token = cookie.get('token')
-    const session = cookie.get('session')
     // Add accountId as query param + token as header
     const url = hostname + `/auth/validate?accountId=${accountId}`
     const headers = {
@@ -35,13 +38,8 @@ export async function getServerSideProps({ req, res, query }) {
       res.writeHead(307, { Location: '/landing' }).end()
       return { props: {ok: false, reason: 'Access not permitted' } }
     }
-    if (!Boolean(session)){
-      res.writeHead(302, { Location: '/entry' }).end()
-      return { props: {ok: true } }
-    }
-    const newStreamModal = (Object.keys(query).length==0) ? false : Boolean(query.newStreamModal)
     // Pass in props to react function
-    return { props: { accountId: accountId, accessToken: token, hostname: hostname, sockethostname: sockethostname, newStreamModal: newStreamModal } }
+    return { props: { accountId: accountId, accessToken: token, hostname: hostname, sockethostname: sockethostname } }
   } catch (error) {
     res.writeHead(307, { Location: '/landing' }).end()
     return { props: {ok: false, reason: 'Issues accessing page' } }
@@ -49,10 +47,99 @@ export async function getServerSideProps({ req, res, query }) {
 }
 
 
-export default function Discovery({ accountId, accessToken, hostname, sockethostname, newStreamModal }) {
-  const [showModal, setShowModal] = useState(newStreamModal)
-  const [isLoading, setIsLoading] = useState(true)
+export default function Discovery({ accountId, accessToken, hostname, sockethostname }) {
+  const [showMenu, setShowMenu] = useState(false)
+  const [showNewStreamModal, setNewStreamShowModal] = useState(false)
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false)
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
+  const [handlePermission, setHandlePermission] = useState(true)
+
+  const [accountInfo, setAccountInfo] = useState({})
+
+  const [isLoadingDiscovery, setIsLoadingDiscovery] = useState(true)
+  const [streams, setStreams] = useState([])
+
+  const [isLoadingFollowSuggestions, setIsLoadingFollowSuggestions] = useState(true)
+  const [suggestions, setSuggestions] = useState([])
+
+  const [isLoadingOnlineFollowing, setIsLoadingOnlineFollowing] = useState(true)
+  const [onlineFollowing, setOnlineFollowing] = useState([])
+
+
   const [socket, setSocket] = useState(null)
+
+  useEffect(() => {
+    const url = hostname + `/account/${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setAccountInfo(res.data)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  useEffect(() => {
+    const url = hostname+`/discovery?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+         .then(res => {
+           setStreams(res.data)
+           setIsLoadingDiscovery(false)
+         })
+         .catch(error => {
+           console.error(error)
+         })
+    return
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/follows/suggestions?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setSuggestions(res.data.suggestions.splice(0,5))
+        setIsLoadingFollowSuggestions(false)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  useEffect(() => {
+    const url = hostname + `/follows/online_following?accountId=${accountId}`
+    const headers = {
+      headers: {
+        'token': accessToken,
+      }
+    }
+    axios.get(url, headers)
+      .then(res => {
+        setOnlineFollowing(res.data)
+        setIsLoadingOnlineFollowing(false)
+      })
+      .catch(error => console.error(error))
+  }, [])
+
+  useEffect(() => {
+    if (!(isLoadingDiscovery || isLoadingFollowSuggestions || isLoadingOnlineFollowing)){
+      if (streams.length>0){
+        setShowMenu(false)
+      } else {
+        setShowMenu(true)
+      }
+    }
+  }, [isLoadingDiscovery, isLoadingFollowSuggestions, isLoadingOnlineFollowing])
 
   useEffect(() => {
     document.title = 'Above the Clouds'
@@ -77,24 +164,26 @@ export default function Discovery({ accountId, accessToken, hostname, sockethost
 
   return (
     <div className={commonStyles.container}>
-      {NewStreamModal(hostname, accountId, accessToken, showModal, setShowModal, socket)}
+      {MenuGuide(showMenu, setShowMenu, setNewStreamShowModal, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
+      {NewStreamModal(hostname, accountId, accessToken, showNewStreamModal, setNewStreamShowModal, socket)}
+      {NotificationsModal(showNotificationsModal, setShowNotificationsModal, setHandlePermission)}
+      {BroadcastModal(hostname, accountId, accessToken, showBroadcastModal, setShowBroadcastModal)}
+      {ScheduleModal(hostname, accountId, accessToken, showScheduleModal, setShowScheduleModal, setNewStreamShowModal)}
+      {NotificationPermissions(handlePermission, setHandlePermission)}
       <div>
-        {NotificationPermissions()}
-      </div>
-      <div>
-        {Header(hostname, accountId, accessToken)}
+        {Header(accountInfo, setShowMenu, setShowNotificationsModal, setShowBroadcastModal, setShowScheduleModal)}
         <div className={commonStyles.bodyContainer}>
           <div className={discoveryStyles.panelLeft}>
             <div className={discoveryStyles.panelLeftMainContainer}>
-              {FollowingSuggestions(hostname, accountId, accessToken)}
-              {OnlineFollowing(hostname, socket, accountId, accessToken)}
+              {FollowingSuggestions(hostname, accountId, accessToken, suggestions, setSuggestions)}
+              {OnlineFollowing(hostname, socket, accountId, accessToken, onlineFollowing, setOnlineFollowing)}
             </div>
           </div>
           <div className={discoveryStyles.panelRight}>
             <div className={discoveryStyles.newStreamContainer}>
-              <button className={discoveryStyles.newStreamButton} onClick={function(){setShowModal(true)}}>New Stream+</button>
+              <button className={discoveryStyles.newStreamButton} onClick={function(){setNewStreamShowModal(true)}}>Create Audio Room+</button>
             </div>
-            {DiscoveryStreams(hostname, accountId, accessToken, socket)}
+            {DiscoveryStreams(hostname, accountId, accessToken, socket, streams, setStreams, isLoadingDiscovery, accountInfo)}
           </div>
         </div>
       </div>

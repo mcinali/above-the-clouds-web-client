@@ -1,3 +1,44 @@
+.container {
+  margin: 2% 20%;
+  padding-left: 5%;
+  display: flex;
+}
+
+.details{
+  float: left;
+  margin-left: 20px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.detailsContainer {
+  left: 0;
+  font-size: 18px;
+  height: 50px;
+  margin: 10% 0;
+  padding: auto 0;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerContainer {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+}
+
+.icon {
+  float: left;
+  height: 40px;
+  width: 40px;
+  margin: 5px 0;
+}
+
 .main {
   position: absolute;
   top: 0px;
@@ -192,7 +233,7 @@
 
 .modalSkipButton {
   color: #0070f3;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .modalSkipButton:hover {

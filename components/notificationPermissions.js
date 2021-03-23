@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import notificationPermissionsStyles from '../styles/NotificationPermissions.module.css'
 
-export default function NotificationPermissions(){
-  const [handlePermission, setHandlePermission] = useState(true)
+export default function NotificationPermissions(handlePermission, setHandlePermission){
 
   useEffect(() => {
     if (handlePermission){
@@ -46,10 +45,9 @@ export default function NotificationPermissions(){
     <div id='notificationPermissions' className={notificationPermissionsStyles.container}>
       <div className={notificationPermissionsStyles.content}>
         <div className={notificationPermissionsStyles.content}>
-          <button className={notificationPermissionsStyles.button} onClick={function(){askNotificationPermission()}}>Enable Notifications</button>
+          <button className={notificationPermissionsStyles.button} onClick={function(){askNotificationPermission()}}>Enable Desktop Notifications</button>
           <div className={notificationPermissionsStyles.textContainer}>
-            <div className={notificationPermissionsStyles.text}>This will only enable desktop notifications for https://www.abovethecloudsapp.com</div>
-            <div className={notificationPermissionsStyles.text}>(make sure notifications are enabled for your browser in System Preferences/Control Panel)</div>
+            <div className={notificationPermissionsStyles.text}>We'll only send you notifications when: someone you follow comes online, someone you follow creates a room, or you get invited to room.</div>
           </div>
         </div>
       </div>

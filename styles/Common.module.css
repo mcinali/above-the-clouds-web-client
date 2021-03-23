@@ -25,6 +25,12 @@
   z-index: 1;
 }
 
+.iconsContainer {
+  margin-left: 25px;
+  display: flex;
+  flex-direction: row;
+}
+
 .image {
   border-radius: 50%;
   height: 30px;
@@ -32,6 +38,41 @@
 }
 
 .image:hover {
+  cursor: pointer;
+}
+
+.imageContainer {
+  height: 25px;
+  width: 25px;
+  margin-left: 20px;
+}
+
+.imageContainer .imageContainerText {
+  visibility: hidden;
+  background-color: black;
+  opacity: 80%;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  width: 120px;
+  padding: 5px 15px;
+  font-size: 14px;
+  position:absolute;
+  display:block;
+  top: 105%;
+  left: 50%;
+}
+
+.imageContainer:hover .imageContainerText {
+  visibility: visible;
+}
+
+.imageSquare {
+  height: 20px;
+  width: 20px;
+}
+
+.imageSquare:hover {
   cursor: pointer;
 }
 
@@ -58,6 +99,28 @@
   margin-right: 5px;
   font-size: 16px;
   color: grey;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 20px;
+  height: 20px;
+  -webkit-animation: spin 0.5s linear infinite; /* Safari */
+  animation: spin 0.5s linear infinite;
+  z-index: 7;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .navbar {
