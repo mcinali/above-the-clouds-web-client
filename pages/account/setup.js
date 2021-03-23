@@ -144,21 +144,21 @@ export default function AccountSetup({ accountId, accessToken, hostname }) {
             Welcome to <a>Above the Clouds!</a>
           </div>
           <div className={modalStyles.subtitle}>
-            Hang out with your friends through social audio
+            Hang out with <a>people</a> you care about. Talk about <a>topics</a> you care about.
           </div>
           <div className={accountSetupStyles.container}>
             <ul>
               <div className={accountSetupStyles.detailsContainer}>
                 <img className={accountSetupStyles.icon} src={'/images/audio.jpg'}/>
-                <div className={accountSetupStyles.details}>Audio-only chat rooms</div>
+                <div className={accountSetupStyles.details}>Create or join Audio-only chat rooms</div>
               </div>
               <div className={accountSetupStyles.detailsContainer}>
                 <img className={accountSetupStyles.icon} src={'/images/four.png'}/>
-                <div className={accountSetupStyles.details}>Max 4 people to a room</div>
+                <div className={accountSetupStyles.details}>Max 4 people can join a room. Rooms disappear after everyone leaves</div>
               </div>
               <div className={accountSetupStyles.detailsContainer}>
                 <img className={accountSetupStyles.icon} src={'/images/network.jpg'}/>
-                <div className={accountSetupStyles.details}>Discover what your network is talking about</div>
+                <div className={accountSetupStyles.details}>Follow friends and discover what they're talking about</div>
               </div>
             </ul>
           </div>
