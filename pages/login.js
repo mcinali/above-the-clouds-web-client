@@ -39,7 +39,7 @@ export default function Login({ hostname }) {
           setCookie('accountId', res.data.accountId)
           setCookie('hasToken', res.data.hasToken)
           setCookie('token', res.data.token)
-          Router.push('/entry')
+          Router.push('/discovery')
         })
         .catch(error => {
           setLoginError('Unable to log in - make sure you are using valid login credentials')
