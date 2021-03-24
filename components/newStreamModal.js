@@ -134,7 +134,7 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
               </div>
             </div>
             <div className={newStreamStyles.createStreamButtonContainer}>
-              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Audio Room</button>
+              <button className={newStreamStyles.createStreamButton} disabled={disableCreateStream} onClick={function(){createStream()}}>Create Room</button>
             </div>
           </div>
         </div>
