@@ -258,10 +258,10 @@ export default function DiscoveryStreams(hostname, accountId, accessToken, socke
                 <div></div>
                 :
                 <div>
-                  Looks like there are no audio rooms to discover at the moment :(
+                  Looks like there are no rooms to discover at the moment
                   <br></br>
                   <br></br>
-                  Check here for audio rooms you were invited to +  public audio rooms created by your following.
+                  You can discover rooms created by your following + rooms you were invited to here
                 </div>
               }
             </div>
