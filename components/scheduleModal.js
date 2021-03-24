@@ -58,7 +58,7 @@ export default function ScheduleModal(hostname, accountId, accessToken, showModa
           <button className={discoveryStyles.newStreamButton}>Schedule Audio Chat+</button>
         </div>
         <div className={scheduleStyles.container}>
-          <div className={scheduleStyles.day}>Friday, March 19th</div>
+          <div className={scheduleStyles.day}>Wednesday, March 24th</div>
           {scheduledStreams.map((scheduledStream, index) => {
             return (
               <div key={index.toString()} className={scheduleStyles.scheduleContainer}>

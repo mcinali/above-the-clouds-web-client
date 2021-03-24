@@ -96,16 +96,17 @@ export default function NewStreamModal(hostname, accountId, accessToken, showMod
           <div className={newStreamStyles.bodyContainer}>
             <div className={newStreamStyles.formContainer}>
               <form>
+              <div className={newStreamStyles.checkboxContainer}>
+                <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
+                <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
+              </div>
                 <div className={newStreamStyles.header}>Room Topic: </div>
-                <div className={newStreamStyles.checkboxContainer}>
-                  <input className={newStreamStyles.checkbox} type='checkbox' checked={inviteOnly} onChange={(e) => setInviteOnly(!inviteOnly)}/>
-                  <div className={newStreamStyles.checkboxLabel}>Invite-Only</div>
-                </div>
                 <textarea area maxLength='64' cols='32' rows='2' value={topicText} className={newStreamStyles.textForm} onChange={(e) => setTopicText(e.target.value)}></textarea>
+                <div className={newStreamStyles.topicPrompts}>e.g. React to a live or recent event, talk about something you recently read, wax philosophic, or keep it open and friendly (e.g. "Hanging out")</div>
               </form>
             </div>
             <div className={newStreamStyles.invitationsContainer}>
-              <div className={newStreamStyles.header}>Invite People in Your Network:</div>
+              <div className={newStreamStyles.header}>Invite Other Above the Clouds Users:</div>
               {Invitations(hostname, accountId, accessToken, invitations, queueStreamInvitation, discardInvitation, {})}
             </div>
             <div className={newStreamStyles.inviteesContainer}>
